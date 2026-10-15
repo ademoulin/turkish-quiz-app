@@ -1,14 +1,15 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 const html = await readFile("dist/index.html", "utf8");
 const jsPath = html.match(/<script[^>]+src="([^"]+)"[^>]*><\/script>/)?.[1];
 const cssPath = html.match(/<link[^>]+href="([^"]+\.css)"[^>]*>/)?.[1];
 if (!jsPath || !cssPath)
   throw Error("Expected one bundled script and stylesheet.");
-const js = (await readFile("dist" + jsPath, "utf8")).replace(
+const js = (await readFile(join("dist", jsPath), "utf8")).replace(
   /<\/script/gi,
   "<\\/script",
 );
-const css = (await readFile("dist" + cssPath, "utf8")).replace(
+const css = (await readFile(join("dist", cssPath), "utf8")).replace(
   /<\/style/gi,
   "<\\/style",
 );

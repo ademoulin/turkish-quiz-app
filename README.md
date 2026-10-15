@@ -4,7 +4,7 @@ A calm, mobile-friendly Turkish vocabulary and conjugation app. It reads the liv
 
 ## Open the app
 
-This project has been built and tested in the Codex workspace and uploaded to [GitHub](https://github.com/ademoulin/turkish-quiz-app). The website has **not** been deployed.
+This project has been built and tested in the Codex workspace and uploaded to [GitHub](https://github.com/ademoulin/turkish-quiz-app). A ready-to-serve website is also available on the `gh-pages` branch. GitHub Pages must be enabled in repository Settings → Pages before it is publicly available.
 
 A packaged single-file version is also generated at `dist/quiz-my-turkish.html`. It was verified when served as a normal web page. Direct double-click opening could not be verified because this environment's browser administrator blocks local-file pages; browser storage rules for local files also vary. Use the server instructions below for the verified workflow.
 
@@ -18,6 +18,14 @@ npm run dev
 Open the address Vite prints in your browser. Keep that terminal running while studying. To use it on your phone, deploy the production `dist` folder to a static web host; choose hosting separately before publishing. No paid service is required by the application itself.
 
 In the cloud environment, the project is at `/workspace/turkish-quiz-app`. Start with `npm run dev -- --port 5173`. A publicly accessible preview URL is not supplied by this onboarding environment.
+
+## Use the hosted website (no installation)
+
+In [repository Pages settings](https://github.com/ademoulin/turkish-quiz-app/settings/pages), choose **Deploy from a branch**, select **gh-pages** and **/ (root)**, then Save. GitHub will show the published website address after its deployment finishes. The expected project address is https://ademoulin.github.io/turkish-quiz-app/; do not assume it is live before GitHub reports deployment success.
+
+The deployment branch contains only the built static site, with relative asset paths and `.nojekyll`. No Node.js installation is needed on your device to study on the hosted site. Sheet edits are fetched live and do not require a deployment. Application code changes require rebuilding and updating the deployment branch.
+
+Progress belongs to the website address and browser: a hosted site does not automatically share progress with a local app or another device. Export/import can transfer it.
 
 ## Start studying
 
