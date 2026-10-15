@@ -16,3 +16,5 @@ These are minor implementation defaults, recorded so they can be changed after u
 - Review mistakes by entry ID, direction, and grammatical combination. A later correct result resolves that combination; other difficult forms stay in the review pool.
 - Preserve progress for deleted sheet IDs. Do not silently transfer it to a new ID. Imported attempts with matching attempt IDs replace those same attempts; other existing results remain.
 - The source was uploaded to GitHub on your explicit instruction. GitHub Pages hosting was subsequently authorized. The gh-pages branch contains the compiled public site; GitHub repository Pages settings control publication. No analytics, paid services, or app accounts have been introduced.
+
+- The word-type menu groups vt, vi, and vt/i under Verbs. Previously saved verb-type filters now show all verbs; sheet metadata stays unchanged.

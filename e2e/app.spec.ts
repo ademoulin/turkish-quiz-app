@@ -202,10 +202,49 @@ test("packaged standalone HTML served normally fetches the real sheet", async ({
   ).toBe(1);
 });
 
-test('combined word types appear under each relevant filter', async ({page}) => {
- await page.route('https://docs.google.com/**', r=>r.fulfill({contentType:'text/csv',body:csv+'\nv003,konuşmak,vt/i,speak,,,\nv004,bugün,adv/n,today,,,'}));
- await page.goto('/');await expect(page.getByText('Your vocabulary is up to date')).toBeVisible();
- await page.getByLabel('Word type',{exact:true}).selectOption('vi');await expect(page.locator('.word-row')).toHaveCount(2);
- await page.getByLabel('Word type',{exact:true}).selectOption('n');await expect(page.locator('.word-row')).toHaveCount(2);
- await page.getByLabel('Word type',{exact:true}).selectOption('adv');await expect(page.locator('.word-row')).toHaveCount(1);
+test("combined word types appear under each relevant filter", async ({
+  page,
+}) => {
+  await page.route("https://docs.google.com/**", (r) =>
+    r.fulfill({
+      contentType: "text/csv",
+      body: csv + "\nv003,konuşmak,vt/i,speak,,,\nv004,bugün,adv/n,today,,,",
+    }),
+  );
+  await page.goto("/");
+  await expect(page.getByText("Your vocabulary is up to date")).toBeVisible();
+  await page.getByLabel("Word type", { exact: true }).selectOption("verbs");
+  await expect(page.locator(".word-row")).toHaveCount(2);
+  await page.getByLabel("Word type", { exact: true }).selectOption("n");
+  await expect(page.locator(".word-row")).toHaveCount(2);
+  await page.getByLabel("Word type", { exact: true }).selectOption("adv");
+  await expect(page.locator(".word-row")).toHaveCount(1);
+});
+
+test("old saved verb filter becomes all verbs and selection includes every verb type", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "quiz-my-turkish-v1",
+      JSON.stringify({ settings: { types: ["vi"] }, attempts: [] }),
+    ),
+  );
+  await page.route("https://docs.google.com/**", (r) =>
+    r.fulfill({
+      contentType: "text/csv",
+      body: csv + "\nv003,konuşmak,vt/i,speak,,,\nv004,yapmak,vt,do,,,",
+    }),
+  );
+  await page.goto("/");
+  await expect(page.getByText("Your vocabulary is up to date")).toBeVisible();
+  await expect(page.getByLabel("Word type", { exact: true })).toHaveValue(
+    "verbs",
+  );
+  await expect(page.locator(".word-row")).toHaveCount(3);
+  await page.getByRole("button", { name: "Select all matching" }).click();
+  await expect(page.getByText("3 selected", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "Transitive verbs", exact: true }),
+  ).toHaveCount(0);
 });

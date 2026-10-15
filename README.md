@@ -85,6 +85,6 @@ Browser tests use the system Chromium when present. Else install a Playwright br
 
 The development and packaged-production browser checks use the real sheet. Other browser tests use small controlled sheet responses to exercise failure paths, edits, invalid rows, HTML-like data, conjugation, and backups. Reference conjugation tests contain hand-written expected forms, independent of the generator.
 
-Validation completed: **175 unit checks**, **7 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
+Validation completed: **175 unit checks**, **8 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
 
 See [DECISIONS.md](DECISIONS.md) for grading and scope choices.

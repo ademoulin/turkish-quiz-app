@@ -35,6 +35,7 @@ type Question = {
   result?: Conjugation;
 };
 const typeNames: Record<string, string> = {
+  verbs: "Verbs",
   adv: "Adverbs",
   adj: "Adjectives",
   n: "Nouns",
@@ -143,20 +144,23 @@ function App() {
   }, [screen, index, feedback]);
   const allTypes = [
     ...new Set(
-      entries.flatMap((e) =>
-        e.type === "vt/i" ? ["vt", "vi", "vt/i"] : e.type.split("/"),
-      ),
+      entries.flatMap((e) => (isVerb(e) ? ["verbs"] : e.type.split("/"))),
     ),
   ];
   const filtered = entries.filter(
     (e) =>
       (!settings.types.length ||
-        settings.types.some(
-          (t) =>
+        settings.types.some((savedType) => {
+          const t = ["vt", "vi", "vt/i"].includes(savedType)
+            ? "verbs"
+            : savedType;
+          return (
+            (t === "verbs" && isVerb(e)) ||
             e.type === t ||
             e.type.split("/").includes(t) ||
-            (e.type === "vt/i" && (t === "vt" || t === "vi")),
-        )) &&
+            (e.type === "vt/i" && (t === "vt" || t === "vi"))
+          );
+        })) &&
       (!search ||
         `${e.turkish} ${e.meaning}`
           .toLocaleLowerCase("tr")
@@ -694,7 +698,13 @@ function App() {
                     Word type
                     <select
                       aria-label="Word type"
-                      value={settings.types[0] || ""}
+                      value={
+                        settings.types.some((t) =>
+                          ["vt", "vi", "vt/i"].includes(t),
+                        )
+                          ? "verbs"
+                          : settings.types[0] || ""
+                      }
                       onChange={(e) =>
                         updateSettings({
                           types: e.target.value ? [e.target.value] : [],
