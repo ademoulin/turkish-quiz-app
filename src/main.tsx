@@ -924,7 +924,7 @@ function App() {
               </h1>
               <p className="question-sub">
                 {latest.kind === "conjugation"
-                  ? latest.entry.meaning
+                  ? `${latest.entry.type}: ${latest.entry.meaning}`
                   : typeNames[latest.entry.type] || latest.entry.type}
               </p>
               {latest.form && (
