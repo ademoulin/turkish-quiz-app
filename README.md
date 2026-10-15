@@ -4,7 +4,7 @@ A calm, mobile-friendly Turkish vocabulary and conjugation app. It reads the liv
 
 ## Open the app
 
-This project has been built and tested in the Codex workspace. It has **not** been deployed or pushed to GitHub automatically.
+This project has been built and tested in the Codex workspace and uploaded to [GitHub](https://github.com/ademoulin/turkish-quiz-app). The website has **not** been deployed.
 
 A packaged single-file version is also generated at `dist/quiz-my-turkish.html`. It was verified when served as a normal web page. Direct double-click opening could not be verified because this environment's browser administrator blocks local-file pages; browser storage rules for local files also vary. Use the server instructions below for the verified workflow.
 

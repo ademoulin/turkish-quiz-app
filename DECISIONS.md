@@ -15,4 +15,4 @@ These are minor implementation defaults, recorded so they can be changed after u
 - A manual correction changes the existing attempt's correctness and is counted once in both progress and the score. Its manual marker remains visible.
 - Review mistakes by entry ID, direction, and grammatical combination. A later correct result resolves that combination; other difficult forms stay in the review pool.
 - Preserve progress for deleted sheet IDs. Do not silently transfer it to a new ID. Imported attempts with matching attempt IDs replace those same attempts; other existing results remain.
-- No application deployment, GitHub push, analytics, paid services, or accounts have been introduced. Hosting remains a separate choice.
+- The source was uploaded to GitHub on your explicit instruction. No application deployment, analytics, paid services, or accounts have been introduced. Hosting remains a separate choice.
