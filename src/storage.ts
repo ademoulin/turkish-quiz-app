@@ -1,6 +1,7 @@
 export const STORAGE_KEY = "quiz-my-turkish-v1";
 export interface Attempt {
   id: string;
+  sessionId?: string;
   entryId: string;
   kind: "meaning" | "conjugation";
   direction: "en" | "tr";
@@ -16,6 +17,7 @@ export interface Settings {
   direction: "en" | "tr" | "mixed";
   length: string;
   types: string[];
+  familiarities: import("./familiarity").Familiarity[];
   selected: string[];
   tenses: import("./grammar").Tense[];
   persons: import("./grammar").Person[];
@@ -27,6 +29,7 @@ export const defaults: Settings = {
   direction: "tr",
   length: "10",
   types: [],
+  familiarities: [],
   selected: [],
   tenses: ["present", "past", "future"],
   persons: ["ben", "sen", "o", "biz", "siz", "onlar"],
@@ -42,7 +45,15 @@ export function readStore(): Store {
   try {
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     return {
-      settings: { ...defaults, ...s.settings },
+      settings: {
+        ...defaults,
+        ...s.settings,
+        familiarities: Array.isArray(s.settings?.familiarities)
+          ? s.settings.familiarities.filter((v: unknown) =>
+              ["New", "Learning", "Familiar", "Well known"].includes(String(v)),
+            )
+          : [],
+      },
       attempts: Array.isArray(s.attempts) ? s.attempts : [],
       cache: s.cache,
     };
@@ -76,6 +87,8 @@ export function validateImport(value: unknown): Attempt[] {
     const a = x as Attempt;
     if (
       typeof a.id !== "string" ||
+      (a.sessionId !== undefined &&
+        (typeof a.sessionId !== "string" || !a.sessionId)) ||
       typeof a.entryId !== "string" ||
       !["meaning", "conjugation"].includes(a.kind) ||
       !["en", "tr"].includes(a.direction) ||

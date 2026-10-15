@@ -20,3 +20,7 @@ These are minor implementation defaults, recorded so they can be changed after u
 - The word-type menu groups vt, vi, and vt/i under Verbs. Previously saved verb-type filters now show all verbs; sheet metadata stays unchanged.
 
 - Interface and project documentation use American English, as requested; the user’s current location does not determine spelling preferences.
+
+- Vocabulary familiarity uses four labels and a multi-select filter, with separate histories by direction. Mixed uses the weaker direction; conjugation does not contribute. Existing history contributes through conservative 30-minute-gap session estimates.
+- Familiar requires 4 successful sessions over 2 days; Well known requires 12 over 3 days. Recent session evidence controls confidence and can demote a word after repeated misses. Repeated guesses in one session do not create extra positive evidence; manual corrections update original evidence. No time decay or automatic prioritization is introduced.
+- Familiarity filters restrict the selected entries eligible for a new session, even if other entries were selected earlier. Hidden selections remain saved. Review mistakes intentionally retains its existing separate behavior.

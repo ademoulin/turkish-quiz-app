@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import {
   conjugate,
@@ -26,6 +26,11 @@ import {
   type Settings,
   type Attempt,
 } from "./storage";
+import {
+  familiarityIndex,
+  familiarityFor,
+  familiarityLevels,
+} from "./familiarity";
 import "./style.css";
 type Question = {
   entry: Entry;
@@ -80,6 +85,17 @@ function App() {
   const input = useRef<HTMLInputElement>(null);
   const importInput = useRef<HTMLInputElement>(null);
   const submitting = useRef(false);
+  const sessionId = useRef(crypto.randomUUID());
+  const familiarity = useMemo(
+    () => familiarityIndex(store.attempts),
+    [store.attempts],
+  );
+  const wordLevel = (id: string) =>
+    familiarityFor(familiarity, id, settings.direction);
+  const matchesFamiliarity = (id: string) =>
+    settings.mode === "conjugation" ||
+    !settings.familiarities.length ||
+    settings.familiarities.includes(wordLevel(id));
   const updateSettings = (patch: Partial<Settings>) =>
     setStore((s) => ({ ...s, settings: { ...s.settings, ...patch } }));
   useEffect(() => {
@@ -149,6 +165,7 @@ function App() {
   ];
   const filtered = entries.filter(
     (e) =>
+      matchesFamiliarity(e.id) &&
       (!settings.types.length ||
         settings.types.some((savedType) => {
           const t = ["vt", "vi", "vt/i"].includes(savedType)
@@ -168,7 +185,9 @@ function App() {
   );
   const chosen = entries.filter((e) => settings.selected.includes(e.id));
   const eligible = chosen.filter(
-    (e) => settings.mode !== "conjugation" || isVerb(e),
+    (e) =>
+      (settings.mode !== "conjugation" || isVerb(e)) &&
+      matchesFamiliarity(e.id),
   );
   const unresolved = store.attempts.filter(
     (a) =>
@@ -284,7 +303,7 @@ function App() {
       setSetupError(
         review
           ? "No available mistakes to review."
-          : "Select some vocabulary first. If practicing conjugations, include verbs.",
+          : "Select vocabulary that matches your filters first. If practicing conjugations, include verbs.",
       );
       return;
     }
@@ -292,6 +311,7 @@ function App() {
       setNotice(
         `Skipped forms needing a checked rule: ${[...new Set(skipped)].join(", ")}.`,
       );
+    sessionId.current = crypto.randomUUID();
     setQuestions(next);
     setIndex(0);
     setSession([]);
@@ -320,6 +340,7 @@ function App() {
           : q.entry.turkish;
     const a: Attempt = {
       id: crypto.randomUUID(),
+      sessionId: sessionId.current,
       entryId: q.entry.id,
       kind: q.kind,
       direction: q.direction,
@@ -645,9 +666,9 @@ function App() {
                         </select>
                       </label>
                       <p className="hint">
-                        For general “can”, select Aorist. Ability
-                        isn’t combined with conditionals yet; those questions
-                        use the ordinary verb.
+                        For general “can”, select Aorist. Ability isn’t combined
+                        with conditionals yet; those questions use the ordinary
+                        verb.
                       </p>
                     </div>
                   )}
@@ -719,6 +740,72 @@ function App() {
                       ))}
                     </select>
                   </label>
+                  {settings.mode !== "conjugation" && (
+                    <fieldset className="familiarity-filter">
+                      <legend>Vocabulary familiarity</legend>
+                      <div className="chips">
+                        <button
+                          className={
+                            !settings.familiarities.length
+                              ? "chip active"
+                              : "chip"
+                          }
+                          aria-pressed={!settings.familiarities.length}
+                          onClick={() => updateSettings({ familiarities: [] })}
+                        >
+                          All levels
+                        </button>
+                        {familiarityLevels.map((level) => (
+                          <button
+                            key={level}
+                            className={
+                              settings.familiarities.includes(level)
+                                ? "chip active"
+                                : "chip"
+                            }
+                            aria-pressed={settings.familiarities.includes(
+                              level,
+                            )}
+                            onClick={() =>
+                              updateSettings({
+                                familiarities: toggle(
+                                  settings.familiarities,
+                                  level,
+                                ),
+                              })
+                            }
+                          >
+                            {level}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="hint">
+                        {settings.direction === "mixed"
+                          ? "Mixed directions use the less familiar of your two levels."
+                          : settings.direction === "tr"
+                            ? "Levels for English → Turkish recall."
+                            : "Levels for Turkish → English recognition."}{" "}
+                        Only matching selected words enter a new session.
+                      </p>
+                      <details className="familiarity-help">
+                        <summary>How familiarity works</summary>
+                        <p>
+                          New means no vocabulary answers yet in this direction.
+                          Learning means you’re still building consistency.
+                          Familiar needs at least 4 successful sessions across 2
+                          days. Well known needs at least 12 across 3 days, with
+                          strong recent results.
+                        </p>
+                        <p>
+                          Recent mistakes lower confidence; one slip won’t erase
+                          a strong history. Repeating a word in the same session
+                          doesn’t earn extra credit. Manual corrections count as
+                          correct. Older sessions are estimated from 30-minute
+                          gaps. Conjugation results never affect these labels.
+                        </p>
+                      </details>
+                    </fieldset>
+                  )}
                   <label className="sr-only" htmlFor="word-search">
                     Search words or meanings
                   </label>
@@ -783,6 +870,30 @@ function App() {
                           <span>
                             <strong lang="tr">{e.turkish}</strong>
                             <small>{e.meaning}</small>
+                            {settings.mode !== "conjugation" && (
+                              <span className="familiarity-badges">
+                                {(settings.direction === "mixed"
+                                  ? (["tr", "en"] as const)
+                                  : [settings.direction]
+                                ).map((direction) => (
+                                  <span
+                                    className="familiarity-badge"
+                                    key={direction}
+                                  >
+                                    {settings.direction === "mixed"
+                                      ? direction === "tr"
+                                        ? "EN → TR: "
+                                        : "TR → EN: "
+                                      : ""}
+                                    {familiarityFor(
+                                      familiarity,
+                                      e.id,
+                                      direction,
+                                    )}
+                                  </span>
+                                ))}
+                              </span>
+                            )}
                           </span>
                           <span className="type-tag">{e.type}</span>
                         </label>
@@ -795,7 +906,10 @@ function App() {
                       </p>
                     )}
                     {entries.length > 0 && !filtered.length && (
-                      <p className="empty">No words match that search.</p>
+                      <p className="empty">
+                        No words match these filters. Try another familiarity
+                        level, word type, or search.
+                      </p>
                     )}
                   </div>
                   <p className="hint">

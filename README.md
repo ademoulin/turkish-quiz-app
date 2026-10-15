@@ -55,6 +55,21 @@ Reload the app or choose **Refresh vocabulary** after editing. No rebuild is nee
 
 The live Google CSV endpoint was verified from a real Chromium browser. The existing public viewing permission worked; **Publish to web was not required**. If permissions later change, restore public viewing access or use the previous cached vocabulary. The app never modifies sharing or sheet data.
 
+## Vocabulary familiarity
+
+Words show **New**, **Learning**, **Familiar**, or **Well known** in vocabulary and mixed practice. Use the **Vocabulary familiarity** buttons to choose one or more levels (for example, New + Learning), then select words or Select all matching. Previously selected words outside those familiarity levels stay saved but are excluded from new sessions. All levels clears the familiarity restriction. Word selection remains random within the eligible group; there is no automatic weighting or spaced-repetition scheduler.
+
+English → Turkish and Turkish → English have separate levels. Mixed directions show both labels and filter using the less familiar level. Conjugation-only mode hides and ignores the familiarity filter; conjugation results never change a word's vocabulary level. Review mistakes remains a separate review flow and ignores setup filters.
+
+- **New:** no vocabulary evidence in that direction.
+- **Learning:** some evidence, not yet consistently recalled across days.
+- **Familiar:** at least 4 fully successful sessions across 2 days, recent confidence score of at least 3, and at least 60% success over the last 5 sessions (or all if fewer).
+- **Well known:** at least 12 fully successful sessions across 3 days, recent confidence score of at least 8, and at least 80% success over the last 5 sessions.
+
+Confidence uses the last 12 sessions: a fully correct session adds 1; a session with a miss subtracts 2, with a floor of zero after each step. Only one evidence point is counted per entry/direction/session, so repeated immediate retries cannot inflate knowledge. A session with any uncorrected miss is not a successful session for that word. Manual grading corrections update the original attempt and count as correct. This is a simple heuristic, not a proficiency certification; thresholds can be adjusted later. Labels do not decay merely because time passes.
+
+New attempts record a session ID. Existing version-1 histories and backups remain supported: legacy sessions are estimated from gaps greater than 30 minutes between recorded attempts. Day boundaries use UTC for consistent results across devices/time zones. No history is erased or transferred between word IDs. Exports/imports preserve session IDs and results; familiarity is recalculated from that history.
+
 ## Grammar scope
 
 Supported: present continuous `-iyor`, definite past `-di`, future `-ecek`, past continuous `-iyordu`, aorist/general `-r`, open conditional (aorist + `-se/-sa`), and bare hypothetical/wish `-se/-sa`. All six persons and affirmative/negative forms are included.
@@ -85,6 +100,6 @@ Browser tests use the system Chromium when present. Else install a Playwright br
 
 The development and packaged-production browser checks use the real sheet. Other browser tests use small controlled sheet responses to exercise failure paths, edits, invalid rows, HTML-like data, conjugation, and backups. Reference conjugation tests contain hand-written expected forms, independent of the generator.
 
-Validation completed: **175 unit checks**, **8 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
+Validation completed: **190 unit checks**, **10 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
 
 See [DECISIONS.md](DECISIONS.md) for grading and scope choices.

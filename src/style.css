@@ -769,3 +769,35 @@ legend,
 .quiz-card .hint {
   font-size: 12px;
 }
+.familiarity-filter {
+  margin: 18px 0;
+}
+.familiarity-filter .chips {
+  gap: 6px;
+}
+.familiarity-filter .chip {
+  font-size: 12px;
+  padding: 7px 10px;
+}
+.familiarity-help {
+  font-size: 12px;
+  color: var(--muted);
+}
+.familiarity-help p {
+  line-height: 1.7;
+}
+.familiarity-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+.familiarity-badge {
+  font-size: 11px;
+  line-height: 1.5;
+  background: #eaf1e8;
+  color: #315d4f;
+  border: 1px solid #d5e1d1;
+  border-radius: 5px;
+  padding: 2px 7px;
+}
