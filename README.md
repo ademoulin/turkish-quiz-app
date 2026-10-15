@@ -59,7 +59,7 @@ The live Google CSV endpoint was verified from a real Chromium browser. The exis
 
 Supported: present continuous `-iyor`, definite past `-di`, future `-ecek`, past continuous `-iyordu`, aorist/general `-r`, open conditional (aorist + `-se/-sa`), and bare hypothetical/wish `-se/-sa`. All six persons and affirmative/negative forms are included.
 
-Ability uses `-(y)Abil-` in the non-conditional tenses, and the distinct negative-ability pattern `-(y)Ama-`. For general “can”, select General / habitual. Ability + conditional is deferred; conditional questions always display the actual ordinary form being requested.
+Ability uses `-(y)Abil-` in the non-conditional tenses, and the distinct negative-ability pattern `-(y)Ama-`. For general “can”, select Aorist. Ability + conditional is deferred; conditional questions always display the actual ordinary form being requested.
 
 Rules cover vowel harmony, past consonant assimilation, vowel contraction, future softening, an explicit aorist exception list, known stem changes, `demek`/`yemek`, and multiword verbs conjugated on the final verb. Unrecognized spellings and unsupported combinations are flagged. Rare irregular verbs and additional tense combinations may require new checked exceptions; the engine is not a complete Turkish morphological dictionary.
 

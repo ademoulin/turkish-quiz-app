@@ -645,7 +645,7 @@ function App() {
                         </select>
                       </label>
                       <p className="hint">
-                        For general “can”, select General / habitual. Ability
+                        For general “can”, select Aorist. Ability
                         isn’t combined with conditionals yet; those questions
                         use the ordinary verb.
                       </p>

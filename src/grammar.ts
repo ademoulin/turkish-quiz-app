@@ -5,7 +5,7 @@ export const tenses = {
   past: "Definite past · -di",
   future: "Future · -ecek",
   pastContinuous: "Past continuous · -iyordu",
-  aorist: "General / habitual · -r",
+  aorist: "Aorist · -r",
   conditional: "Open conditional · -rse",
   hypothetical: "Hypothetical / wish · -se",
 } as const;
