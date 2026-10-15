@@ -63,7 +63,7 @@ Ability uses `-(y)Abil-` in the non-conditional tenses, and the distinct negativ
 
 Rules cover vowel harmony, past consonant assimilation, vowel contraction, future softening, an explicit aorist exception list, known stem changes, `demek`/`yemek`, and multiword verbs conjugated on the final verb. Unrecognized spellings and unsupported combinations are flagged. Rare irregular verbs and additional tense combinations may require new checked exceptions; the engine is not a complete Turkish morphological dictionary.
 
-Third-person plural prompts explicitly show `onlar`. Both plural agreement and the singular-form predicate are accepted; past continuous also accepts the alternative placement of plural agreement. Feedback explains this choice. English cues are clearly labelled **pattern examples with “come”**; they illustrate the requested person/tense rather than claiming to translate the entire vocabulary definition.
+Third-person plural prompts explicitly show `onlar`. Both plural agreement and the singular-form predicate are accepted; past continuous also accepts the alternative placement of plural agreement. Feedback explains this choice. English cues are clearly labeled **pattern examples with “come”**; they illustrate the requested person/tense rather than claiming to translate the entire vocabulary definition.
 
 Later features: case/postposition exercises, verbal nouns and subordinate clauses, reported past and other complex combinations, spaced repetition, accounts, automatic cross-device sync, and a fully offline app shell.
 

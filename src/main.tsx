@@ -284,7 +284,7 @@ function App() {
       setSetupError(
         review
           ? "No available mistakes to review."
-          : "Select some vocabulary first. If practising conjugations, include verbs.",
+          : "Select some vocabulary first. If practicing conjugations, include verbs.",
       );
       return;
     }
@@ -443,7 +443,7 @@ function App() {
         {screen === "setup" && (
           <>
             <section className="intro">
-              <p className="eyebrow">MERHABA, LET’S PRACTISE</p>
+              <p className="eyebrow">MERHABA, LET’S PRACTICE</p>
               <h1>
                 Make it come
                 <br />
@@ -638,7 +638,7 @@ function App() {
                           }
                         >
                           <option value="off">Without ability</option>
-                          <option value="on">Practise ability</option>
+                          <option value="on">Practice ability</option>
                           <option value="mixed">
                             Mix with and without ability
                           </option>
@@ -678,7 +678,7 @@ function App() {
                     onClick={() => start()}
                     disabled={!entries.length}
                   >
-                    Let’s practise <span>→</span>
+                    Let’s practice <span>→</span>
                   </button>
                   <button
                     className="text-button full"

@@ -16,7 +16,7 @@ test("live browser vocabulary fetch, mobile study and persistent manual correcti
     ),
   ).toBe(true);
   await page.getByRole("button", { name: "Select all matching" }).click();
-  await page.getByRole("button", { name: "Let’s practise" }).click();
+  await page.getByRole("button", { name: "Let’s practice" }).click();
   await page.getByLabel("What is the Turkish word?").fill("definitely wrong");
   await page.getByLabel("What is the Turkish word?").press("Enter");
   await expect(
@@ -65,7 +65,7 @@ test("conjugation grading, feedback, ending and mistake review", async ({
     await page.getByRole("button", { name: person, exact: true }).click();
   await page.getByRole("button", { name: "negative", exact: true }).click();
   await page.getByRole("button", { name: "Select all matching" }).click();
-  await page.getByRole("button", { name: "Let’s practise" }).click();
+  await page.getByRole("button", { name: "Let’s practice" }).click();
   await expect(page.getByText("Question 1 of 1")).toBeVisible();
   await page.locator("#answer").fill("wrong");
   await page.getByRole("button", { name: "Check answer" }).click();
@@ -88,7 +88,7 @@ test("failed refresh uses cache and a later edit keeps progress by ID", async ({
 }) => {
   await fixture(page);
   await page.getByRole("button", { name: "Select all matching" }).click();
-  await page.getByRole("button", { name: "Let’s practise" }).click();
+  await page.getByRole("button", { name: "Let’s practice" }).click();
   await page.locator("#answer").fill("wrong");
   await page.locator("#answer").press("Enter");
   await page.getByRole("button", { name: "End session" }).click();
@@ -149,7 +149,7 @@ test("export/import round trip merges results and rejects invalid imports", asyn
 }) => {
   await fixture(page);
   await page.getByRole("button", { name: "Select all matching" }).click();
-  await page.getByRole("button", { name: "Let’s practise" }).click();
+  await page.getByRole("button", { name: "Let’s practice" }).click();
   await page.locator("#answer").fill("no");
   await page.locator("#answer").press("Enter");
   await page.getByRole("button", { name: "End session" }).click();
@@ -190,7 +190,7 @@ test("packaged standalone HTML served normally fetches the real sheet", async ({
   });
   await expect(page.locator(".word-row")).toHaveCount(152);
   await page.getByRole("button", { name: "Select all matching" }).click();
-  await page.getByRole("button", { name: "Let’s practise" }).click();
+  await page.getByRole("button", { name: "Let’s practice" }).click();
   await page.locator("#answer").fill("test");
   await page.locator("#answer").press("Enter");
   await expect(page.locator(".feedback")).toBeVisible();

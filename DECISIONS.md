@@ -10,7 +10,7 @@ These are minor implementation defaults, recorded so they can be changed after u
 - A fixed-length session is capped at the selected entry count, with one question per entry. Each new conjugation session chooses fresh random forms; this avoids unexpectedly repeating vocabulary within a session.
 - Retain hidden selections when filtering. “Select all matching” adds visible matches; “Clear matching” removes only visible matches.
 - Ability + conditional combinations are deferred. If selected with other tenses, conditionals use ordinary forms and show no Ability badge. If ability-only settings select exclusively conditionals, explain the conflict before starting.
-- The pattern English cue always uses “come”, labelled as an example. This avoids unreliable automatic English conjugation or translation of dictionary explanations.
+- The pattern English cue always uses “come”, labeled as an example. This avoids unreliable automatic English conjugation or translation of dictionary explanations.
 - With an explicit onlar, accept the standard plural and singular-form predicates. For past continuous accept geliyorlardı, geliyordular, and geliyordu; for open conditionals accept gelirseler, gelirlerse, and gelirse.
 - A manual correction changes the existing attempt's correctness and is counted once in both progress and the score. Its manual marker remains visible.
 - Review mistakes by entry ID, direction, and grammatical combination. A later correct result resolves that combination; other difficult forms stay in the review pool.
@@ -18,3 +18,5 @@ These are minor implementation defaults, recorded so they can be changed after u
 - The source was uploaded to GitHub on your explicit instruction. GitHub Pages hosting was subsequently authorized. The gh-pages branch contains the compiled public site; GitHub repository Pages settings control publication. No analytics, paid services, or app accounts have been introduced.
 
 - The word-type menu groups vt, vi, and vt/i under Verbs. Previously saved verb-type filters now show all verbs; sheet metadata stays unchanged.
+
+- Interface and project documentation use American English, as requested; the user’s current location does not determine spelling preferences.
