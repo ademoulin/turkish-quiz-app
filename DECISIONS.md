@@ -24,3 +24,5 @@ These are minor implementation defaults, recorded so they can be changed after u
 - Vocabulary familiarity uses four labels and a multi-select filter, with separate histories by direction. Mixed uses the weaker direction; conjugation does not contribute. Existing history contributes through conservative 30-minute-gap session estimates.
 - Familiar requires 4 successful sessions over 2 days; Well known requires 12 over 3 days. Recent session evidence controls confidence and can demote a word after repeated misses. Repeated guesses in one session do not create extra positive evidence; manual corrections update original evidence. No time decay or automatic prioritization is introduced.
 - Familiarity filters restrict the selected entries eligible for a new session, even if other entries were selected earlier. Hidden selections remain saved. Review mistakes intentionally retains its existing separate behavior.
+
+- Answer grading treats a and â as equivalent in both languages and all quiz modes. Display spelling stays unchanged; other Turkish letter distinctions remain significant.

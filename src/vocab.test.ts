@@ -79,3 +79,13 @@ test('Word header supports the renamed live sheet and legacy aliases', () => {
     assert.equal(parsed.entries[0].id, 'v1');
   }
 });
+
+test('circumflex a is optional in all answer matching without folding other Turkish letters', () => {
+  const e = entry('hâlâ', 'still');
+  assert.ok(matchesTurkish('hala', e, [e]));
+  assert.ok(matchesTurkish('HÂLÂ', entry('hala', 'paternal aunt'), []));
+  assert.equal(normalize('KÂR', 'tr'), normalize('kar', 'tr'));
+  assert.equal(normalize('a\u0302', 'tr'), 'a');
+  assert.ok(matchesEnglish('a', entry('bir', 'â')));
+  for (const [a,b] of [['ı','i'],['ş','s'],['ç','c'],['ğ','g'],['ö','o'],['ü','u']]) assert.notEqual(normalize(a,'tr'),normalize(b,'tr'));
+});

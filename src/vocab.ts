@@ -67,6 +67,7 @@ export function normalize(s: string, language: "en" | "tr" = "en") {
   return s
     .normalize("NFC")
     .toLocaleLowerCase(language)
+    .replace(/â/g, "a")
     .trim()
     .replace(/^[\s.,!?;:“”"'‘’…]+|[\s.,!?;:“”"'‘’…]+$/g, "")
     .replace(/\s+/g, " ");
