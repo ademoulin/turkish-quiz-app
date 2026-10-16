@@ -71,3 +71,11 @@ test("sheet content stays text even when it resembles HTML", () =>
       .entries[0].meaning,
     "<img src=x onerror=alert(1)>",
   ));
+
+test('Word header supports the renamed live sheet and legacy aliases', () => {
+  for (const header of ['Word', ' word ', 'WORD', 'Verb', 'Turkish']) {
+    const parsed = parseVocab(`ID,${header},Type,Meaning\nv1,gelmek,vi,come`);
+    assert.equal(parsed.entries[0].turkish, 'gelmek');
+    assert.equal(parsed.entries[0].id, 'v1');
+  }
+});

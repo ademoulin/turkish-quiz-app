@@ -20,12 +20,12 @@ export function parseVocab(csv: string): {
   const h = headers.map((x) => x.trim().toLowerCase());
   const indexes = [
     h.indexOf("id"),
-    h.indexOf("turkish") >= 0 ? h.indexOf("turkish") : h.indexOf("verb"),
+    ["word", "turkish", "verb"].map(name => h.indexOf(name)).find(index => index >= 0) ?? -1,
     h.indexOf("type"),
     h.indexOf("meaning"),
   ];
   if (indexes.some((i) => i < 0))
-    throw Error("Expected columns: ID, Verb (or Turkish), Type, Meaning.");
+    throw Error("Expected columns: ID, Word (or Turkish/Verb), Type, Meaning.");
   const warnings = result.errors.map((e) => `CSV: ${e.message}`);
   const seen = new Set<string>();
   const entries: Entry[] = [];
