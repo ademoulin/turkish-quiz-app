@@ -26,3 +26,5 @@ These are minor implementation defaults, recorded so they can be changed after u
 - Familiarity filters restrict the selected entries eligible for a new session, even if other entries were selected earlier. Hidden selections remain saved. Review mistakes intentionally retains its existing separate behavior.
 
 - Answer grading treats a and â as equivalent in both languages and all quiz modes. Display spelling stays unchanged; other Turkish letter distinctions remain significant.
+
+- Conjugation grading alone treats g/ğ, i/ı, c/ç, s/ş, o/ö, and u/ü as equivalent. Vocabulary retains Turkish letter distinctions (apart from the previously approved a/â equivalence). Correct conjugations and explanations keep their proper Turkish spelling.

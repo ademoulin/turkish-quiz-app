@@ -70,6 +70,8 @@ Confidence uses the last 12 sessions: a fully correct session adds 1; a session 
 
 New attempts record a session ID. Existing version-1 histories and backups remain supported: legacy sessions are estimated from gaps greater than 30 minutes between recorded attempts. Day boundaries use UTC for consistent results across devices/time zones. No history is erased or transferred between word IDs. Exports/imports preserve session IDs and results; familiarity is recalculated from that history.
 
+For conjugation answers only, an English keyboard is sufficient: g/ğ, i/ı, c/ç, s/ş, o/ö, and u/ü are equivalent. The displayed correct form keeps proper Turkish spelling. Vocabulary answer checking still requires the distinct Turkish letters, except that a/â are equivalent in all modes.
+
 ## Grammar scope
 
 Supported: present continuous `-iyor`, definite past `-di`, future `-ecek`, past continuous `-iyordu`, aorist/general `-r`, open conditional (aorist + `-se/-sa`), and bare hypothetical/wish `-se/-sa`. All six persons and affirmative/negative forms are included.

@@ -12,7 +12,6 @@ import {
   parseVocab,
   SHEET_URL,
   isVerb,
-  normalize,
   matchesEnglish,
   matchesTurkish,
   englishAnswers,
@@ -31,6 +30,7 @@ import {
   familiarityFor,
   familiarityLevels,
 } from "./familiarity";
+import { matchesConjugation } from "./grading";
 import "./style.css";
 type Question = {
   entry: Entry;
@@ -332,9 +332,7 @@ function App() {
     const q = latest;
     const correct =
       q.kind === "conjugation"
-        ? q.result!.accepted.some(
-            (s) => normalize(s, "tr") === normalize(answer, "tr"),
-          )
+        ? matchesConjugation(answer, q.result!.accepted)
         : q.direction === "en"
           ? matchesEnglish(answer, q.entry)
           : matchesTurkish(answer, q.entry, entries);
@@ -1168,7 +1166,9 @@ function App() {
                 <p className="hint centered">
                   {feedback
                     ? "Press Enter when you’re ready to continue."
-                    : "Press Enter to check. Turkish letters count."}
+                    : latest.kind === "conjugation"
+                          ? "Press Enter to check. Plain keyboard letters are accepted."
+                          : "Press Enter to check. Turkish letters count."}
                 </p>
               </form>
             </article>

@@ -355,3 +355,11 @@ test("new session IDs persist, labels update, and conjugation mode ignores famil
   );
   expect(updated[1].sessionId).not.toBe(updated[0].sessionId);
 });
+
+test('conjugation accepts plain letters but displays correct Turkish spelling',async({page})=>{
+ await fixture(page);await page.getByRole('button',{name:'Conjugation Put the endings to work.'}).click();
+ for(const label of ['Present continuous · -iyor','Definite past · -di'])await page.getByLabel(label,{exact:true}).uncheck();
+ for(const person of ['sen','o','biz','siz','onlar'])await page.getByRole('button',{name:person,exact:true}).click();
+ await page.getByRole('button',{name:'negative',exact:true}).click();await page.getByRole('button',{name:'Select all matching'}).click();await page.getByRole('button',{name:'Let’s practice'}).click();
+ await expect(page.getByText('Press Enter to check. Plain keyboard letters are accepted.')).toBeVisible();await page.locator('#answer').fill('gelecegim');await page.locator('#answer').press('Enter');await expect(page.getByText('That’s right. Güzel!')).toBeVisible();await expect(page.locator('.expected')).toHaveText('geleceğim');
+});
