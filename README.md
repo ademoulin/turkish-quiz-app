@@ -36,7 +36,7 @@ Progress belongs to the website address and browser: a hosted site does not auto
 5. If a valid answer was missed, choose **My answer was correct**. This updates the original attempt and score rather than recording two attempts.
 6. Review mistakes or see your progress. Export a backup under **Your progress**.
 
-A session asks one question per selected entry, up to 10, 20, or all selected entries. Selecting only one verb produces one question; start another session for another randomly selected form. All forms come from your selected settings. Mixed mode chooses vocabulary or conjugation randomly for verbs; non-verbs always get vocabulary questions.
+A session asks one question per selected entry, up to 10, 20, 50, 100, or all selected entries. Selecting only one verb produces one question; start another session for another randomly selected form. All forms come from your selected settings. Mixed mode chooses vocabulary or conjugation randomly for verbs; non-verbs always get vocabulary questions.
 
 ## Update vocabulary
 

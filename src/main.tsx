@@ -688,6 +688,8 @@ function App() {
                     >
                       <option value="10">10 questions · a little reset</option>
                       <option value="20">20 questions · a deeper dive</option>
+                      <option value="50">50 questions</option>
+                      <option value="100">100 questions</option>
                       <option value="all">All selected words</option>
                     </select>
                   </label>
