@@ -1050,11 +1050,11 @@ function App() {
               {latest.form && (
                 <>
                   <div className="question-tags">
-                    <span>{tenses[latest.form.tense]}</span>
-                    <span>{latest.form.person}</span>
                     <span>
                       {latest.form.negative ? "Negative" : "Affirmative"}
                     </span>
+                    <span>{tenses[latest.form.tense]}</span>
+                    <span>{latest.form.person}</span>
                     {latest.form.ability && <span>Ability</span>}
                   </div>
                   <p className="cue">{latest.result?.cue}</p>
