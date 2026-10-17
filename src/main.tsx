@@ -684,11 +684,11 @@ function App() {
                         updateSettings({ length: e.target.value })
                       }
                     >
-                      <option value="10">10 questions · a little reset</option>
-                      <option value="20">20 questions · a deeper dive</option>
-                      <option value="50">50 questions</option>
-                      <option value="100">100 questions</option>
-                      <option value="all">All selected words</option>
+                      <option value="10">10 questions · a little sip</option>
+                      <option value="20">20 questions · finding your flow</option>
+                      <option value="50">50 questions · getting in the groove</option>
+                      <option value="100">100 questions · settling in</option>
+                      <option value="all">All selected words · the whole kahvaltı</option>
                     </select>
                   </label>
                   <p className="hint">
