@@ -1208,6 +1208,9 @@ function App() {
                             {entries.find((e) => e.id === a.entryId)?.turkish ||
                               a.entryId}
                           </strong>
+                          <small>
+                            Meaning: {questions.find((q) => q.entry.id === a.entryId)?.entry.meaning || entries.find((e) => e.id === a.entryId)?.meaning || "Not available"}
+                          </small>
                           <small>Your answer: {a.answer}</small>
                         </span>
                         <span>{a.expected}</span>

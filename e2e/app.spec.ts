@@ -363,3 +363,15 @@ test('conjugation accepts plain letters but displays correct Turkish spelling',a
  await page.getByRole('button',{name:'negative',exact:true}).click();await page.getByRole('button',{name:'Select all matching'}).click();await page.getByRole('button',{name:'Let’s practice'}).click();
  await expect(page.getByText('Press Enter to check. Plain keyboard letters are accepted.')).toBeVisible();await page.locator('#answer').fill('gelecegim');await page.locator('#answer').press('Enter');await expect(page.getByText('That’s right. Güzel!')).toBeVisible();await expect(page.locator('.expected')).toHaveText('geleceğim');
 });
+
+test('missed vocabulary results include the English meaning and Turkish answer', async ({page}) => {
+ await fixture(page);
+ await page.getByLabel('Search words or meanings').fill('bina');
+ await page.getByRole('button',{name:'Select all matching'}).click();
+ await page.getByRole('button',{name:'Let’s practice'}).click();
+ await page.locator('#answer').fill('wrong');await page.locator('#answer').press('Enter');
+ await page.getByRole('button',{name:'See my results'}).click();
+ await expect(page.getByText('Meaning: building',{exact:true})).toBeVisible();
+ await expect(page.getByText('Your answer: wrong',{exact:true})).toBeVisible();
+ await expect(page.locator('.summary .history > div > span:last-child')).toHaveText('bina');
+});
