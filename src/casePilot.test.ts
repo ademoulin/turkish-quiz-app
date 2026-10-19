@@ -173,6 +173,10 @@ test("practice mode is optional in old backups and retained in new evidence", ()
 test("new cases retain their own evidence, strict spelling and partial catalog scope", async () => {
   const { catalogMapping, caseReferences, pilotMistakes } =
     await import("./casePilot");
+  for (const c of ["accusative", "genitive"]) {
+    const lastVowels = new Set(caseQuestions.filter(q => q.conceptId === c).map(q => q.base.match(/[aeıioöuü]/g)!.at(-1)));
+    assert.deepEqual(lastVowels, new Set("aeıioöuü"));
+  }
   assert.equal(catalogMapping.concepts.accusative, 35);
   assert.equal(catalogMapping.concepts.genitive, 21);
   assert.match(caseReferences.genitive, /partial mapping/);
