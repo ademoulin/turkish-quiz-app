@@ -801,3 +801,10 @@ legend,
   border-radius: 5px;
   padding: 2px 7px;
 }
+
+.grammar-preview { margin-bottom: 24px; }
+.grammar-preview select { display: block; width: 100%; max-width: 100%; margin: 8px 0 16px; }
+.grammar-preview fieldset { min-width: 0; }
+.grammar-preview legend { font-size: 1.2rem; overflow-wrap: anywhere; }
+.grammar-preview .word-row { cursor: pointer; overflow-wrap: anywhere; }
+.grammar-preview button { margin: 8px 8px 8px 0; }
