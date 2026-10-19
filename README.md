@@ -105,3 +105,42 @@ The development and packaged-production browser checks use the real sheet. Other
 Validation completed: **190 unit checks**, **10 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
 
 See [DECISIONS.md](DECISIONS.md) for grading and scope choices.
+
+### Yeni Hitit 1 grammar preview (v82)
+
+The attached source bank is preserved verbatim in
+`src/data/yeni_hitit_1_codex_staging_v82.json`: 588 draft questions, 196 skills,
+three variants per skill. The implementation brief is saved alongside this README.
+This bank is **unverified and not approved for public release**. Word-stress
+questions remain excluded. Explanations are the supplied text, without rewriting.
+
+`npm run dev` enables the grammar preview. `npm run build` validates the bank and
+builds the existing production app with the preview UI and question bank excluded.
+For local review, use `npm run build:grammar-preview` followed by `npm run preview`.
+Do not publish that preview build without explicit release approval and independent
+linguistic review. Vite's relative base preserves the GitHub Pages project path;
+the generated standalone HTML includes the bank only in a preview build.
+
+Open “Grammar preview” in practice setup. Choose a section and/or stable skill ID,
+then start a session. Every question in the selected pool appears once in shuffled
+order; choices are shuffled by ID. Select a choice and check it to reveal the
+answer and supplied explanation. Scores count one attempt per question. End or
+restart a session at any time. Radio choices support keyboard and touch input.
+Preview scores live only in the current session and do not change vocabulary
+familiarity, progress backups, or existing quiz modes.
+
+Validation: `npm test`, `npm run build`, `npm run build:grammar-preview`, and
+`npm run test:e2e`. The browser suite includes an existing live vocabulary test
+that requires Google Sheets access; all other browser tests use local fixtures.
+The preview bundle currently produces Vite's advisory warning for a chunk over
+500 kB; no runtime content is fetched from GitHub.
+
+Local changes can be preserved with:
+
+```sh
+git bundle create yeni-hitit-v82-integration.bundle codex/yeni-hitit-v82-integration
+```
+
+On another checkout, import with `git fetch /path/to/yeni-hitit-v82-integration.bundle
+codex/yeni-hitit-v82-integration:codex/yeni-hitit-v82-integration`, then check out
+that branch. A bundle includes commit history and needs no GitHub connection.
