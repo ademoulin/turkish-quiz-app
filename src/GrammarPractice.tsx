@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
 import { sectionLabel, skillLabel } from './grammarLabels';
-import { CasePilot } from './CasePilot';
+import { CasePilot, PossessivePractice } from './CasePilot';
 import type { PilotAttempt } from './casePilot';
 export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAttempt[]; updateAttempts: (update: (a:PilotAttempt[])=>PilotAttempt[])=>void}) {
   const [open, setOpen] = useState(false);
@@ -19,6 +19,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
     <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Multiple-choice scores stay in this session only; typed pilot attempts are saved.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <CasePilot attempts={attempts} updateAttempts={updateAttempts} />
+      <PossessivePractice attempts={attempts} updateAttempts={updateAttempts} />
       {!session ? <>
         <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
         <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>

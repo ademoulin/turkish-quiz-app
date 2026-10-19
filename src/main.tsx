@@ -986,7 +986,7 @@ function App() {
                 </div>
                 <h3>Typed grammar evidence</h3>
                 <p>{(store.pilotAttempts || []).length} saved typed attempts · {(store.pilotAttempts || []).filter(a => a.correct).length} correct, including self-corrections. No mastery ratings yet.</p>
-                <div className="history">{(store.pilotAttempts || []).slice(-20).reverse().map(a => <div key={a.id}><span><strong>{a.conceptId} · {a.questionId}</strong><small>{a.correct ? 'Correct' : 'Incorrect'}{a.manual ? ' · marked correct by you' : ''}</small></span><span>{a.answer}</span></div>)}</div>
+                <div className="history">{(store.pilotAttempts || []).slice(-20).reverse().map(a => <div key={a.id}><span><strong>{a.owner || a.conceptId} · {a.questionId}</strong><small>{a.correct ? 'Correct' : 'Incorrect'}{a.manual ? ' · marked correct by you' : ''}</small></span><span>{a.answer}</span></div>)}</div>
                 <h3>Keep a copy</h3>
                 <p className="hint">
                   Progress is saved only in this browser on this device.

@@ -179,3 +179,22 @@ incorrect, within the selected case (or all cases with Mixed). A subsequent
 correct answer or manual correction clears a question; a later miss brings it
 back. Empty review queues disable the button. Results remain evidence without
 mastery labels, and older progress backups remain compatible.
+
+### Typed possessive forms
+
+Open **Grammar practice → Typed endings · Possessive forms**. Select an owner
+for four questions, or **Mixed owners · 12 questions** for two per owner.
+Type only the complete possessed noun, without the owner pronoun. Every prompt
+states the owner and noun number: the “their” questions request plural
+possessions; the other owners request one possessed item.
+
+There are 24 newly authored draft exercises, guided by Yeni Hitit 1 §3.1,
+printed p.37 and Ödkem rule 20. Independent linguistic review is pending. This
+batch tests possessive forms; full genitive–possessive noun phrases, possessive
+plus case combinations, and singular possessions with plural owners are deferred.
+
+Possessive mistakes have their own review button. Case practice stays separate.
+Both use the same strict Turkish spelling, keyboard/touch controls, manual
+correction and browser history. Export/import preserves owner and noun-number
+evidence alongside existing case results; old version-1 backups remain supported.
+There are no grammar mastery labels or thresholds.
