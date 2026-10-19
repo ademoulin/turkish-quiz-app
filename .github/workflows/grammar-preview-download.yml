@@ -1,0 +1,44 @@
+name: Download grammar preview
+
+on:
+  push:
+    branches:
+      - codex/yeni-hitit-v82-integration
+    paths:
+      - .github/workflows/grammar-preview-download.yml
+      - src/GrammarPractice.tsx
+      - src/grammarLabels.ts
+      - src/data/yeni_hitit_1_codex_staging_v82.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-preview:
+    name: Package private review preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out integration branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build grammar preview
+        run: npm run build:grammar-preview
+
+      - name: Upload preview website files
+        uses: actions/upload-artifact@v4
+        with:
+          name: yeni-hitit-v82-grammar-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7

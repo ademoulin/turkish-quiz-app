@@ -1,0 +1,325 @@
+diff --git a/README.md b/README.md
+index b622429ea3d9b7fbe56c6fc2d1b90dd3a87156b3..6b0ce34f89368a439d0f6f0cc921a679ae093887 100644
+--- a/README.md
++++ b/README.md
+@@ -105,3 +105,42 @@ The development and packaged-production browser checks use the real sheet. Other
+ Validation completed: **190 unit checks**, **10 browser checks**, and the production build passed. Browser checks include a 390px mobile viewport; the initial direct-local-file check was blocked by browser policy and is not claimed as passed.
+ 
+ See [DECISIONS.md](DECISIONS.md) for grading and scope choices.
++
++### Yeni Hitit 1 grammar preview (v82)
++
++The attached source bank is preserved verbatim in
++`src/data/yeni_hitit_1_codex_staging_v82.json`: 588 draft questions, 196 skills,
++three variants per skill. The implementation brief is saved alongside this README.
++This bank is **unverified and not approved for public release**. Word-stress
++questions remain excluded. Explanations are the supplied text, without rewriting.
++
++`npm run dev` enables the grammar preview. `npm run build` validates the bank and
++builds the existing production app with the preview UI and question bank excluded.
++For local review, use `npm run build:grammar-preview` followed by `npm run preview`.
++Do not publish that preview build without explicit release approval and independent
++linguistic review. Vite's relative base preserves the GitHub Pages project path;
++the generated standalone HTML includes the bank only in a preview build.
++
++Open “Grammar preview” in practice setup. Choose a section and/or stable skill ID,
++then start a session. Every question in the selected pool appears once in shuffled
++order; choices are shuffled by ID. Select a choice and check it to reveal the
++answer and supplied explanation. Scores count one attempt per question. End or
++restart a session at any time. Radio choices support keyboard and touch input.
++Preview scores live only in the current session and do not change vocabulary
++familiarity, progress backups, or existing quiz modes.
++
++Validation: `npm test`, `npm run build`, `npm run build:grammar-preview`, and
++`npm run test:e2e`. The browser suite includes an existing live vocabulary test
++that requires Google Sheets access; all other browser tests use local fixtures.
++The preview bundle currently produces Vite's advisory warning for a chunk over
++500 kB; no runtime content is fetched from GitHub.
++
++Local changes can be preserved with:
++
++```sh
++git bundle create yeni-hitit-v82-integration.bundle codex/yeni-hitit-v82-integration
++```
++
++On another checkout, import with `git fetch /path/to/yeni-hitit-v82-integration.bundle
++codex/yeni-hitit-v82-integration:codex/yeni-hitit-v82-integration`, then check out
++that branch. A bundle includes commit history and needs no GitHub connection.
+diff --git a/e2e/yeni-hitit.spec.ts b/e2e/yeni-hitit.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..01e58bb272f6dbee13383cfaead3e988d82e8ee9
+--- /dev/null
++++ b/e2e/yeni-hitit.spec.ts
+@@ -0,0 +1,37 @@
++import {test, expect} from '@playwright/test';
++import {readFileSync} from 'node:fs';
++const dataset: {questions: {prompt:string; explanation:string; correct_option_id:string; options:{id:string;text:string}[]}[]} = JSON.parse(readFileSync(new URL('../src/data/yeni_hitit_1_codex_staging_v82.json', import.meta.url), 'utf8'));
++test('grammar preview filters, keyboard check, score, completion and reset on mobile', async({page})=>{
++ await page.route('https://docs.google.com/**',r=>r.fulfill({status:200,body:'ID,Verb,Type,Meaning\nv001,gelmek,vi,come'}));
++ await page.goto('/');
++ await page.getByRole('button',{name:'Open grammar preview'}).click();
++ await page.getByLabel('Section',{exact:true}).selectOption('4.1');
++ await page.getByLabel('Skill',{exact:true}).selectOption('YH1-04-01-S01');
++ await page.getByRole('button',{name:'Start grammar practice'}).click();
++ const seen=new Set<string>();
++ for(let i=0;i<3;i++) {
++  const area=page.getByRole('region',{name:'Grammar practice preview'});
++  const prompt=await area.locator('legend').innerText();
++  expect(seen.has(prompt)).toBe(false);seen.add(prompt);
++  const q=dataset.questions.find(q=>q.prompt===prompt)!;
++  await expect(area.locator('input[type=radio]')).toHaveCount(4);
++  await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);
++  await area.getByRole('radio',{name:q.options.find(o=>o.id===q.correct_option_id)!.text,exact:true}).check();
++  await area.getByRole('button',{name:'Check grammar answer'}).focus();
++  await page.keyboard.press('Enter');
++  await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
++  await expect(area.getByRole('radio').first()).toBeDisabled();
++  await expect(area.getByText(`${i+1} / ${i+1} correct / attempted`,{exact:true})).toBeVisible();
++  await area.getByRole('button',{name:i===2?'See grammar results':'Next grammar question'}).click();
++ }
++ await expect(page.getByText('Grammar session complete')).toBeVisible();
++ await page.getByRole('button',{name:'Restart grammar practice'}).click();
++ await page.getByRole('button',{name:'Start grammar practice'}).click();
++ await expect(page.getByText('0 / 0 correct / attempted',{exact:true})).toBeVisible();
++ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
++});
++test('production build hides unapproved bank',async({page})=>{
++ await page.route('https://docs.google.com/**',r=>r.abort());
++ await page.goto('http://127.0.0.1:4173/turkish-quiz-app/');
++ await expect(page.getByRole('button',{name:'Open grammar preview'})).toHaveCount(0);
++});
+diff --git a/package.json b/package.json
+index fd097cc9684b296cc5b27fc28c0025af779f652e..8cf567426d680ba4bdd049188553205434b22f8c 100644
+--- a/package.json
++++ b/package.json
+@@ -5,10 +5,11 @@
+   "type": "module",
+   "scripts": {
+     "dev": "vite --host 0.0.0.0",
+-    "build": "tsc -b && vite build && node scripts/standalone.mjs",
+-    "test": "tsx --test src/*.test.ts",
++    "build": "node --import tsx scripts/validate-yeni-hitit.ts && tsc -b && vite build && node scripts/standalone.mjs",
++    "test": "node --import tsx --test src/*.test.ts",
+     "preview": "vite preview --host 0.0.0.0",
+-    "test:e2e": "playwright test"
++    "test:e2e": "playwright test",
++    "build:grammar-preview": "VITE_GRAMMAR_PREVIEW=true npm run build"
+   },
+   "dependencies": {
+     "react": "^19.0.0",
+diff --git a/scripts/validate-yeni-hitit.ts b/scripts/validate-yeni-hitit.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..be6bc448cc75c093e721020b1628c6bce8c9572b
+--- /dev/null
++++ b/scripts/validate-yeni-hitit.ts
+@@ -0,0 +1,3 @@
++import { bank, validateBank } from '../src/yeniHitit';
++validateBank(bank);
++console.log('Yeni Hitit v82 validated: 588 questions, 196 skills, four options and valid answer keys; prosody excluded.');
+diff --git a/src/GrammarPractice.tsx b/src/GrammarPractice.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..d09637e06d868221a04df793e81aefcd7cd69ce8
+--- /dev/null
++++ b/src/GrammarPractice.tsx
+@@ -0,0 +1,38 @@
++import React, { useState } from 'react';
++import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
++export function GrammarPractice() {
++  const [open, setOpen] = useState(false);
++  const [section, setSection] = useState('');
++  const [skill, setSkill] = useState('');
++  const [session, setSession] = useState<Session | null>(null);
++  const [selected, setSelected] = useState('');
++  const sections = [...new Set(bank.questions.map(q => q.section))].sort((a,b) => a.localeCompare(b, undefined, {numeric:true}));
++  const skills = [...new Set(bank.questions.filter(q => !section || q.section === section).map(q => q.skill_id))].sort();
++  const q = session?.questions[session.index];
++  const checked = !!(q && session?.answers[q.id] !== undefined);
++  const result = session && score(session);
++  return <section className="panel grammar-preview" aria-label="Grammar practice preview">
++    <h2>Yeni Hitit 1 · Grammar practice</h2>
++    <p className="hint">Preview · Unverified draft · 588 questions across 196 skills. Independent linguistic review required before release. Preview scores stay in this session only.</p>
++    {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar preview</button> : <>
++      {!session ? <>
++        <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s}>{s}</option>)}</select>
++        <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s}>{s}</option>)}</select>
++        <button className="primary" onClick={() => {setSession(startSession(section, skill)); setSelected('');}}>Start grammar practice</button>
++      </> : <>
++        <p role="status">{result!.correct} / {result!.attempted} correct / attempted</p>
++        {q ? <>
++          <p>Question {session.index + 1} of {session.questions.length} · Section {q.section} · {q.skill_id}</p>
++          <form onSubmit={e => {e.preventDefault(); if (checked) {setSession(s => s && nextQuestion(s)); setSelected('');} else if (selected) setSession(s => s && submitAnswer(s, selected));}}>
++            <fieldset disabled={checked}><legend>{q.prompt}</legend>{q.options.map(o => <label className="word-row" key={o.id}><input type="radio" name="grammar-answer" value={o.id} checked={selected === o.id} onChange={() => setSelected(o.id)} /><span lang="tr">{o.text}</span></label>)}</fieldset>
++            {checked && <div className={'feedback ' + (session.answers[q.id] === q.correct_option_id ? 'correct' : 'incorrect')} role="status"><strong>{session.answers[q.id] === q.correct_option_id ? 'Correct.' : 'Incorrect.'}</strong><p lang="tr">Correct answer: {q.options.find(o => o.id === q.correct_option_id)!.text}</p><p>{q.explanation}</p></div>}
++            <button className="primary" disabled={!checked && !selected}>{checked ? session.index + 1 === session.questions.length ? 'See grammar results' : 'Next grammar question' : 'Check grammar answer'}</button>
++          </form>
++          <button className="text-button" onClick={() => setSession(s => s && ({...s, index:s.questions.length}))}>End grammar session</button>
++        </> : <h3>Grammar session complete</h3>}
++        <button className="secondary" onClick={() => {setSession(null); setSelected('');}}>Restart grammar practice</button>
++      </>}
++      <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar preview</button>
++    </>}
++  </section>;
++}diff --git a/src/main.tsx b/src/main.tsx
+index 9d18c20a6d446bbc54f92fe64bf1e45a8c6a6911..6c2279665ed346a12411e085bae65adfbac527ab 100644
+--- a/src/main.tsx
++++ b/src/main.tsx
+@@ -32,6 +32,8 @@ import {
+ } from "./familiarity";
+ import { matchesConjugation } from "./grading";
+ import "./style.css";
++import { GrammarPractice } from "./GrammarPractice";
++declare const __GRAMMAR_PREVIEW__: boolean;
+ type Question = {
+   entry: Entry;
+   kind: "meaning" | "conjugation";
+@@ -480,6 +482,7 @@ function App() {
+                 Build a little confidence, one question at a time.
+               </p>
+             </section>
++            {__GRAMMAR_PREVIEW__ && <GrammarPractice />}
+             <section className="source-bar" aria-label="Vocabulary connection">
+               <div>
+                 <span
+diff --git a/src/style.css b/src/style.css
+index 72566cda4640631e6dafc4009969a281073fa545..832c97f5b241f81c4b3343cc412cba0bc31f5ac5 100644
+--- a/src/style.css
++++ b/src/style.css
+@@ -801,3 +801,10 @@ legend,
+   border-radius: 5px;
+   padding: 2px 7px;
+ }
++
++.grammar-preview { margin-bottom: 24px; }
++.grammar-preview select { display: block; width: 100%; max-width: 100%; margin: 8px 0 16px; }
++.grammar-preview fieldset { min-width: 0; }
++.grammar-preview legend { font-size: 1.2rem; overflow-wrap: anywhere; }
++.grammar-preview .word-row { cursor: pointer; overflow-wrap: anywhere; }
++.grammar-preview button { margin: 8px 8px 8px 0; }
+diff --git a/src/yeniHitit.test.ts b/src/yeniHitit.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce00860559cfa5e2bbdd7bd5616fce7095695498
+--- /dev/null
++++ b/src/yeniHitit.test.ts
+@@ -0,0 +1,44 @@
++import { test } from 'node:test';
++import assert from 'node:assert/strict';
++import {bank, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
++test('v82 schema, counts, exclusions and malformed content', () => {
++ validateBank(bank);
++ for (const mutate of [
++ (d: typeof bank) => {d.questions[1].id=d.questions[0].id;},
++ (d: typeof bank) => {d.questions[0].correct_option_id='missing';},
++ (d: typeof bank) => {d.questions[0].options.pop();},
++ (d: typeof bank) => {d.questions[0].options[1].text=d.questions[0].options[0].text;},
++ (d: typeof bank) => {d.questions[0].prompt='';},
++ (d: typeof bank) => {d.questions[0].explanation='';},
++ (d: typeof bank) => {d.questions[0].prompt='Choose the word stress';},
++ ]) {const d=structuredClone(bank);mutate(d);assert.throws(()=>validateBank(d));}
++});
++test('filters, empty/unknown skill and unique session pool', () => {
++ const section=bank.questions[0].section, skill=bank.questions[0].skill_id;
++ assert.ok(selectQuestions(section).every(q=>q.section===section));
++ assert.equal(selectQuestions('',skill).length,3);
++ assert.equal(selectQuestions('','unknown').length,0);
++ assert.equal(selectQuestions('unknown').length,0);
++ assert.equal(selectQuestions('','').length,588);
++ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,588);
++});
++test('every shuffled option retains answer mapping, only keyed option scores', () => {
++ for(const q of selectQuestions('', '', ()=>0.1)) {
++  const original=bank.questions.find(x=>x.id===q.id)!;
++  assert.equal(q.options.find(o=>o.id===q.correct_option_id)!.text,original.options.find(o=>o.id===original.correct_option_id)!.text);
++  for(const o of q.options) assert.equal(score(submitAnswer({questions:[q],index:0,answers:{}},o.id)).correct,o.id===q.correct_option_id?1:0);
++ }
++});
++test('duplicate submission, completion and reset', () => {
++ let s=startSession('',bank.questions[0].skill_id);
++ assert.equal(nextQuestion(s),s);
++ assert.equal(submitAnswer(s,'unknown'),s);
++ for(const q of s.questions) {
++  s=submitAnswer(s,q.correct_option_id);
++  assert.equal(submitAnswer(s,q.options.find(o=>o.id!==q.correct_option_id)!.id),s);
++  s=nextQuestion(s);
++ }
++ assert.equal(s.index,3);assert.deepEqual(score(s),{correct:3,attempted:3});
++ assert.equal(submitAnswer(s,'A'),s);
++ assert.deepEqual(score(startSession()),{correct:0,attempted:0});
++});
+diff --git a/src/yeniHitit.ts b/src/yeniHitit.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..cfb0030cda60c22364e0797e5b1f20e8b704c81f
+--- /dev/null
++++ b/src/yeniHitit.ts
+@@ -0,0 +1,33 @@
++import dataset from './data/yeni_hitit_1_codex_staging_v82.json';
++export type GrammarQuestion = (typeof dataset.questions)[number];
++export const bank = dataset;
++export function validateBank(value: unknown): asserts value is typeof dataset {
++  const d = value as typeof dataset;
++  if (!d || d.schema_version !== '1.0' || d.dataset_version !== 'v82-codex-staging' || d.source_version !== 'v81' || d.review_status !== 'UNVERIFIED_DRAFT_NOT_APPROVED_FOR_PUBLIC_RELEASE' || !Array.isArray(d.questions) || d.questions.length !== 588) throw Error('Invalid v82 dataset metadata/count');
++  const ids = new Set<string>();
++  const skills = new Map<string, number>();
++  for (const q of d.questions) {
++    if (!q || typeof q.id !== 'string' || !q.id.trim() || ids.has(q.id) || typeof q.section !== 'string' || !q.section.trim() || typeof q.skill_id !== 'string' || !q.skill_id.trim() || q.type !== 'single_select' || typeof q.prompt !== 'string' || !q.prompt.trim() || typeof q.explanation !== 'string' || !q.explanation.trim()) throw Error(`Invalid question ${q?.id}`);
++    if (/stress|prosody|vurgu/i.test(q.prompt + ' ' + q.explanation) || /^YH1-00-03-S0[34]$/.test(q.skill_id)) throw Error(`Excluded prosody question ${q.id}`);
++    if (!Array.isArray(q.options) || q.options.length !== 4 || new Set(q.options.map(o => o.id)).size !== 4 || new Set(q.options.map(o => o.text?.trim())).size !== 4 || q.options.some(o => typeof o.id !== 'string' || !o.id.trim() || typeof o.text !== 'string' || !o.text.trim()) || !q.options.some(o => o.id === q.correct_option_id)) throw Error(`Invalid options/key ${q.id}`);
++    ids.add(q.id); skills.set(q.skill_id, (skills.get(q.skill_id) || 0) + 1);
++  }
++  if (skills.size !== 196 || [...skills.values()].some(n => n !== 3)) throw Error('Expected 196 skills with three variants each');
++}
++export function shuffle<T>(items: readonly T[], random = Math.random): T[] {
++  const result = [...items];
++  for (let i = result.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [result[i], result[j]] = [result[j], result[i]]; }
++  return result;
++}
++export function selectQuestions(section = '', skill = '', random = Math.random) {
++  return shuffle(bank.questions.filter(q => (!section || q.section === section) && (!skill || q.skill_id === skill)), random).map(q => ({...q, options: shuffle(q.options, random)}));
++}
++export type Session = { questions: GrammarQuestion[]; index: number; answers: Record<string, string> };
++export function startSession(section = '', skill = ''): Session { return { questions: selectQuestions(section, skill), index: 0, answers: {} }; }
++export function submitAnswer(s: Session, option: string): Session {
++  const q = s.questions[s.index];
++  if (!q || s.answers[q.id] !== undefined || !q.options.some(o => o.id === option)) return s;
++  return {...s, answers: {...s.answers, [q.id]: option}};
++}
++export function nextQuestion(s: Session): Session { const q = s.questions[s.index]; return q && s.answers[q.id] !== undefined ? {...s, index: s.index + 1} : s; }
++export function score(s: Session) { return { attempted: Object.keys(s.answers).length, correct: s.questions.filter(q => s.answers[q.id] === q.correct_option_id).length }; }
+diff --git a/tsconfig.json b/tsconfig.json
+index 71e524067b30c468853bcd57bddf8afe91eb203d..bd21145f4e5dc91d714d3783c3eb2cc92147d637 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -1,14 +1,21 @@
+ {
+   "compilerOptions": {
+     "target": "ES2022",
+-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
++    "lib": [
++      "ES2022",
++      "DOM",
++      "DOM.Iterable"
++    ],
+     "module": "ESNext",
+     "moduleResolution": "Bundler",
+     "jsx": "react-jsx",
+     "strict": true,
+     "skipLibCheck": true,
+     "noEmit": true,
+-    "allowImportingTsExtensions": true
++    "allowImportingTsExtensions": true,
++    "resolveJsonModule": true
+   },
+-  "include": ["src"]
++  "include": [
++    "src"
++  ]
+ }
+diff --git a/vite.config.ts b/vite.config.ts
+index a215da29bbc2c623797c1ba034a1018e7f9c1bf7..c3c1af6735288b12f97de5160b05c453523d5249 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -1,4 +1,4 @@
+ import { defineConfig } from 'vite';
+ 
+ // Relative assets work on GitHub Pages' /turkish-quiz-app/ project path.
+-export default defineConfig({ base: './' });
++export default defineConfig({ base: './', define: { __GRAMMAR_PREVIEW__: JSON.stringify(process.env.NODE_ENV !== 'production' || process.env.VITE_GRAMMAR_PREVIEW === 'true') } });

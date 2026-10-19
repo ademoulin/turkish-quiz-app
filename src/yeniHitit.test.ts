@@ -1,0 +1,44 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import {bank, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
+test('v82 schema, counts, exclusions and malformed content', () => {
+ validateBank(bank);
+ for (const mutate of [
+ (d: typeof bank) => {d.questions[1].id=d.questions[0].id;},
+ (d: typeof bank) => {d.questions[0].correct_option_id='missing';},
+ (d: typeof bank) => {d.questions[0].options.pop();},
+ (d: typeof bank) => {d.questions[0].options[1].text=d.questions[0].options[0].text;},
+ (d: typeof bank) => {d.questions[0].prompt='';},
+ (d: typeof bank) => {d.questions[0].explanation='';},
+ (d: typeof bank) => {d.questions[0].prompt='Choose the word stress';},
+ ]) {const d=structuredClone(bank);mutate(d);assert.throws(()=>validateBank(d));}
+});
+test('filters, empty/unknown skill and unique session pool', () => {
+ const section=bank.questions[0].section, skill=bank.questions[0].skill_id;
+ assert.ok(selectQuestions(section).every(q=>q.section===section));
+ assert.equal(selectQuestions('',skill).length,3);
+ assert.equal(selectQuestions('','unknown').length,0);
+ assert.equal(selectQuestions('unknown').length,0);
+ assert.equal(selectQuestions('','').length,588);
+ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,588);
+});
+test('every shuffled option retains answer mapping, only keyed option scores', () => {
+ for(const q of selectQuestions('', '', ()=>0.1)) {
+  const original=bank.questions.find(x=>x.id===q.id)!;
+  assert.equal(q.options.find(o=>o.id===q.correct_option_id)!.text,original.options.find(o=>o.id===original.correct_option_id)!.text);
+  for(const o of q.options) assert.equal(score(submitAnswer({questions:[q],index:0,answers:{}},o.id)).correct,o.id===q.correct_option_id?1:0);
+ }
+});
+test('duplicate submission, completion and reset', () => {
+ let s=startSession('',bank.questions[0].skill_id);
+ assert.equal(nextQuestion(s),s);
+ assert.equal(submitAnswer(s,'unknown'),s);
+ for(const q of s.questions) {
+  s=submitAnswer(s,q.correct_option_id);
+  assert.equal(submitAnswer(s,q.options.find(o=>o.id!==q.correct_option_id)!.id),s);
+  s=nextQuestion(s);
+ }
+ assert.equal(s.index,3);assert.deepEqual(score(s),{correct:3,attempted:3});
+ assert.equal(submitAnswer(s,'A'),s);
+ assert.deepEqual(score(startSession()),{correct:0,attempted:0});
+});
