@@ -8,20 +8,46 @@ import {
   pilotMistakes,
   selectPilotQuestions,
   type CaseSelection,
+  type TypedQuestion,
   type PilotAttempt,
 } from "./casePilot";
+import {
+  possessiveConcepts,
+  possessiveQuestions,
+  selectPossessiveQuestions,
+  possessiveMistakes,
+  type PossessiveSelection,
+} from "./possessives";
 type Props = {
+  family?: "cases" | "possessives";
   attempts: PilotAttempt[];
   updateAttempts: (update: (a: PilotAttempt[]) => PilotAttempt[]) => void;
 };
-export function CasePilot({ attempts, updateAttempts }: Props) {
-  const [concept, setConcept] = useState<CaseSelection>("locative");
-  const [questions, setQuestions] = useState<typeof caseQuestions>([]);
+export function CasePilot({
+  attempts,
+  updateAttempts,
+  family = "cases",
+}: Props) {
+  const possessive = family === "possessives";
+  const prefix = possessive ? "possessive" : "pilot";
+  const labels: Record<string, string> = possessive
+    ? possessiveConcepts
+    : concepts;
+  const bank = possessive ? possessiveQuestions : caseQuestions;
+  const knownIds = new Set(bank.map((q) => q.id));
+  const familyAttempts = attempts.filter((a) => knownIds.has(a.questionId));
+  const required = possessive ? "Required owner" : "Required case";
+  const [concept, setConcept] = useState<CaseSelection | PossessiveSelection>(
+    possessive ? "possessive_ben" : "locative",
+  );
+  const [questions, setQuestions] = useState<TypedQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [practiceMode, setPracticeMode] =
     useState<NonNullable<PilotAttempt["practiceMode"]>>("single_case");
-  const mistakes = pilotMistakes(attempts, concept);
+  const mistakes = possessive
+    ? possessiveMistakes(attempts, concept as PossessiveSelection)
+    : pilotMistakes(attempts, concept as CaseSelection);
   const sessionId = useRef("");
   const input = useRef<HTMLInputElement>(null);
   const checkButton = useRef<HTMLButtonElement>(null);
@@ -34,15 +60,23 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
     else if (feedback) checkButton.current?.focus();
   }, [q, feedback]);
   function start(review = false) {
-    const pool = review ? shuffle(mistakes) : selectPilotQuestions(concept);
+    const pool = review
+      ? shuffle<TypedQuestion>(mistakes)
+      : possessive
+        ? selectPossessiveQuestions(concept as PossessiveSelection)
+        : selectPilotQuestions(concept as CaseSelection);
     if (!pool.length) return;
     sessionId.current = crypto.randomUUID();
     setPracticeMode(
       review
         ? "mistake_review"
         : concept === "mixed"
-          ? "mixed_cases"
-          : "single_case",
+          ? possessive
+            ? "mixed_possessives"
+            : "mixed_cases"
+          : possessive
+            ? "single_possessive"
+            : "single_case",
     );
     setIndex(0);
     setAnswer("");
@@ -67,53 +101,75 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
     });
   }
   return (
-    <section className="panel" aria-label="Typed case pilot">
-      <h3>Typed endings · Case pilot</h3>
+    <section
+      className="panel"
+      aria-label={possessive ? "Typed possessive practice" : "Typed case pilot"}
+    >
+      <h3>
+        {possessive
+          ? "Typed endings · Possessive forms"
+          : "Typed endings · Case pilot"}
+      </h3>
       <p className="hint">
-        50 newly authored draft questions across five cases; independent
-        linguistic review pending. Type the complete word with Turkish spelling.
-        Attempts are saved; no mastery rating yet.
+        {possessive
+          ? "24 newly authored draft questions across six owners, mapped to Ödkem rule 20. Type only the possessed noun for the stated owner and noun number. Independent linguistic review pending. Attempts are saved; no mastery rating yet."
+          : "50 newly authored draft questions across five cases; independent linguistic review pending. Type the complete word with Turkish spelling. Attempts are saved; no mastery rating yet."}
       </p>
       {!questions.length ? (
         <>
-          <label className="field" htmlFor="pilot-concept">
-            Required case
+          <label className="field" htmlFor={prefix + "-concept"}>
+            {required}
           </label>
           <select
-            id="pilot-concept"
+            id={prefix + "-concept"}
             value={concept}
-            onChange={(e) => setConcept(e.target.value as CaseSelection)}
+            onChange={(e) =>
+              setConcept(e.target.value as CaseSelection | PossessiveSelection)
+            }
           >
-            <option value="mixed">Mixed cases · 12 questions</option>
-            {Object.entries(concepts).map(([id, label]) => (
+            <option value="mixed">
+              {possessive
+                ? "Mixed owners · 12 questions"
+                : "Mixed cases · 12 questions"}
+            </option>
+            {Object.entries(labels).map(([id, label]) => (
               <option key={id} value={id}>
                 {label}
               </option>
             ))}
           </select>
           <button className="primary" onClick={() => start()}>
-            Start typed case practice
+            {possessive
+              ? "Start possessive practice"
+              : "Start typed case practice"}
           </button>
           <p className="hint">
             {concept === "mixed"
-              ? "Mixed practice: two or three questions per case, shuffled together. Each question still names the required case."
-              : "Practice all 10 questions for this case."}
+              ? possessive
+                ? "Mixed practice: two questions per owner, shuffled together. Each question names the owner and noun number."
+                : "Mixed practice: two or three questions per case, shuffled together. Each question still names the required case."
+              : possessive
+                ? "Practice all four questions for this owner."
+                : "Practice all 10 questions for this case."}
           </p>
           <button
             className="secondary"
             disabled={!mistakes.length}
             onClick={() => start(true)}
           >
-            Review grammar mistakes ({mistakes.length})
+            {possessive
+              ? "Review possessive mistakes"
+              : "Review grammar mistakes"}{" "}
+            ({mistakes.length})
           </button>
           <p className="hint">
             {mistakes.length
-              ? "Reviews the latest missed forms in your selected case or mixed pool. A later correct answer or manual correction clears that question until you miss it again."
+              ? "Reviews the latest missed forms in your selection. A later correct answer or manual correction clears that question until you miss it again."
               : "No grammar mistakes to review in this selection. Missed answers will appear here."}
           </p>
           <p>
-            {attempts.length} saved typed attempts ·{" "}
-            {attempts.filter((a) => a.correct).length} correct, including
+            {familyAttempts.length} saved typed attempts ·{" "}
+            {familyAttempts.filter((a) => a.correct).length} correct, including
             self-corrections
           </p>
         </>
@@ -121,10 +177,17 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
         <>
           <p>
             {practiceMode === "mistake_review"
-              ? "Reviewing grammar mistakes"
-              : practiceMode === "mixed_cases"
-                ? "Mixed case practice"
-                : "Single case practice"}
+              ? possessive
+                ? "Reviewing possessive mistakes"
+                : "Reviewing grammar mistakes"
+              : practiceMode === "mixed_cases" ||
+                  practiceMode === "mixed_possessives"
+                ? possessive
+                  ? "Mixed possessive practice"
+                  : "Mixed case practice"
+                : possessive
+                  ? "Single owner practice"
+                  : "Single case practice"}
           </p>
           <p role="status">
             {results.filter((a) => a.correct).length} / {results.length} typed
@@ -133,19 +196,25 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
           {q ? (
             <div>
               <p>
-                Question {index + 1} of {questions.length} · Required case:{" "}
-                {concepts[q.conceptId]}
+                Question {index + 1} of {questions.length} · {required}:{" "}
+                {labels[q.conceptId]}
               </p>
+              {"nounNumber" in q && (
+                <p>
+                  Noun number: <strong>{q.nounNumber}</strong>. Type only the
+                  possessed noun, without the owner.
+                </p>
+              )}
               <p lang="tr">{q.sentence}</p>
               <p>
                 Base word: <strong lang="tr">{q.base}</strong>
               </p>
-              <label className="field" htmlFor="pilot-answer">
+              <label className="field" htmlFor={prefix + "-answer"}>
                 Complete inflected word
               </label>
               <input
                 ref={input}
-                id="pilot-answer"
+                id={prefix + "-answer"}
                 className="answer"
                 lang="tr"
                 value={answer}
@@ -224,7 +293,11 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
               )}
             </div>
           ) : (
-            <h4>Typed case session complete</h4>
+            <h4>
+              {possessive
+                ? "Possessive session complete"
+                : "Typed case session complete"}
+            </h4>
           )}
           <button className="text-button" onClick={() => setQuestions([])}>
             {q ? "End typed session" : "Restart typed practice"}
@@ -233,4 +306,8 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
       )}
     </section>
   );
+}
+
+export function PossessivePractice(props: Omit<Props, "family">) {
+  return <CasePilot {...props} family="possessives" />;
 }

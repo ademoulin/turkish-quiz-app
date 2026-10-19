@@ -1,3 +1,9 @@
+import {
+  possessiveConcepts,
+  type PossessiveConcept,
+  type PossessiveQuestion,
+} from "./possessives";
+import { latestMistakes } from "./practiceReview";
 import { shuffle } from "./shuffle";
 /** Newly authored draft exercises; not textbook quotations or tutor-certified content.
  * References: Yeni Hitit 1 §2.2 p.29, §3.2 p.40, §6.1 p.73 (printed pages). Ödkem Rules catalog mapping uses its explicit numeric IDs.
@@ -433,12 +439,20 @@ export const caseQuestions: CaseQuestion[] = (
 export const matchesCase = (answer: string, expected: string) =>
   answer.normalize("NFC").trim().toLocaleLowerCase("tr") ===
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
+export type TypedQuestion = CaseQuestion | PossessiveQuestion;
 export interface PilotAttempt {
   id: string;
   sessionId: string;
-  practiceMode?: "single_case" | "mixed_cases" | "mistake_review";
+  practiceMode?:
+    | "single_case"
+    | "mixed_cases"
+    | "mistake_review"
+    | "single_possessive"
+    | "mixed_possessives";
   questionId: string;
-  conceptId: Concept;
+  conceptId: Concept | PossessiveConcept;
+  owner?: string;
+  nounNumber?: "singular" | "plural";
   exerciseType: "typed_form_completion";
   supportingRuleIds: string[];
   answer: string;
@@ -449,7 +463,7 @@ export interface PilotAttempt {
 }
 export function recordPilot(
   attempts: PilotAttempt[],
-  q: CaseQuestion,
+  q: TypedQuestion,
   answer: string,
   sessionId: string,
   practiceMode: NonNullable<PilotAttempt["practiceMode"]> = "single_case",
@@ -467,6 +481,7 @@ export function recordPilot(
       practiceMode,
       questionId: q.id,
       conceptId: q.conceptId,
+      ...("owner" in q ? { owner: q.owner, nounNumber: q.nounNumber } : {}),
       exerciseType: q.exerciseType,
       supportingRuleIds: q.supportingRuleIds,
       answer: answer.trim(),
@@ -498,10 +513,22 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       !a.sessionId ||
       !a.questionId ||
       (a.practiceMode !== undefined &&
-        !["single_case", "mixed_cases", "mistake_review"].includes(
-          a.practiceMode,
-        )) ||
-      !Object.hasOwn(concepts, a.conceptId) ||
+        ![
+          "single_case",
+          "mixed_cases",
+          "mistake_review",
+          "single_possessive",
+          "mixed_possessives",
+        ].includes(a.practiceMode)) ||
+      (!Object.hasOwn(concepts, a.conceptId) &&
+        !Object.hasOwn(possessiveConcepts, a.conceptId)) ||
+      (Object.hasOwn(possessiveConcepts, a.conceptId) &&
+        (typeof a.owner !== "string" ||
+          !a.owner.trim() ||
+          a.nounNumber === undefined)) ||
+      (a.owner !== undefined && typeof a.owner !== "string") ||
+      (a.nounNumber !== undefined &&
+        !["singular", "plural"].includes(a.nounNumber)) ||
       a.exerciseType !== "typed_form_completion" ||
       !Array.isArray(a.supportingRuleIds) ||
       !a.supportingRuleIds.every((r) => typeof r === "string") ||
@@ -523,18 +550,7 @@ export function pilotMistakes(
   attempts: PilotAttempt[],
   selection: CaseSelection = "mixed",
 ) {
-  const latest = new Map<string, PilotAttempt>();
-  for (const a of new Map(attempts.map((a) => [a.id, a])).values()) {
-    if (!Number.isFinite(Date.parse(a.time))) continue;
-    const previous = latest.get(a.questionId);
-    if (!previous || Date.parse(a.time) >= Date.parse(previous.time))
-      latest.set(a.questionId, a);
-  }
-  return caseQuestions.filter(
-    (q) =>
-      (selection === "mixed" || q.conceptId === selection) &&
-      latest.get(q.id)?.correct === false,
-  );
+  return latestMistakes(caseQuestions, attempts, selection);
 }
 /** Keep 12 mixed questions, distributing extras across randomly chosen cases. */
 export function selectPilotQuestions(
