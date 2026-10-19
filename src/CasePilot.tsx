@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { shuffle } from "./yeniHitit";
+import { shuffle } from "./shuffle";
 import {
   caseQuestions,
   concepts,

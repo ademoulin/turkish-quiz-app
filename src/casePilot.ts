@@ -1,4 +1,4 @@
-import { shuffle } from "./yeniHitit";
+import { shuffle } from "./shuffle";
 /** Newly authored draft exercises; not textbook quotations or tutor-certified content.
  * Reference: Yeni Hitit 1, section 2.2, printed p.29. Ödkem Rules catalog mapping uses its explicit numeric IDs.
  */
