@@ -35,4 +35,4 @@ export function GrammarPractice() {
       <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar preview</button>
     </>}
   </section>;
-}diff --git a/src/main.tsx b/src/main.tsx
+}
