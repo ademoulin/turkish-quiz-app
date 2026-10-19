@@ -114,3 +114,25 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
     ),
   ).toBe(10);
 });
+
+test('all case pools use strict spelling and touch letters; production project path', async ({page}) => {
+ await page.route('https://docs.google.com/**',r=>r.abort());
+ await page.goto('http://127.0.0.1:4173/turkish-quiz-app/');
+ await page.getByRole('button',{name:'Open grammar practice'}).click();
+ const pilot=page.getByRole('region',{name:'Typed case pilot'});
+ for(const concept of ['locative','dative','ablative']) {
+  await pilot.getByLabel('Required case',{exact:true}).selectOption(concept);
+  await pilot.getByRole('button',{name:'Start typed case practice'}).click();
+  const text=await pilot.innerText();const q=caseQuestions.find(q=>q.conceptId===concept && text.includes(q.sentence))!;
+  const input=pilot.getByLabel('Complete inflected word');
+  await pilot.getByRole('button',{name:'ğ',exact:true}).click();
+  await expect(input).toHaveValue('ğ');
+  await input.fill('wrong');
+  await input.press('Enter');
+  await expect(pilot.getByText('Incorrect.',{exact:true})).toBeVisible();
+  await expect(pilot.getByText(`Correct answer: ${q.answer}`,{exact:true})).toBeVisible();
+  await expect(pilot.getByText('0 / 1 typed answers correct / attempted',{exact:true})).toBeVisible();
+  await pilot.getByRole('button',{name:'End typed session'}).click();
+ }
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.length)).toBe(3);
+});

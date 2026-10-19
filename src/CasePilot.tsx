@@ -113,6 +113,7 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
               <input
                 ref={input}
                 id="pilot-answer"
+                className="answer"
                 lang="tr"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
@@ -122,12 +123,11 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
                 spellCheck={false}
               />
               {!feedback && (
-                <div className="button-row" aria-label="Turkish letters">
+                <div className="characters" aria-label="Turkish letters">
                   {"çğıöşü".split("").map((c) => (
                     <button
                       key={c}
                       type="button"
-                      className="secondary"
                       onClick={() => insert(c)}
                     >
                       {c}
