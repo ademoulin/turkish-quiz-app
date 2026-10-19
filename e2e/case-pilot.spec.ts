@@ -136,3 +136,20 @@ test('all case pools use strict spelling and touch letters; production project p
  }
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.length)).toBe(3);
 });
+
+test('typed checking works inside a preview sandbox without form permission', async ({page}) => {
+ await page.route('https://docs.google.com/**',r=>r.abort());
+ await page.goto('/');
+ await page.setContent('<iframe title="Preview" sandbox="allow-scripts allow-same-origin" src="http://127.0.0.1:4173/turkish-quiz-app/"></iframe>');
+ const frame=page.frameLocator('iframe');
+ await frame.getByRole('button',{name:'Open grammar practice'}).click();
+ const pilot=frame.getByRole('region',{name:'Typed case pilot'});
+ await pilot.getByRole('button',{name:'Start typed case practice'}).click();
+ await pilot.getByLabel('Complete inflected word').fill('wrong');
+ await pilot.getByRole('button',{name:'Check typed answer'}).click();
+ await expect(pilot.getByText('Incorrect.',{exact:true})).toBeVisible();
+ await pilot.getByRole('button',{name:'Next typed question'}).click();
+ await pilot.getByLabel('Complete inflected word').fill('wrong');
+ await pilot.getByLabel('Complete inflected word').press('Enter');
+ await expect(pilot.getByText('0 / 2 typed answers correct / attempted',{exact:true})).toBeVisible();
+});

@@ -28,6 +28,11 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
     if (q && !feedback) input.current?.focus();
     else if (feedback) checkButton.current?.focus();
   }, [q, feedback]);
+  function check() {
+    if (!q || feedback || locked.current || !answer.trim()) return;
+    locked.current = true;
+    updateAttempts((a) => recordPilot(a, q, answer, sessionId.current));
+  }
   function insert(c: string) {
     const el = input.current;
     const start = el?.selectionStart ?? answer.length;
@@ -89,16 +94,7 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
             answers correct / attempted
           </p>
           {q ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (feedback || locked.current || !answer.trim()) return;
-                locked.current = true;
-                updateAttempts((a) =>
-                  recordPilot(a, q, answer, sessionId.current),
-                );
-              }}
-            >
+            <div>
               <p>
                 Question {index + 1} of {questions.length} · Required case:{" "}
                 {concepts[q.conceptId]}
@@ -117,6 +113,12 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
                 lang="tr"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                    e.preventDefault();
+                    check();
+                  }
+                }}
                 disabled={!!feedback}
                 autoComplete="off"
                 autoCapitalize="none"
@@ -180,12 +182,14 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
                 <button
                   ref={checkButton}
                   className="primary"
+                  type="button"
+                  onClick={check}
                   disabled={!answer.trim()}
                 >
                   Check typed answer
                 </button>
               )}
-            </form>
+            </div>
           ) : (
             <h4>Typed case session complete</h4>
           )}
