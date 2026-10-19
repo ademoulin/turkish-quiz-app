@@ -36,8 +36,14 @@ jobs:
       - name: Validate question bank
         run: node --import tsx scripts/validate-yeni-hitit.ts
 
-      - name: Build production app (grammar excluded)
+      - name: Build production app (grammar enabled)
         run: npm run build
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser checks
+        run: npm run test:e2e
 
       - name: Build grammar preview
         run: npm run build:grammar-preview

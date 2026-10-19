@@ -39,6 +39,7 @@ export const defaults: Settings = {
 export interface Store {
   settings: Settings;
   attempts: Attempt[];
+  pilotAttempts?: import("./casePilot").PilotAttempt[];
   cache?: { csv: string; time: string };
 }
 export function readStore(): Store {
@@ -55,6 +56,7 @@ export function readStore(): Store {
           : [],
       },
       attempts: Array.isArray(s.attempts) ? s.attempts : [],
+      pilotAttempts: Array.isArray(s.pilotAttempts) ? s.pilotAttempts : [],
       cache: s.cache,
     };
   } catch {
