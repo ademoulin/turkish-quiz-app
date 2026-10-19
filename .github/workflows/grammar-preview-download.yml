@@ -6,6 +6,9 @@ on:
       - codex/yeni-hitit-v82-integration
     paths:
       - .github/workflows/grammar-preview-download.yml
+      - src/GrammarPractice.tsx
+      - src/grammarLabels.ts
+      - src/data/yeni_hitit_1_codex_staging_v82.json
   workflow_dispatch:
 
 permissions:
