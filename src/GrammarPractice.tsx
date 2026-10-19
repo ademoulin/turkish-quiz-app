@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
+import { sectionLabel, skillLabel } from './grammarLabels';
 export function GrammarPractice() {
   const [open, setOpen] = useState(false);
   const [section, setSection] = useState('');
@@ -16,13 +17,13 @@ export function GrammarPractice() {
     <p className="hint">Preview · Unverified draft · 588 questions across 196 skills. Independent linguistic review required before release. Preview scores stay in this session only.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar preview</button> : <>
       {!session ? <>
-        <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s}>{s}</option>)}</select>
-        <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s}>{s}</option>)}</select>
+        <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
+        <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>
         <button className="primary" onClick={() => {setSession(startSession(section, skill)); setSelected('');}}>Start grammar practice</button>
       </> : <>
         <p role="status">{result!.correct} / {result!.attempted} correct / attempted</p>
         {q ? <>
-          <p>Question {session.index + 1} of {session.questions.length} · Section {q.section} · {q.skill_id}</p>
+          <p>Question {session.index + 1} of {session.questions.length} · Section {q.section} · {skillLabel(q.skill_id)}</p>
           <form onSubmit={e => {e.preventDefault(); if (checked) {setSession(s => s && nextQuestion(s)); setSelected('');} else if (selected) setSession(s => s && submitAnswer(s, selected));}}>
             <fieldset disabled={checked}><legend>{q.prompt}</legend>{q.options.map(o => <label className="word-row" key={o.id}><input type="radio" name="grammar-answer" value={o.id} checked={selected === o.id} onChange={() => setSelected(o.id)} /><span lang="tr">{o.text}</span></label>)}</fieldset>
             {checked && <div className={'feedback ' + (session.answers[q.id] === q.correct_option_id ? 'correct' : 'incorrect')} role="status"><strong>{session.answers[q.id] === q.correct_option_id ? 'Correct.' : 'Incorrect.'}</strong><p lang="tr">Correct answer: {q.options.find(o => o.id === q.correct_option_id)!.text}</p><p>{q.explanation}</p></div>}
