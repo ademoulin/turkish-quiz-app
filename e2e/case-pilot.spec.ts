@@ -96,13 +96,11 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
           .length,
     ),
   ).toBe(10);
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "legacy.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify({ version: 1, attempts: [] })),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "legacy.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ version: 1, attempts: [] })),
+  });
   await expect(
     page.getByText(/Imported 0 typed grammar results/),
   ).toBeVisible();
@@ -115,41 +113,171 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
   ).toBe(10);
 });
 
-test('all case pools use strict spelling and touch letters; production project path', async ({page}) => {
- await page.route('https://docs.google.com/**',r=>r.abort());
- await page.goto('http://127.0.0.1:4173/turkish-quiz-app/');
- await page.getByRole('button',{name:'Open grammar practice'}).click();
- const pilot=page.getByRole('region',{name:'Typed case pilot'});
- for(const concept of ['locative','dative','ablative']) {
-  await pilot.getByLabel('Required case',{exact:true}).selectOption(concept);
-  await pilot.getByRole('button',{name:'Start typed case practice'}).click();
-  const text=await pilot.innerText();const q=caseQuestions.find(q=>q.conceptId===concept && text.includes(q.sentence))!;
-  const input=pilot.getByLabel('Complete inflected word');
-  await pilot.getByRole('button',{name:'ğ',exact:true}).click();
-  await expect(input).toHaveValue('ğ');
-  await input.fill('wrong');
-  await input.press('Enter');
-  await expect(pilot.getByText('Incorrect.',{exact:true})).toBeVisible();
-  await expect(pilot.getByText(`Correct answer: ${q.answer}`,{exact:true})).toBeVisible();
-  await expect(pilot.getByText('0 / 1 typed answers correct / attempted',{exact:true})).toBeVisible();
-  await pilot.getByRole('button',{name:'End typed session'}).click();
- }
- expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.length)).toBe(3);
+test("all case pools use strict spelling and touch letters; production project path", async ({
+  page,
+}) => {
+  await page.route("https://docs.google.com/**", (r) => r.abort());
+  await page.goto("http://127.0.0.1:4173/turkish-quiz-app/");
+  await page.getByRole("button", { name: "Open grammar practice" }).click();
+  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  for (const concept of ["locative", "dative", "ablative"]) {
+    await pilot
+      .getByLabel("Required case", { exact: true })
+      .selectOption(concept);
+    await pilot
+      .getByRole("button", { name: "Start typed case practice" })
+      .click();
+    const text = await pilot.innerText();
+    const q = caseQuestions.find(
+      (q) => q.conceptId === concept && text.includes(q.sentence),
+    )!;
+    const input = pilot.getByLabel("Complete inflected word");
+    await pilot.getByRole("button", { name: "ğ", exact: true }).click();
+    await expect(input).toHaveValue("ğ");
+    await input.fill("wrong");
+    await input.press("Enter");
+    await expect(pilot.getByText("Incorrect.", { exact: true })).toBeVisible();
+    await expect(
+      pilot.getByText(`Correct answer: ${q.answer}`, { exact: true }),
+    ).toBeVisible();
+    await expect(
+      pilot.getByText("0 / 1 typed answers correct / attempted", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await pilot.getByRole("button", { name: "End typed session" }).click();
+  }
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("quiz-my-turkish-v1")!).pilotAttempts
+          .length,
+    ),
+  ).toBe(3);
 });
 
-test('typed checking works inside a preview sandbox without form permission', async ({page}) => {
- await page.route('https://docs.google.com/**',r=>r.abort());
- await page.goto('/');
- await page.setContent('<iframe title="Preview" sandbox="allow-scripts allow-same-origin" src="http://127.0.0.1:4173/turkish-quiz-app/"></iframe>');
- const frame=page.frameLocator('iframe');
- await frame.getByRole('button',{name:'Open grammar practice'}).click();
- const pilot=frame.getByRole('region',{name:'Typed case pilot'});
- await pilot.getByRole('button',{name:'Start typed case practice'}).click();
- await pilot.getByLabel('Complete inflected word').fill('wrong');
- await pilot.getByRole('button',{name:'Check typed answer'}).click();
- await expect(pilot.getByText('Incorrect.',{exact:true})).toBeVisible();
- await pilot.getByRole('button',{name:'Next typed question'}).click();
- await pilot.getByLabel('Complete inflected word').fill('wrong');
- await pilot.getByLabel('Complete inflected word').press('Enter');
- await expect(pilot.getByText('0 / 2 typed answers correct / attempted',{exact:true})).toBeVisible();
+test("typed checking works inside a preview sandbox without form permission", async ({
+  page,
+}) => {
+  await page.route("https://docs.google.com/**", (r) => r.abort());
+  await page.goto("/");
+  await page.setContent(
+    '<iframe title="Preview" sandbox="allow-scripts allow-same-origin" src="http://127.0.0.1:4173/turkish-quiz-app/"></iframe>',
+  );
+  const frame = page.frameLocator("iframe");
+  await frame.getByRole("button", { name: "Open grammar practice" }).click();
+  const pilot = frame.getByRole("region", { name: "Typed case pilot" });
+  await pilot
+    .getByRole("button", { name: "Start typed case practice" })
+    .click();
+  await pilot.getByLabel("Complete inflected word").fill("wrong");
+  await pilot.getByRole("button", { name: "Check typed answer" }).click();
+  await expect(pilot.getByText("Incorrect.", { exact: true })).toBeVisible();
+  await pilot.getByRole("button", { name: "Next typed question" }).click();
+  await pilot.getByLabel("Complete inflected word").fill("wrong");
+  await pilot.getByLabel("Complete inflected word").press("Enter");
+  await expect(
+    pilot.getByText("0 / 2 typed answers correct / attempted", { exact: true }),
+  ).toBeVisible();
+});
+
+test("mixed sessions balance cases and mistake review resolves only corrected questions", async ({
+  page,
+}) => {
+  await page.route("https://docs.google.com/**", (r) => r.abort());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open grammar practice" }).click();
+  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  await expect(
+    pilot.getByRole("button", {
+      name: "Review grammar mistakes (0)",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await pilot
+    .getByRole("button", { name: "Start typed case practice" })
+    .click();
+  const firstText = await pilot.innerText();
+  const missed = caseQuestions.find((q) => firstText.includes(q.sentence))!;
+  await pilot.getByLabel("Complete inflected word").fill("wrong");
+  await pilot.getByRole("button", { name: "Check typed answer" }).click();
+  await pilot.getByRole("button", { name: "End typed session" }).click();
+  await pilot
+    .getByLabel("Required case", { exact: true })
+    .selectOption("dative");
+  await expect(
+    pilot.getByRole("button", {
+      name: "Review grammar mistakes (0)",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await pilot
+    .getByLabel("Required case", { exact: true })
+    .selectOption("mixed");
+  await pilot
+    .getByRole("button", { name: "Review grammar mistakes (1)", exact: true })
+    .click();
+  await expect(
+    pilot.getByText("Reviewing grammar mistakes", { exact: true }),
+  ).toBeVisible();
+  await expect(pilot.getByText(missed.sentence, { exact: true })).toBeVisible();
+  await pilot.getByLabel("Complete inflected word").fill("wrong");
+  await pilot.getByLabel("Complete inflected word").press("Enter");
+  await pilot.getByRole("button", { name: "My answer was correct" }).click();
+  await pilot.getByRole("button", { name: "See typed results" }).click();
+  await pilot.getByRole("button", { name: "Restart typed practice" }).click();
+  await expect(
+    pilot.getByRole("button", {
+      name: "Review grammar mistakes (0)",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await page.reload();
+  await page.getByRole("button", { name: "Open grammar practice" }).click();
+  await pilot
+    .getByLabel("Required case", { exact: true })
+    .selectOption("mixed");
+  await pilot
+    .getByRole("button", { name: "Start typed case practice" })
+    .click();
+  const counts: Record<string, number> = {};
+  const seen = new Set<string>();
+  for (let i = 0; i < 12; i++) {
+    const text = await pilot.innerText();
+    const q = caseQuestions.find((q) => text.includes(q.sentence))!;
+    expect(seen.has(q.id)).toBe(false);
+    seen.add(q.id);
+    counts[q.conceptId] = (counts[q.conceptId] || 0) + 1;
+    await expect(
+      pilot.getByText(new RegExp("Required case: " + q.conceptId, "i")),
+    ).toBeVisible();
+    await pilot.getByLabel("Complete inflected word").fill(q.answer);
+    await pilot.getByRole("button", { name: "Check typed answer" }).click();
+    await pilot
+      .getByRole("button", {
+        name: i === 11 ? "See typed results" : "Next typed question",
+      })
+      .click();
+  }
+  expect(counts).toEqual({ locative: 4, dative: 4, ablative: 4 });
+  await expect(
+    pilot.getByText("12 / 12 typed answers correct / attempted", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  const attempts = await page.evaluate(
+    () => JSON.parse(localStorage.getItem("quiz-my-turkish-v1")!).pilotAttempts,
+  );
+  expect(
+    attempts.filter((a: any) => a.practiceMode === "mixed_cases"),
+  ).toHaveLength(12);
+  expect(
+    attempts.filter((a: any) => a.practiceMode === "mistake_review"),
+  ).toHaveLength(1);
+  expect(attempts.filter((a: any) => a.manual)).toHaveLength(1);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
 });

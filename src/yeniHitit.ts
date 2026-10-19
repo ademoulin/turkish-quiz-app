@@ -1,3 +1,4 @@
+import { shuffle } from './shuffle';
 import dataset from './data/yeni_hitit_1_codex_staging_v82.json';
 export type GrammarQuestion = (typeof dataset.questions)[number];
 export const bank = dataset;
@@ -14,11 +15,8 @@ export function validateBank(value: unknown): asserts value is typeof dataset {
   }
   if (skills.size !== 196 || [...skills.values()].some(n => n !== 3)) throw Error('Expected 196 skills with three variants each');
 }
-export function shuffle<T>(items: readonly T[], random = Math.random): T[] {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [result[i], result[j]] = [result[j], result[i]]; }
-  return result;
-}
+export { shuffle } from './shuffle';
+
 export function selectQuestions(section = '', skill = '', random = Math.random) {
   return shuffle(bank.questions.filter(q => (!section || q.section === section) && (!skill || q.skill_id === skill)), random).map(q => ({...q, options: shuffle(q.options, random)}));
 }

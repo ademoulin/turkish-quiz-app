@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { shuffle } from "./yeniHitit";
+import { shuffle } from "./shuffle";
 import {
   caseQuestions,
   concepts,
   recordPilot,
   correctPilot,
-  type Concept,
+  pilotMistakes,
+  selectPilotQuestions,
+  type CaseSelection,
   type PilotAttempt,
 } from "./casePilot";
 type Props = {
@@ -13,10 +15,13 @@ type Props = {
   updateAttempts: (update: (a: PilotAttempt[]) => PilotAttempt[]) => void;
 };
 export function CasePilot({ attempts, updateAttempts }: Props) {
-  const [concept, setConcept] = useState<Concept>("locative");
+  const [concept, setConcept] = useState<CaseSelection>("locative");
   const [questions, setQuestions] = useState<typeof caseQuestions>([]);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
+  const [practiceMode, setPracticeMode] =
+    useState<NonNullable<PilotAttempt["practiceMode"]>>("single_case");
+  const mistakes = pilotMistakes(attempts, concept);
   const sessionId = useRef("");
   const input = useRef<HTMLInputElement>(null);
   const checkButton = useRef<HTMLButtonElement>(null);
@@ -28,10 +33,28 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
     if (q && !feedback) input.current?.focus();
     else if (feedback) checkButton.current?.focus();
   }, [q, feedback]);
+  function start(review = false) {
+    const pool = review ? shuffle(mistakes) : selectPilotQuestions(concept);
+    if (!pool.length) return;
+    sessionId.current = crypto.randomUUID();
+    setPracticeMode(
+      review
+        ? "mistake_review"
+        : concept === "mixed"
+          ? "mixed_cases"
+          : "single_case",
+    );
+    setIndex(0);
+    setAnswer("");
+    locked.current = false;
+    setQuestions(pool);
+  }
   function check() {
     if (!q || feedback || locked.current || !answer.trim()) return;
     locked.current = true;
-    updateAttempts((a) => recordPilot(a, q, answer, sessionId.current));
+    updateAttempts((a) =>
+      recordPilot(a, q, answer, sessionId.current, practiceMode),
+    );
   }
   function insert(c: string) {
     const el = input.current;
@@ -59,28 +82,35 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
           <select
             id="pilot-concept"
             value={concept}
-            onChange={(e) => setConcept(e.target.value as Concept)}
+            onChange={(e) => setConcept(e.target.value as CaseSelection)}
           >
+            <option value="mixed">Mixed cases · 12 questions</option>
             {Object.entries(concepts).map(([id, label]) => (
               <option key={id} value={id}>
                 {label}
               </option>
             ))}
           </select>
-          <button
-            className="primary"
-            onClick={() => {
-              sessionId.current = crypto.randomUUID();
-              setIndex(0);
-              setAnswer("");
-              locked.current = false;
-              setQuestions(
-                shuffle(caseQuestions.filter((q) => q.conceptId === concept)),
-              );
-            }}
-          >
+          <button className="primary" onClick={() => start()}>
             Start typed case practice
           </button>
+          <p className="hint">
+            {concept === "mixed"
+              ? "Mixed practice: four questions per case, shuffled together. Each question still names the required case."
+              : "Practice all 10 questions for this case."}
+          </p>
+          <button
+            className="secondary"
+            disabled={!mistakes.length}
+            onClick={() => start(true)}
+          >
+            Review grammar mistakes ({mistakes.length})
+          </button>
+          <p className="hint">
+            {mistakes.length
+              ? "Reviews the latest missed forms in your selected case or mixed pool. A later correct answer or manual correction clears that question until you miss it again."
+              : "No grammar mistakes to review in this selection. Missed answers will appear here."}
+          </p>
           <p>
             {attempts.length} saved typed attempts ·{" "}
             {attempts.filter((a) => a.correct).length} correct, including
@@ -89,6 +119,13 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
         </>
       ) : (
         <>
+          <p>
+            {practiceMode === "mistake_review"
+              ? "Reviewing grammar mistakes"
+              : practiceMode === "mixed_cases"
+                ? "Mixed case practice"
+                : "Single case practice"}
+          </p>
           <p role="status">
             {results.filter((a) => a.correct).length} / {results.length} typed
             answers correct / attempted
@@ -127,11 +164,7 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
               {!feedback && (
                 <div className="characters" aria-label="Turkish letters">
                   {"çğıöşü".split("").map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => insert(c)}
-                    >
+                    <button key={c} type="button" onClick={() => insert(c)}>
                       {c}
                     </button>
                   ))}
