@@ -12,10 +12,10 @@ export function GrammarPractice() {
   const q = session?.questions[session.index];
   const checked = !!(q && session?.answers[q.id] !== undefined);
   const result = session && score(session);
-  return <section className="panel grammar-preview" aria-label="Grammar practice preview">
+  return <section className="panel grammar-preview" aria-label="Grammar practice">
     <h2>Yeni Hitit 1 · Grammar practice</h2>
-    <p className="hint">Preview · Unverified draft · 588 questions across 196 skills. Independent linguistic review required before release. Preview scores stay in this session only.</p>
-    {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar preview</button> : <>
+    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Scores stay in this session only.</p>
+    {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       {!session ? <>
         <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
         <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>
@@ -33,7 +33,7 @@ export function GrammarPractice() {
         </> : <h3>Grammar session complete</h3>}
         <button className="secondary" onClick={() => {setSession(null); setSelected('');}}>Restart grammar practice</button>
       </>}
-      <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar preview</button>
+      <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar practice</button>
     </>}
   </section>;
 }
