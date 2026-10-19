@@ -167,3 +167,15 @@ bank and other grading policies are unchanged.
 To try an unmerged branch locally: `npm ci`, then `npm run dev`. No branch preview
 is automatically published to GitHub Pages. Checks: `npm test`, `npm run build`,
 `npm run test:e2e` (requires Playwright Chromium).
+
+### Mixed case practice and grammar mistake review
+
+Choose **Mixed cases · 12 questions** for a shuffled set of four questions per
+case. Each prompt still explicitly names the required case. Single-case practice
+continues to use 10 questions.
+
+**Review grammar mistakes** practices questions whose latest saved result was
+incorrect, within the selected case (or all cases with Mixed). A subsequent
+correct answer or manual correction clears a question; a later miss brings it
+back. Empty review queues disable the button. Results remain evidence without
+mastery labels, and older progress backups remain compatible.

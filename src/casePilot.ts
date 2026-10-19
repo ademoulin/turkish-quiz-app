@@ -1,3 +1,4 @@
+import { shuffle } from "./yeniHitit";
 /** Newly authored draft exercises; not textbook quotations or tutor-certified content.
  * Reference: Yeni Hitit 1, section 2.2, printed p.29. Ödkem Rules catalog mapping uses its explicit numeric IDs.
  */
@@ -273,6 +274,7 @@ export const matchesCase = (answer: string, expected: string) =>
 export interface PilotAttempt {
   id: string;
   sessionId: string;
+  practiceMode?: "single_case" | "mixed_cases" | "mistake_review";
   questionId: string;
   conceptId: Concept;
   exerciseType: "typed_form_completion";
@@ -288,6 +290,7 @@ export function recordPilot(
   q: CaseQuestion,
   answer: string,
   sessionId: string,
+  practiceMode: NonNullable<PilotAttempt["practiceMode"]> = "single_case",
 ): PilotAttempt[] {
   if (
     !answer.trim() ||
@@ -299,6 +302,7 @@ export function recordPilot(
     {
       id: crypto.randomUUID(),
       sessionId,
+      practiceMode,
       questionId: q.id,
       conceptId: q.conceptId,
       exerciseType: q.exerciseType,
@@ -331,6 +335,10 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       !a.id ||
       !a.sessionId ||
       !a.questionId ||
+      (a.practiceMode !== undefined &&
+        !["single_case", "mixed_cases", "mistake_review"].includes(
+          a.practiceMode,
+        )) ||
       !Object.hasOwn(concepts, a.conceptId) ||
       a.exerciseType !== "typed_form_completion" ||
       !Array.isArray(a.supportingRuleIds) ||
@@ -342,4 +350,47 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       throw Error("Invalid pilot result.");
     return a;
   });
+}
+
+export type CaseSelection = Concept | "mixed";
+/** Latest evidence per question; merge duplicate attempt IDs like backup import.
+ * Equal timestamps use the later history entry. Unknown questions stay in history,
+ * but cannot enter a playable review pool.
+ */
+export function pilotMistakes(
+  attempts: PilotAttempt[],
+  selection: CaseSelection = "mixed",
+) {
+  const latest = new Map<string, PilotAttempt>();
+  for (const a of new Map(attempts.map((a) => [a.id, a])).values()) {
+    if (!Number.isFinite(Date.parse(a.time))) continue;
+    const previous = latest.get(a.questionId);
+    if (!previous || Date.parse(a.time) >= Date.parse(previous.time))
+      latest.set(a.questionId, a);
+  }
+  return caseQuestions.filter(
+    (q) =>
+      (selection === "mixed" || q.conceptId === selection) &&
+      latest.get(q.id)?.correct === false,
+  );
+}
+/** Mixed sessions contain four questions per case, with no duplicates. */
+export function selectPilotQuestions(
+  selection: CaseSelection,
+  random = Math.random,
+) {
+  if (selection !== "mixed")
+    return shuffle(
+      caseQuestions.filter((q) => q.conceptId === selection),
+      random,
+    );
+  return shuffle(
+    (Object.keys(concepts) as Concept[]).flatMap((c) =>
+      shuffle(
+        caseQuestions.filter((q) => q.conceptId === c),
+        random,
+      ).slice(0, 4),
+    ),
+    random,
+  );
 }
