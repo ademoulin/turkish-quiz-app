@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build && node scripts/standalone.mjs",
-    "test": "tsx --test src/*.test.ts",
+    "build": "node --import tsx scripts/validate-yeni-hitit.ts && tsc -b && vite build && node scripts/standalone.mjs",
+    "test": "node --import tsx --test src/*.test.ts",
     "preview": "vite preview --host 0.0.0.0",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:grammar-preview": "VITE_GRAMMAR_PREVIEW=true npm run build"
   },
   "dependencies": {
     "react": "^19.0.0",
