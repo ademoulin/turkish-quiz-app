@@ -70,9 +70,9 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
     <section className="panel" aria-label="Typed case pilot">
       <h3>Typed endings · Case pilot</h3>
       <p className="hint">
-        30 newly authored draft questions. Mapped to Ödkem Rules 14–16;
-        independent linguistic review pending. Type the complete word with
-        Turkish spelling. Attempts are saved; no mastery rating yet.
+        50 newly authored draft questions across five cases; independent
+        linguistic review pending. Type the complete word with Turkish spelling.
+        Attempts are saved; no mastery rating yet.
       </p>
       {!questions.length ? (
         <>
@@ -96,7 +96,7 @@ export function CasePilot({ attempts, updateAttempts }: Props) {
           </button>
           <p className="hint">
             {concept === "mixed"
-              ? "Mixed practice: four questions per case, shuffled together. Each question still names the required case."
+              ? "Mixed practice: two or three questions per case, shuffled together. Each question still names the required case."
               : "Practice all 10 questions for this case."}
           </p>
           <button

@@ -120,7 +120,13 @@ test("all case pools use strict spelling and touch letters; production project p
   await page.goto("http://127.0.0.1:4173/turkish-quiz-app/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
   const pilot = page.getByRole("region", { name: "Typed case pilot" });
-  for (const concept of ["locative", "dative", "ablative"]) {
+  for (const concept of [
+    "locative",
+    "dative",
+    "ablative",
+    "accusative",
+    "genitive",
+  ]) {
     await pilot
       .getByLabel("Required case", { exact: true })
       .selectOption(concept);
@@ -153,7 +159,7 @@ test("all case pools use strict spelling and touch letters; production project p
         JSON.parse(localStorage.getItem("quiz-my-turkish-v1")!).pilotAttempts
           .length,
     ),
-  ).toBe(3);
+  ).toBe(5);
 });
 
 test("typed checking works inside a preview sandbox without form permission", async ({
@@ -259,7 +265,14 @@ test("mixed sessions balance cases and mistake review resolves only corrected qu
       })
       .click();
   }
-  expect(counts).toEqual({ locative: 4, dative: 4, ablative: 4 });
+  expect(Object.keys(counts).sort()).toEqual([
+    "ablative",
+    "accusative",
+    "dative",
+    "genitive",
+    "locative",
+  ]);
+  for (const count of Object.values(counts)) expect([2, 3]).toContain(count);
   await expect(
     pilot.getByText("12 / 12 typed answers correct / attempted", {
       exact: true,
@@ -280,4 +293,58 @@ test("mixed sessions balance cases and mistake review resolves only corrected qu
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+
+test("accusative and genitive each complete ten unique typed questions", async ({
+  page,
+}) => {
+  await page.route("https://docs.google.com/**", (r) => r.abort());
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open grammar practice" }).click();
+  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  for (const concept of ["accusative", "genitive"]) {
+    await pilot
+      .getByLabel("Required case", { exact: true })
+      .selectOption(concept);
+    await pilot
+      .getByRole("button", { name: "Start typed case practice" })
+      .click();
+    const seen = new Set<string>();
+    for (let i = 0; i < 10; i++) {
+      const text = await pilot.innerText();
+      const q = caseQuestions.find(
+        (q) => q.conceptId === concept && text.includes(q.sentence),
+      )!;
+      expect(seen.has(q.id)).toBe(false);
+      seen.add(q.id);
+      await expect(pilot.getByText(q.explanation, { exact: true })).toHaveCount(
+        0,
+      );
+      await pilot.getByLabel("Complete inflected word").fill(q.answer);
+      await pilot.getByLabel("Complete inflected word").press("Enter");
+      await expect(
+        pilot.getByText(q.explanation, { exact: true }),
+      ).toBeVisible();
+      await pilot
+        .getByRole("button", {
+          name: i === 9 ? "See typed results" : "Next typed question",
+        })
+        .click();
+    }
+    await expect(
+      pilot.getByText("10 / 10 typed answers correct / attempted", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await pilot.getByRole("button", { name: "Restart typed practice" }).click();
+  }
+  const attempts = await page.evaluate(
+    () => JSON.parse(localStorage.getItem("quiz-my-turkish-v1")!).pilotAttempts,
+  );
+  expect(
+    attempts.filter((a: any) => a.conceptId === "accusative"),
+  ).toHaveLength(10);
+  expect(attempts.filter((a: any) => a.conceptId === "genitive")).toHaveLength(
+    10,
+  );
 });

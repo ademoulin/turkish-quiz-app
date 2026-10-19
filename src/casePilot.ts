@@ -1,16 +1,26 @@
 import { shuffle } from "./shuffle";
 /** Newly authored draft exercises; not textbook quotations or tutor-certified content.
- * Reference: Yeni Hitit 1, section 2.2, printed p.29. Ödkem Rules catalog mapping uses its explicit numeric IDs.
+ * References: Yeni Hitit 1 §2.2 p.29, §3.2 p.40, §6.1 p.73 (printed pages). Ödkem Rules catalog mapping uses its explicit numeric IDs.
  */
 export const concepts = {
   locative: "Locative (-DA)",
   dative: "Dative (-(y)A)",
   ablative: "Ablative (-DAn)",
+  accusative: "Accusative (-(y)I)",
+  genitive: "Genitive (-(n)In)",
 } as const;
 export const catalogMapping = {
-  concepts: { locative: 15, dative: 14, ablative: 16 },
+  concepts: {
+    locative: 15,
+    dative: 14,
+    ablative: 16,
+    accusative: 35,
+    genitive: 21,
+  },
   supportingRules: {
     two_way_vowel_harmony: 2,
+    four_way_vowel_harmony: 3,
+    buffer_n: 8,
     consonant_softening: 4,
     voiceless_assimilation: 5,
     buffer_y: 8,
@@ -19,6 +29,14 @@ export const catalogMapping = {
     "Turkish Vocab Quiz - Source Vocab · Ödkem Rules (provided workbook snapshot)",
 } as const;
 export type Concept = keyof typeof concepts;
+export const caseReferences = {
+  locative: "Yeni Hitit 1 §2.2, printed p.29",
+  dative: "Yeni Hitit 1 §2.2, printed p.29",
+  ablative: "Yeni Hitit 1 §2.2, printed p.29",
+  accusative: "Yeni Hitit 1 §6.1, printed p.73",
+  genitive:
+    "Yeni Hitit 1 §3.2, printed p.40; Ödkem 21 is a partial mapping: genitive form only, not whole genitive–possessive construction",
+} as const;
 export interface CaseQuestion {
   id: string;
   conceptId: Concept;
@@ -248,6 +266,150 @@ const rows: Record<Concept, [string, string, string, string, string[]][]> = {
       ["two_way_vowel_harmony", "voiceless_assimilation"],
     ],
   ],
+  accusative: [
+    [
+      "ev",
+      "Bu ___ satın almak istiyorum.",
+      "evi",
+      "Final vowel e selects -i.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "kitap",
+      "Bu ___ dün okudum.",
+      "kitabı",
+      "Final vowel a selects -ı; p softens to b before the vowel.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+    [
+      "okul",
+      "Bu ___ çok seviyorum.",
+      "okulu",
+      "Final vowel u selects -u.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "gül",
+      "Bu ___ vazoya koyuyorum.",
+      "gülü",
+      "Final vowel ü selects -ü.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "kapı",
+      "Lütfen şu ___ kapat.",
+      "kapıyı",
+      "Final vowel ı selects ı; vowel-final kapı needs buffer y.",
+      ["four_way_vowel_harmony", "buffer_y"],
+    ],
+    [
+      "kedi",
+      "Bahçedeki ___ görüyor musun?",
+      "kediyi",
+      "Final vowel i selects i; vowel-final kedi needs buffer y.",
+      ["four_way_vowel_harmony", "buffer_y"],
+    ],
+    [
+      "köprü",
+      "Bu ___ her gün geçiyoruz.",
+      "köprüyü",
+      "Final vowel ü selects ü; vowel-final köprü needs buffer y.",
+      ["four_way_vowel_harmony", "buffer_y"],
+    ],
+    [
+      "araba",
+      "Bu ___ park ediyorum.",
+      "arabayı",
+      "Final vowel a selects ı; vowel-final araba needs buffer y.",
+      ["four_way_vowel_harmony", "buffer_y"],
+    ],
+    [
+      "ağaç",
+      "Şu ___ görüyor musun?",
+      "ağacı",
+      "Final vowel a selects -ı; ç softens to c before the vowel.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+    [
+      "çocuk",
+      "Parktaki ___ tanıyorum.",
+      "çocuğu",
+      "Final vowel u selects -u; k softens to ğ before the vowel.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+  ],
+  genitive: [
+    [
+      "ev",
+      "Bu ___ kapısı açık.",
+      "evin",
+      "Final vowel e selects -in. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "okul",
+      "Bu ___ bahçesi çok büyük.",
+      "okulun",
+      "Final vowel u selects -un. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "gül",
+      "Bu ___ kokusu çok güzel.",
+      "gülün",
+      "Final vowel ü selects -ün. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "kız",
+      "Şu ___ çantası kırmızı.",
+      "kızın",
+      "Final vowel ı selects -ın. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony"],
+    ],
+    [
+      "araba",
+      "Bu ___ kapısı kilitli.",
+      "arabanın",
+      "Final vowel a selects ın; vowel-final araba needs buffer n. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "buffer_n"],
+    ],
+    [
+      "kedi",
+      "Bu ___ gözleri yeşil.",
+      "kedinin",
+      "Final vowel i selects in; vowel-final kedi needs buffer n. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "buffer_n"],
+    ],
+    [
+      "köprü",
+      "Bu ___ ayakları sağlam.",
+      "köprünün",
+      "Final vowel ü selects ün; vowel-final köprü needs buffer n. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "buffer_n"],
+    ],
+    [
+      "kitap",
+      "Bu ___ kapağı mavi.",
+      "kitabın",
+      "Final vowel a selects -ın; p softens to b before the vowel. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+    [
+      "çocuk",
+      "Bu ___ adı Deniz.",
+      "çocuğun",
+      "Final vowel u selects -un; k softens to ğ before the vowel. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+    [
+      "ağaç",
+      "Şu ___ yaprakları sarı.",
+      "ağacın",
+      "Final vowel a selects -ın; ç softens to c before the vowel. The possessed noun is already supplied; only the genitive form is tested.",
+      ["four_way_vowel_harmony", "consonant_softening"],
+    ],
+  ],
 };
 export const caseQuestions: CaseQuestion[] = (
   Object.keys(rows) as Concept[]
@@ -374,7 +536,7 @@ export function pilotMistakes(
       latest.get(q.id)?.correct === false,
   );
 }
-/** Mixed sessions contain four questions per case, with no duplicates. */
+/** Keep 12 mixed questions, distributing extras across randomly chosen cases. */
 export function selectPilotQuestions(
   selection: CaseSelection,
   random = Math.random,
@@ -384,12 +546,15 @@ export function selectPilotQuestions(
       caseQuestions.filter((q) => q.conceptId === selection),
       random,
     );
+  const cases = shuffle(Object.keys(concepts) as Concept[], random);
+  const perCase = Math.floor(12 / cases.length);
+  const extras = 12 % cases.length;
   return shuffle(
-    (Object.keys(concepts) as Concept[]).flatMap((c) =>
+    cases.flatMap((c, i) =>
       shuffle(
         caseQuestions.filter((q) => q.conceptId === c),
         random,
-      ).slice(0, 4),
+      ).slice(0, perCase + (i < extras ? 1 : 0)),
     ),
     random,
   );

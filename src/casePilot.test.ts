@@ -8,10 +8,16 @@ import {
   validatePilotImport,
 } from "./casePilot";
 import { validateImport, readStore, writeStore } from "./storage";
-test("30 stable draft questions, 10 per concept, separate supporting rules", () => {
-  assert.equal(caseQuestions.length, 30);
-  assert.equal(new Set(caseQuestions.map((q) => q.id)).size, 30);
-  for (const concept of ["locative", "dative", "ablative"])
+test("50 stable draft questions, 10 per concept, separate supporting rules", () => {
+  assert.equal(caseQuestions.length, 50);
+  assert.equal(new Set(caseQuestions.map((q) => q.id)).size, 50);
+  for (const concept of [
+    "locative",
+    "dative",
+    "ablative",
+    "accusative",
+    "genitive",
+  ])
     assert.equal(
       caseQuestions.filter((q) => q.conceptId === concept).length,
       10,
@@ -94,8 +100,14 @@ test("mixed pool is balanced, randomized, unique and leaves bank unchanged", asy
   const pool = selectPilotQuestions("mixed", () => 0.25);
   assert.equal(pool.length, 12);
   assert.equal(new Set(pool.map((q) => q.id)).size, 12);
-  for (const c of ["locative", "dative", "ablative"] as const) {
-    assert.equal(pool.filter((q) => q.conceptId === c).length, 4);
+  for (const c of [
+    "locative",
+    "dative",
+    "ablative",
+    "accusative",
+    "genitive",
+  ] as const) {
+    assert.ok([2, 3].includes(pool.filter((q) => q.conceptId === c).length));
     assert.equal(selectPilotQuestions(c).length, 10);
   }
   assert.notDeepEqual(
@@ -156,4 +168,31 @@ test("practice mode is optional in old backups and retained in new evidence", ()
       pilotAttempts: [{ ...a, practiceMode: "bad" }],
     }),
   );
+});
+
+test("new cases retain their own evidence, strict spelling and partial catalog scope", async () => {
+  const { catalogMapping, caseReferences, pilotMistakes } =
+    await import("./casePilot");
+  assert.equal(catalogMapping.concepts.accusative, 35);
+  assert.equal(catalogMapping.concepts.genitive, 21);
+  assert.match(caseReferences.genitive, /partial mapping/);
+  const acc = caseQuestions.find((q) => q.id === "case-accusative-10")!;
+  const gen = caseQuestions.find((q) => q.id === "case-genitive-09")!;
+  assert.equal(matchesCase("cocugu", acc.answer), false);
+  assert.equal(matchesCase("çocuğu", acc.answer), true);
+  assert.equal(matchesCase("çocuğun", gen.answer), true);
+  assert.equal(matchesCase("çocuğu", gen.answer), false);
+  let attempts = recordPilot([], acc, "wrong", "one");
+  attempts = recordPilot(attempts, gen, "wrong", "one");
+  const restored = validatePilotImport(
+    JSON.parse(JSON.stringify({ version: 1, pilotAttempts: attempts })),
+  );
+  assert.deepEqual(pilotMistakes(restored, "accusative"), [acc]);
+  assert.deepEqual(pilotMistakes(restored, "genitive"), [gen]);
+  assert.deepEqual(
+    pilotMistakes(correctPilot(restored, restored[1].id), "genitive"),
+    [],
+  );
+  assert.ok(gen.supportingRuleIds.includes("four_way_vowel_harmony"));
+  assert.ok(!gen.supportingRuleIds.includes("possessive"));
 });

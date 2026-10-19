@@ -153,8 +153,8 @@ letters count. Enter checks an answer; the focused Next button advances after
 feedback. Turkish-letter buttons are available for touch and keyboard users.
 “My answer was correct” updates the existing attempt once.
 
-There are 30 newly authored draft exercises (10 per case), guided by Yeni Hitit 1
-§2.2, printed p.29, and mapped to Ödkem Rules IDs 14–16 from the supplied workbook.
+There are 50 newly authored draft exercises (10 per case), guided by Yeni Hitit 1
+§2.2 p.29, §3.2 p.40, and §6.1 p.73 (printed pages), and mapped to Ödkem Rules IDs 14–16, 35, and partially 21 from the supplied workbook. Genitive questions test only the genitive word; the possessed noun is supplied.
 These exercises are not textbook quotations or independently certified content.
 Supporting phonological rules are recorded separately from the tested case.
 
@@ -170,8 +170,8 @@ is automatically published to GitHub Pages. Checks: `npm test`, `npm run build`,
 
 ### Mixed case practice and grammar mistake review
 
-Choose **Mixed cases · 12 questions** for a shuffled set of four questions per
-case. Each prompt still explicitly names the required case. Single-case practice
+Choose **Mixed cases · 12 questions** for a shuffled set of two or three questions per
+case, covering all five cases. Each prompt still explicitly names the required case. Single-case practice
 continues to use 10 questions.
 
 **Review grammar mistakes** practices questions whose latest saved result was
