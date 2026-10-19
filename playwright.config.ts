@@ -23,8 +23,8 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: "npm run build && npm run preview -- --port 4173",
-      url: "http://127.0.0.1:4173",
+      command: "npm run build && npm run preview -- --port 4173 --base /turkish-quiz-app/",
+      url: "http://127.0.0.1:4173/turkish-quiz-app/",
       reuseExistingServer: !process.env.CI,
     },
   ],

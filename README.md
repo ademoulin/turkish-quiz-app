@@ -144,3 +144,26 @@ git bundle create yeni-hitit-v82-integration.bundle codex/yeni-hitit-v82-integra
 On another checkout, import with `git fetch /path/to/yeni-hitit-v82-integration.bundle
 codex/yeni-hitit-v82-integration:codex/yeni-hitit-v82-integration`, then check out
 that branch. A bundle includes commit history and needs no GitHub connection.
+
+## Typed case pilot
+
+Open **Grammar practice → Typed endings · Case pilot**, select the required case,
+and start a 10-question session. Type the complete inflected base word; Turkish
+letters count. Enter checks an answer; the focused Next button advances after
+feedback. Turkish-letter buttons are available for touch and keyboard users.
+“My answer was correct” updates the existing attempt once.
+
+There are 30 newly authored draft exercises (10 per case), guided by Yeni Hitit 1
+§2.2, printed p.29, and mapped to Ödkem Rules IDs 14–16 from the supplied workbook.
+These exercises are not textbook quotations or independently certified content.
+Supporting phonological rules are recorded separately from the tested case.
+
+Pilot evidence is saved in the existing browser store and included in progress
+export/import as optional `pilotAttempts`. Old version 1 backups remain supported;
+imports merge by attempt ID. Session scores and saved history are evidence only,
+with no grammar mastery classification. The existing 588-question multiple-choice
+bank and other grading policies are unchanged.
+
+To try an unmerged branch locally: `npm ci`, then `npm run dev`. No branch preview
+is automatically published to GitHub Pages. Checks: `npm test`, `npm run build`,
+`npm run test:e2e` (requires Playwright Chromium).

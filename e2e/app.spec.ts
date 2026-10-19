@@ -184,7 +184,7 @@ test("export/import round trip merges results and rejects invalid imports", asyn
 test("packaged standalone HTML served normally fetches the real sheet", async ({
   page,
 }) => {
-  await page.goto("http://127.0.0.1:4173/quiz-my-turkish.html");
+  await page.goto("http://127.0.0.1:4173/turkish-quiz-app/quiz-my-turkish.html");
   await expect(page.getByText("Your vocabulary is up to date")).toBeVisible({
     timeout: 30000,
   });
