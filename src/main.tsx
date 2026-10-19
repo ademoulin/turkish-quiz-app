@@ -32,6 +32,8 @@ import {
 } from "./familiarity";
 import { matchesConjugation } from "./grading";
 import "./style.css";
+import { GrammarPractice } from "./GrammarPractice";
+declare const __GRAMMAR_PREVIEW__: boolean;
 type Question = {
   entry: Entry;
   kind: "meaning" | "conjugation";
@@ -480,6 +482,7 @@ function App() {
                 Build a little confidence, one question at a time.
               </p>
             </section>
+            {__GRAMMAR_PREVIEW__ && <GrammarPractice />}
             <section className="source-bar" aria-label="Vocabulary connection">
               <div>
                 <span
