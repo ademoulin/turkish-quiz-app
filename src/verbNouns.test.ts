@@ -4,15 +4,15 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('60 authored model sentences produce 180 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,60);assert.equal(bank.length,180);assert.equal(new Set(bank.map(q=>q.id)).size,180);
- for(const lesson of ['activity','cases','subjects','clause_cases','negation'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
+test('72 authored model sentences produce 216 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,72);assert.equal(bank.length,216);assert.equal(new Set(bank.map(q=>q.id)).size,216);
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal(e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'){assert.equal(q.options?.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(examples.filter(e=>e.form==='ma_accusative').length,4);assert.equal(examples.filter(e=>e.form==='ma_dative').length,4);assert.equal(examples.filter(e=>e.form==='mak_ablative').length,4);
 });
 test('mixed sessions balance tasks without reusing model sentences; focused sessions cover their whole task',()=>{
- for(const lesson of ['activity','cases','subjects','clause_cases','negation'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
  for(const task of ['meaning','structure','type'] as const){const pool=selectLessonQuestions(lesson,task);assert.equal(pool.length,12);assert.equal(pool.every(q=>q.task===task&&q.lessonId===lesson),true);}}
 });
 test('option identity grades meanings and structures; blank, unknown and duplicate submissions do not score',()=>{
@@ -85,4 +85,23 @@ test('negation history, duplicate scoring, corrections and task review preserve 
  const q=lessonPool('negation','structure')[0],a=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(a,'negation','structure').length,1);assert.equal(lessonMistakes(a,'negation','type').length,0);assert.equal(lessonMistakes(a,'subjects').length,0);
  const corrected=correctPilot(a,a[0].id);assert.equal(corrected[0].id,a[0].id);assert.equal(corrected[0].time,a[0].time);assert.equal(corrected[0].answer,a[0].answer);assert.equal(corrected[0].negationScope,a[0].negationScope);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:corrected}),corrected);assert.equal(lessonMistakes(corrected,'negation').length,0);
  const old=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,negationScope:'none'}]}));
+});
+
+test('-DIK content models balance subjects and past/habitual contexts with explicit harmony, agreement and case forms',()=>{
+ const models=examples.filter(e=>e.lessonId==='content_dik'),pool=lessonPool('content_dik','type');
+ assert.deepEqual(pool.map(q=>q.expected),['geldiğimi','çalıştığımı','okuduğunu','yürüdüğünü','çıktığını','yüzdüğünü','bitirdiğimizi','buluştuğumuzu','gezdiğinizi','pişirdiğinizi','ettiklerini','kalktıklarını']);
+ for(const person of ['ben','sen','o','biz','siz','onlar']){const pair=models.filter(e=>e.nominalSubject===person);assert.equal(pair.length,2);assert.deepEqual(pair.map(e=>e.contentTime),['past_event','habitual_fact']);}
+ for(const e of models){assert.equal(e.nominalCase,'accusative');assert.ok(e.structurePrompt);assert.ok(e.structureAnswer);assert.equal(e.form,'dik_possessive_case');assert.equal(e.supportingRuleIds.includes('buffer_n'),['o','onlar'].includes(e.nominalSubject!));assert.equal(e.supportingRuleIds.includes('consonant_softening'),e.nominalSubject!=='onlar');assert.match(e.unit,e.contentTime==='past_event'?/dün/:/her /);}
+ for(const [index,bad] of [[0,'geldikimi'],[1,'çalışdığımı'],[2,'okuduğumu'],[3,'yurudugunu'],[4,'çıkdığını'],[5,'yüzdüğü'],[6,'bitirdiğimi'],[7,'buluşduğumuzu'],[8,'gezdiğinizi!'],[10,'ettiğlerini'],[11,'kalkdıklarını']] as const)assert.equal(recordLesson([],pool[index],bad,'s')[0].correct,false);
+ const plural=pool[10];assert.equal(recordLesson([],plural,'ettiğini','s')[0].correct,false); // explicit overt-plural cue, not a general grammatical ban
+ for(const q of pool)assert.equal(recordLesson([],q,' '+q.expected.normalize('NFD')+' ','s')[0].correct,true);
+});
+test('-DIK results retain time context, subject and outer case across corrections, retries and legacy-compatible imports',()=>{
+ for(const q of lessonPool('content_dik')){
+  const saved=recordLesson([],q,q.task==='type'?q.expected:'target','s');assert.equal(saved[0].contentTime,q.contentTime);assert.equal(saved[0].nominalSubject,q.nominalSubject);assert.equal(saved[0].nominalCase,'accusative');assert.deepEqual(validatePilotImport({version:1,pilotAttempts:saved}),saved);assert.strictEqual(recordLesson(saved,q,'wrong','s'),saved);
+  for(const patch of [{contentTime:undefined},{contentTime:'future'},{nominalCase:undefined},{nominalCase:'dative'},{nominalSubject:undefined},{nominalSubject:42},{lessonId:'clause_cases'},{negationScope:'none'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...saved[0],...patch}]}));
+ }
+ const q=lessonPool('content_dik','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'content_dik','structure').length,1);assert.equal(lessonMistakes(wrong,'content_dik','type').length,0);assert.equal(lessonMistakes(wrong,'negation').length,0);
+ const corrected=correctPilot(wrong,wrong[0].id);for(const field of ['id','time','answer','contentTime','nominalSubject','nominalCase'] as const)assert.equal(corrected[0][field],wrong[0][field]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:corrected}),corrected);assert.equal(lessonMistakes(corrected,'content_dik').length,0);assert.equal(lessonMistakes(recordLesson(wrong,q,'target','retry'),'content_dik').length,0);
+ const old=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,contentTime:'past_event'}]}));assert.deepEqual(validatePilotImport({version:1}),[]);
 });
