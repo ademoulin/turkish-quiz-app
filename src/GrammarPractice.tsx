@@ -17,15 +17,15 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
   const result = session && score(session);
   return <section className="panel grammar-preview" aria-label="Grammar practice">
     <h2>Yeni Hitit 1 · Grammar practice</h2>
-    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Multiple-choice scores stay in this session only; typed pilot attempts are saved.</p>
+    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Multiple-choice scores stay in this session only; typed grammar attempts are saved.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
       <select id="grammar-activity" value={activity} onChange={e => setActivity(e.target.value)}>
-        <option value="cases">Typed endings · Case pilot</option>
+        <option value="cases">Case Forms</option>
         <option value="possessives">Typed endings · Possessive forms</option>
         <option value="phrases">Build a noun phrase · Genitive + possessive</option>
         <option value="possessed-cases">Combine endings · Possessive + case</option>
-        <option value="multiple-choice">Yeni Hitit · Multiple choice</option>
+        <option value="multiple-choice">Grammar Multiple Choice</option>
       </select>
       <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
       <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>

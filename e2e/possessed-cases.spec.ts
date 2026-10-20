@@ -48,7 +48,7 @@ test('possessed-case review, selection, reload and old/new backups stay separate
  await expect(area.getByRole('button',{name:'Review possessed case mistakes (0)',exact:true})).toBeDisabled();
  await page.reload();await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('possessed-cases');
  await expect(area.getByText('2 saved typed attempts · 1 correct, including self-corrections',{exact:true})).toBeVisible();
- for(const [activity,region] of [['cases','Typed case pilot'],['possessives','Typed possessive practice'],['phrases','Typed noun phrase practice']]){
+ for(const [activity,region] of [['cases','Case Forms'],['possessives','Typed possessive practice'],['phrases','Typed noun phrase practice']]){
   await page.getByLabel('Practice activity',{exact:true}).selectOption(activity);
   await expect(page.getByRole('region',{name:region,exact:true}).getByText('0 saved typed attempts · 0 correct, including self-corrections',{exact:true})).toBeVisible();
  }

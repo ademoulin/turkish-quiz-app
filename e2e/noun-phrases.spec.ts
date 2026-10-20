@@ -123,7 +123,7 @@ test("phrase mistake review, reload and backup stay separate from word-form evid
       { exact: true },
     ),
   ).toBeVisible();
-  for (const [name, activity] of [["Typed case pilot", "cases"], ["Typed possessive practice", "possessives"]]) {
+  for (const [name, activity] of [["Case Forms", "cases"], ["Typed possessive practice", "possessives"]]) {
     await page.getByLabel("Practice activity", {exact:true}).selectOption(activity);
     await expect(
       page

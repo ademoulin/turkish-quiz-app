@@ -28,8 +28,8 @@ import {
 } from "./nounPhrases";
 const cases: PracticeConfig = {
   id: "pilot",
-  region: "Typed case pilot",
-  title: "Typed endings · Case pilot",
+  region: "Case Forms",
+  title: "Case Forms",
   description:
     "50 newly authored draft questions across five cases; independent linguistic review pending. Type the complete word with Turkish spelling. Attempts are saved; no mastery rating yet.",
   bank: caseQuestions,
