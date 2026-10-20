@@ -467,14 +467,14 @@ export interface PilotAttempt {
     | "pronoun_cases"
     | "choose_case";
   questionId: string;
-  conceptId: `case_choice_${"locative" | "dative" | "ablative"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
+  conceptId: `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
-  selectedCase?: "locative" | "dative" | "ablative";
+  selectedCase?: "locative" | "dative" | "ablative" | "accusative" | "bare";
   caseCorrect?: boolean;
   formCorrect?: boolean;
   baseNoun?: string;
   givenForm?: string;
-  requiredCase?: Exclude<Concept, "genitive">;
+  requiredCase?: Exclude<Concept, "genitive"> | "bare";
   answerScope?: "word" | "phrase";
   possessor?: string;
   possessed?: string;
@@ -577,7 +577,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
         !Object.hasOwn(suffixChainConcepts, a.conceptId) &&
         !Object.hasOwn(pronounCaseConcepts, a.conceptId) &&
-        !["case_choice_locative","case_choice_dative","case_choice_ablative"].includes(a.conceptId)) ||
+        !["case_choice_locative","case_choice_dative","case_choice_ablative","case_choice_accusative","case_choice_bare"].includes(a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
@@ -607,9 +607,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         !["singular", "plural"].includes(a.nounNumber)) ||
       (a.conceptId.startsWith("case_choice_")
         ? a.exerciseType !== "case_choice_completion" ||
-          !["locative","dative","ablative"].includes(a.requiredCase || "") ||
+          !["locative","dative","ablative","accusative","bare"].includes(a.requiredCase || "") ||
           a.conceptId !== `case_choice_${a.requiredCase}` ||
-          !["locative","dative","ablative"].includes(a.selectedCase || "") ||
+          !["locative","dative","ablative","accusative","bare"].includes(a.selectedCase || "") ||
           typeof a.baseNoun !== "string" || !a.baseNoun.trim() ||
           typeof a.caseCorrect !== "boolean" || typeof a.formCorrect !== "boolean" ||
           a.correct !== (a.caseCorrect && a.formCorrect) ||

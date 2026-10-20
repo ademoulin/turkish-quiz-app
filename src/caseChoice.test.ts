@@ -2,10 +2,10 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {choiceQuestions as bank,recordChoice,correctChoice,choiceMistakes,selectChoiceQuestions} from './caseChoice';
 import {validatePilotImport} from './casePilot';
-test('30 distinct authored questions; balanced sessions, honest metadata and no answer in sentence',()=>{
- assert.equal(bank.length,30);assert.equal(new Set(bank.map(q=>q.id)).size,30);
- for(const c of ['locative','dative','ablative'])assert.equal(bank.filter(q=>q.requiredCase===c).length,10);
- for(let i=0;i<10;i++){const pool=selectChoiceQuestions();assert.equal(new Set(pool.map(q=>q.id)).size,12);for(const c of ['locative','dative','ablative'])assert.equal(pool.filter(q=>q.requiredCase===c).length,4);}
+test('50 distinct authored questions; balanced sessions, honest metadata and no answer in sentence',()=>{
+ assert.equal(bank.length,50);assert.equal(new Set(bank.map(q=>q.id)).size,50);
+ for(const c of ['locative','dative','ablative','accusative','bare'])assert.equal(bank.filter(q=>q.requiredCase===c).length,10);
+ for(let i=0;i<10;i++){const pool=selectChoiceQuestions();assert.equal(new Set(pool.map(q=>q.id)).size,12);for(const c of ['locative','dative','ablative','accusative','bare'])assert.ok([2,3].includes(pool.filter(q=>q.requiredCase===c).length));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.ok(q.sentence.includes('___'));assert.ok(q.meaning&&q.explanation);}
 });
 test('case choice and strict form production score independently; duplicate checks are ignored',()=>{
@@ -28,4 +28,17 @@ test('version-1 backups accept new evidence and old empty histories, reject inco
  for(const patch of [{selectedCase:'accusative'},{caseCorrect:'yes'},{formCorrect:false},{requiredCase:'genitive'},{exerciseType:'typed_form_completion'},{correct:false},{conceptId:'locative'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a[0],...patch}]}));
  // Actual corrected history, with the original timestamp and raw answers, round-trips.
  const bad=recordChoice([],bank[0],'dative','wrong','s');const fixed=correctChoice(correctChoice(bad,bad[0].id,'case'),bad[0].id,'form');assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
+});
+
+test('accusative and bare objects grade independently, retain Turkish distinctions and round-trip with prior choice history',()=>{
+ for(const q of bank.filter(q=>['accusative','bare'].includes(q.requiredCase))){
+  const right=recordChoice([],q,q.requiredCase,' '+q.answer.normalize('NFD')+' ','s');assert.equal(right[0].correct,true);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:right}),right);
+  const selected=q.requiredCase==='bare'?'accusative':'bare';const wrong=recordChoice([],q,selected,q.answer,'s');assert.equal(wrong[0].caseCorrect,false);assert.equal(wrong[0].formCorrect,true);
+  const other=bank.find(other=>other.base===q.base&&other.requiredCase===selected)!;const form=recordChoice([],q,q.requiredCase,other.answer,'s');assert.equal(form[0].caseCorrect,true);assert.equal(form[0].formCorrect,false);assert.equal(choiceMistakes(form).length,1);
+  const fixed=correctChoice(form,form[0].id,'form');assert.equal(fixed[0].id,form[0].id);assert.equal(fixed[0].time,form[0].time);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(choiceMistakes(fixed).length,0);
+  if(q.requiredCase==='bare'){assert.equal(q.base,q.answer);assert.deepEqual(q.supportingRuleIds,[]);}else assert.ok(q.supportingRuleIds.includes('four_way_vowel_harmony'));
+ }
+ for(const [expected,bad] of [['kitabı','kitabi'],['ekmeği','ekmegi'],['süt','sut'],['çay','cay']]){const q=bank.find(q=>q.answer===expected)!;assert.equal(recordChoice([],q,q.requiredCase,bad,'s')[0].formCorrect,false);}
+ const legacy=recordChoice([],bank[0],'locative',bank[0].answer,'old');const bare=bank.find(q=>q.requiredCase==='bare')!;const combined=recordChoice(legacy,bare,'bare',bare.answer,'new');assert.deepEqual(validatePilotImport({version:1,pilotAttempts:combined}),combined);
+ for(const conceptId of ['case_choice_genitive','case_choice_none'])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...combined[1],conceptId}]}));
 });
