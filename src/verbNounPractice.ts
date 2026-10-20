@@ -22,6 +22,7 @@ export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:s
  if(q.task!=='type'&&!option)return attempts;
  return [...attempts,{
   id:crypto.randomUUID(),sessionId,practiceMode:'verb_noun_lesson',questionId:q.id,conceptId:q.conceptId,
+  ...(q.nominalCase?{nominalCase:q.nominalCase}:{}),
   ...(q.nominalSubject?{nominalSubject:q.nominalSubject}:{}),
   lessonId:q.lessonId,lessonTask:q.task,exampleId:q.exampleId,exerciseType:q.exerciseType,
   ...(q.task==='type'?{}:{selectedOptionId:answer,expectedOptionId:q.expectedOptionId}),
