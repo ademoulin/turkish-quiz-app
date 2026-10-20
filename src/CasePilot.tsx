@@ -1,3 +1,4 @@
+import {mixedGrammarQuestions,mixedGrammarMistakes,selectMixedGrammarQuestions,selectMixedGrammarPool,mixedGrammarFamily} from './mixedGrammar';
 import {ownerSelections,type OwnerSelection} from './practiceOwners';
 import {suffixChainConcepts,suffixChainQuestions,selectSuffixChainQuestions,suffixChainMistakes,countSuffixChainQuestions,type SuffixChainSelection} from "./suffixChains";
 import {possessedCaseConcepts, possessedCaseQuestions, possessedCaseMistakes, selectPossessedCaseQuestions, countPossessedCaseQuestions, type PossessedCaseSelection, type PossessedNumberSelection} from "./possessedCases";
@@ -210,4 +211,24 @@ export function PossessedCasePractice(props: PracticeProps) {
   <div hidden={method!=='add-case'}><TypedPractice {...props} config={possessedCases} /></div>
   <div hidden={method!=='build-from-base'}><TypedPractice {...props} config={suffixChains} /></div>
  </div>;
+}
+
+const mixedGrammar:PracticeConfig={
+ id:'mixed-grammar',region:'Mixed Grammar Review',title:'Mixed Grammar Review',
+ description:'12-question sessions across five typed exercise families, reusing existing draft questions. Follow the task shown for each question. Results are saved under the original question and concept; independent linguistic review remains pending.',
+ guide:<><h4>How to practice</h4><p>Switch between case forms, possessives, two-word noun phrases, adding a case to a supplied form, and building all endings from a base noun. Read the Task heading and requirements before typing. Some questions need one word; noun phrases need both words. Do not type a whole sentence.</p><p><strong>Worked example (not scored):</strong> If the task is Possessive forms, bilet (ticket) + my, singular → <span lang="tr">biletim</span>. Other tasks ask for different endings; follow their stated owner, number and case.</p><p>All questions gives 12 shuffled questions, with two or three from each family. Previous mistakes reviews up to 12 currently missed questions, with fewer when fewer are available. A correct answer or manual correction updates that question’s existing review history.</p></>,
+ bank:mixedGrammarQuestions,initialSelection:'mixed',
+ select:()=>selectMixedGrammarQuestions(),
+ mistakes:a=>mixedGrammarMistakes(a),
+ reviewSelect:questions=>selectMixedGrammarPool(questions),
+ reviewMode:'mixed_grammar_review',mode:()=> 'mixed_grammar',
+ startLabel:'Start mixed grammar review',
+ setupHint:()=> 'All questions · 12 questions, balanced across five exercise families. Previous mistakes uses up to 12 latest missed questions without adding cleared items.',
+ reviewLabel:'Review previous grammar mistakes',
+ sessionLabel:m=>m==='mixed_grammar_review'?'Reviewing previous grammar mistakes':'Mixed grammar practice',
+ questionConfig:q=>({cases,possessives,phrases,add_case:possessedCases,build_from_base:suffixChains})[mixedGrammarFamily(q)],
+ cue:()=>'',answerLabel:'Your typed answer',completionLabel:'Mixed grammar session complete',
+};
+export function MixedGrammarReview(props:PracticeProps){
+ return <TypedPractice {...props} config={mixedGrammar} />;
 }

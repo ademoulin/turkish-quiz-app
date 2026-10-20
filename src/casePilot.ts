@@ -460,7 +460,9 @@ export interface PilotAttempt {
     | "noun_phrases"
     | "single_possessed_case"
     | "mixed_possessed_cases"
-    | "build_from_base";
+    | "build_from_base"
+    | "mixed_grammar"
+    | "mixed_grammar_review";
   questionId: string;
   conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept;
   baseNoun?: string;
@@ -556,6 +558,8 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "single_possessed_case",
           "mixed_possessed_cases",
           "build_from_base",
+          "mixed_grammar",
+          "mixed_grammar_review",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&

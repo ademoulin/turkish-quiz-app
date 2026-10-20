@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
 import { sectionLabel, skillLabel } from './grammarLabels';
-import { CasePilot, PossessivePractice, NounPhrasePractice, PossessedCasePractice } from './CasePilot';
+import { CasePilot, PossessivePractice, NounPhrasePractice, PossessedCasePractice, MixedGrammarReview } from './CasePilot';
 import type { PilotAttempt } from './casePilot';
 export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAttempt[]; updateAttempts: (update: (a:PilotAttempt[])=>PilotAttempt[])=>void}) {
   const [open, setOpen] = useState(false);
@@ -25,6 +25,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         <option value="possessives">Typed endings · Possessive forms</option>
         <option value="phrases">Build a noun phrase · Genitive + possessive</option>
         <option value="possessed-cases">Combine endings · Possessive + case</option>
+        <option value="mixed-review">Mixed Grammar Review</option>
         <option value="multiple-choice">Grammar Multiple Choice</option>
       </select>
       <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
@@ -32,6 +33,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
       <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'phrases'}><NounPhrasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'possessed-cases'}><PossessedCasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'mixed-review'}><MixedGrammarReview attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'multiple-choice'}>
       {!session ? <>
         <section aria-label="How to practice"><h4>How to practice</h4><p>Choose a section or skill, or leave both set to All. Start a session, select one answer, then press Check grammar answer. The answer and explanation appear after checking.</p><p><strong>Worked example (not scored):</strong> Choose the Turkish word meaning ‘we’: ben / biz. Select biz, then check. Ben means ‘I’.</p></section>
