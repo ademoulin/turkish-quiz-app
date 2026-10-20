@@ -221,7 +221,9 @@ mastery classifications are assigned.
 ### Case endings on possessed nouns
 
 Open **Grammar practice → Practice activity → Combine endings · Possessive + case**.
-Choose all 48 shuffled questions or one of four cases (12 questions each).
+Choose a case and possessed noun number: Singular (48 questions), Plural (24),
+or Mixed (72). Singular remains the default. A single-case session has 12 singular,
+6 plural, or 18 mixed questions. Both filters also apply to mistake review.
 Each prompt names the required case and supplies the possessed form, including
 its existing possessive ending. Add only the case ending. For a supplied two-word
 phrase, return both words and keep the first word unchanged.
@@ -231,8 +233,10 @@ and grammar appendix §7.5(i), which explicitly covers third-person possessive n
 before case suffixes. Ödkem mappings: tested cases 14/15/16/35; supporting rules
 20 (supplied possession), 21 (supplied phrases), 2/3 (harmony), and 8 (partial buffer
 mapping). The n is required even before -de/-den. Independent review is pending.
-Only singular possessions are included; no genitive case stacking or third-person
-plural-owner ambiguity. This activity tests adding a named case, not choosing a
+Every question states the owner and whether the possessions are singular or
+plural. Third-person plural owners in this batch explicitly have plural
+possessions; the intended reading is supplied rather than inferred. No genitive
+case stacking is included. This activity tests adding a named case, not choosing a
 case or producing the underlying possessive form.
 
 Word answers retain strict Turkish spelling and existing word normalization.
@@ -257,3 +261,15 @@ including repeated my/your/his-her house contrasts. The original 24 question IDs
 answers and saved evidence remain valid; the 24 additions keep singular
 possessions and the same textbook/catalog scope. Plural forms and case choice
 remain future work. Independent linguistic review remains pending.
+
+### Plural possessed-case drills
+
+Combine endings now adds 24 authored draft plural drills (six per case, one per
+owner). The plural and possessive endings are already supplied; only adding the
+named case is assessed. Preserve both endings, e.g. kitapların → kitaplarına.
+The explicit owner and plural number disambiguate forms like çantaları.
+Yeni Hitit 1 grammar appendix §7.5(i) explicitly includes arabaları + case forms;
+the existing case/possessive source and Ödkem mappings apply. Plural production
+is supporting context, not separate mastery evidence. Independent review remains
+pending. Old singular questions and histories remain unchanged. Version-1 backups
+now also accept plural possessed-case snapshots; no new backup version is needed.

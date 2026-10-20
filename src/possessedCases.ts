@@ -8,6 +8,7 @@ export const possessedCaseConcepts = {
   possessed_accusative: 'Accusative on a possessed noun (-I)',
 } as const;
 export type PossessedCaseConcept = keyof typeof possessedCaseConcepts;
+export type PossessedNumberSelection = 'singular' | 'plural' | 'mixed';
 export type PossessedCaseSelection = PossessedCaseConcept | 'mixed';
 export interface PossessedCaseQuestion extends Omit<CaseQuestion, 'conceptId' | 'exerciseType'> {
   conceptId: PossessedCaseConcept;
@@ -17,14 +18,14 @@ export interface PossessedCaseQuestion extends Omit<CaseQuestion, 'conceptId' | 
   requiredCase: Exclude<Concept, 'genitive'>;
   answerScope: 'word' | 'phrase';
   owner: string;
-  nounNumber: 'singular';
+  nounNumber: 'singular' | 'plural';
 }
 export const possessedCaseCatalogMapping = {
   testedRules: {locative:15, dative:14, ablative:16, accusative:35},
   supportingRules: {possessive_ending:20, genitive_possessive_phrase:21, two_way_vowel_harmony:2, four_way_vowel_harmony:3, buffer_n:8},
   source: 'Turkish Vocab Quiz - Source Vocab · Ödkem Rules (provided workbook snapshot)',
   textbook: 'Yeni Hitit 1 §2.2 printed p.29, §3.1–3.2 printed pp.37–40, §6.1 printed p.73; grammar appendix §7.5(i), possessive endings + case endings',
-  scope: 'Add the explicitly requested case to a supplied singular possessed form. Not case choice, possessive-form production, plural possessions or sentence production. Third-person n also precedes consonant-initial locative/ablative; the catalog buffer rule is a supporting, partial mapping.',
+  scope: 'Add the explicitly requested case to a supplied singular or plural possessed form. Number and owner are explicit, including plural possessions for third-person plural owners. Not case choice, producing plural/possessive endings or sentence production. Third-person n also precedes consonant-initial locative/ablative; the catalog buffer rule is a supporting, partial mapping.',
 } as const;
 // Newly authored exercises. The supplied form already contains possession; only the added case is tested.
 // given form, owner, sentence, answer, suffix, third-person n
@@ -122,7 +123,7 @@ const givenMeanings: Record<string,string> = {
   "yüzünüz": "your face (plural/formal)",
   "komşunun köpeği": "the neighbor’s dog"
 };
-export const possessedCaseQuestions: PossessedCaseQuestion[] = (Object.keys(rows) as (keyof typeof rows)[]).flatMap(requiredCase =>
+export const singularPossessedCaseQuestions: PossessedCaseQuestion[] = (Object.keys(rows) as (keyof typeof rows)[]).flatMap(requiredCase =>
  rows[requiredCase].map(([givenForm,owner,sentence,answer,suffix,buffer],i) => ({
   id:`possessed-${requiredCase}-${String(i+1).padStart(2,'0')}`,
   conceptId:`possessed_${requiredCase}` as PossessedCaseConcept,
@@ -133,7 +134,54 @@ export const possessedCaseQuestions: PossessedCaseQuestion[] = (Object.keys(rows
   supportingRuleIds:['possessive_ending',requiredCase === 'accusative' ? 'four_way_vowel_harmony' : 'two_way_vowel_harmony',...(buffer?['buffer_n']:[]),...(givenForm.includes(' ')?['genitive_possessive_phrase']:[])],
   source:'newly_authored',reviewStatus:'draft_needs_independent_review',
  })));
-export function selectPossessedCaseQuestions(selection:PossessedCaseSelection='mixed', random=Math.random) {
- return shuffle(possessedCaseQuestions.filter(q=>selection==='mixed'||q.conceptId===selection),random);
+// Six owners per case; every possession is explicitly plural. Owner o is singular,
+// owner onlar is plural, even where their written possessed forms coincide.
+const pluralRows: Record<Exclude<Concept,'genitive'>, [string,string,string,string,string,string,boolean][]> = {
+ locative: [
+  ['evlerim','my houses','ben','Kışın ___ kalorifer çalışıyor.','evlerimde','-de',false],
+  ['kitapların','your books','sen','Bu konuyla ilgili bilgiler ___ var.','kitaplarında','-da',false],
+  ['çantaları','his/her bags','o','Anahtarlar ___ kaldı.','çantalarında','-da',true],
+  ['odalarımız','our rooms','biz','Bu gece ___ kalacağız.','odalarımızda','-da',false],
+  ['defterleriniz','your notebooks','siz','Bu notlar ___ yazılı.','defterlerinizde','-de',false],
+  ['arabaları','their cars','onlar','Çocuk koltukları ___ var.','arabalarında','-da',true],
+ ],
+ dative: [
+  ['evlerim','my houses','ben','Bu yıl ___ yeni kapılar taktırdım.','evlerime','-e',false],
+  ['kitapların','your books','sen','Cevabı bulmak için ___ bak.','kitaplarına','-a',false],
+  ['çantaları','his/her bags','o','Eşyaları ___ koyduk.','çantalarına','-a',true],
+  ['odalarımız','our rooms','biz','Akşam ___ döndük.','odalarımıza','-a',false],
+  ['defterleriniz','your notebooks','siz','Lütfen bu cümleyi ___ yazın.','defterlerinize','-e',false],
+  ['arabaları','their cars','onlar','Çocuklar ___ doğru koştu.','arabalarına','-a',true],
+ ],
+ ablative: [
+  ['gözlerim','my eyes','ben','___ yaş geldi.','gözlerimden','-den',false],
+  ['çantaların','your bags','sen','Kitapları ___ çıkardım.','çantalarından','-dan',false],
+  ['cepleri','his/her pockets','o','Bozuk paraları ___ çıkardı.','ceplerinden','-den',true],
+  ['odalarımız','our rooms','biz','Sabah ___ çıktık.','odalarımızdan','-dan',false],
+  ['defterleriniz','your notebooks','siz','Bu notları ___ aldım.','defterlerinizden','-den',false],
+  ['arabaları','their cars','onlar','Çantaları ___ çıkardılar.','arabalarından','-dan',true],
+ ],
+ accusative: [
+  ['kitaplarım','my books','ben','Öğretmene ___ gösterdim.','kitaplarımı','-ı',false],
+  ['evlerin','your houses','sen','Fotoğrafta ___ gördüm.','evlerini','-i',false],
+  ['kedileri','his/her cats','o','Veteriner ___ muayene etti.','kedilerini','-i',true],
+  ['çantalarımız','our bags','biz','___ kapının yanına bıraktık.','çantalarımızı','-ı',false],
+  ['gözlükleriniz','your pairs of glasses','siz','___ masaya koyun.','gözlüklerinizi','-i',false],
+  ['arabaları','their cars','onlar','Akşam ___ yıkadılar.','arabalarını','-ı',true],
+ ],
+};
+export const pluralPossessedCaseQuestions: PossessedCaseQuestion[] = (Object.keys(pluralRows) as (keyof typeof pluralRows)[]).flatMap(requiredCase=>
+ pluralRows[requiredCase].map(([givenForm,givenMeaning,owner,sentence,answer,suffix,buffer],i)=>({
+  id:`possessed-plural-${requiredCase}-${String(i+1).padStart(2,'0')}`,
+  conceptId:`possessed_${requiredCase}` as PossessedCaseConcept,
+  exerciseType:'typed_possessed_case',givenForm,givenMeaning,base:givenForm,requiredCase,
+  answerScope:'word',owner,nounNumber:'plural',sentence,answer,
+  explanation:`${givenForm} already includes plural possessions and the stated owner. Keep both endings. ${buffer?'After the third-person possessive ending, insert n before the case suffix. ':'Add the case suffix directly; no extra buffer is needed. '}${requiredCase==='accusative'?'Four-way':'Two-way'} vowel harmony follows the supplied form’s last vowel and selects ${suffix}: ${answer}.`,
+  supportingRuleIds:['possessive_ending',requiredCase==='accusative'?'four_way_vowel_harmony':'two_way_vowel_harmony',...(buffer?['buffer_n']:[])],
+  source:'newly_authored',reviewStatus:'draft_needs_independent_review',
+ })));
+export const possessedCaseQuestions = [...singularPossessedCaseQuestions,...pluralPossessedCaseQuestions];
+export function selectPossessedCaseQuestions(selection:PossessedCaseSelection='mixed', random=Math.random, number:PossessedNumberSelection='singular') {
+ return shuffle(possessedCaseQuestions.filter(q=>(selection==='mixed'||q.conceptId===selection)&&(number==='mixed'||q.nounNumber===number)),random);
 }
-export const possessedCaseMistakes=(attempts:PilotAttempt[], selection:PossessedCaseSelection='mixed')=>latestMistakes(possessedCaseQuestions,attempts,selection);
+export const possessedCaseMistakes=(attempts:PilotAttempt[], selection:PossessedCaseSelection='mixed', number:PossessedNumberSelection='singular')=>latestMistakes(possessedCaseQuestions.filter(q=>number==='mixed'||q.nounNumber===number),attempts,selection);

@@ -19,11 +19,12 @@ export type PracticeConfig = {
   initialSelection: string;
   selectionLabel?: string;
   selections?: { id: string; label: string }[];
-  select: (selection: string) => TypedQuestion[];
-  mistakes: (attempts: PilotAttempt[], selection: string) => TypedQuestion[];
+  secondarySelection?: {label: string; initial: string; options: {id:string; label:string}[]};
+  select: (selection: string, secondarySelection?: string) => TypedQuestion[];
+  mistakes: (attempts: PilotAttempt[], selection: string, secondarySelection?: string) => TypedQuestion[];
   mode: (selection: string) => NonNullable<PilotAttempt["practiceMode"]>;
   startLabel: string;
-  setupHint: (selection: string) => string;
+  setupHint: (selection: string, secondarySelection?: string) => string;
   guide: React.ReactNode;
   instruction?: (q: TypedQuestion) => React.ReactNode;
   reviewLabel: string;
@@ -43,6 +44,7 @@ export function TypedPractice({
   config,
 }: PracticeProps & { config: PracticeConfig }) {
   const [selection, setSelection] = useState(config.initialSelection);
+  const [secondarySelection, setSecondarySelection] = useState(config.secondarySelection?.initial || "");
   const [questions, setQuestions] = useState<TypedQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
@@ -55,7 +57,7 @@ export function TypedPractice({
   const nextButton = useRef<HTMLButtonElement>(null);
   const knownIds = new Set(config.bank.map((q) => q.id));
   const familyAttempts = attempts.filter((a) => knownIds.has(a.questionId));
-  const mistakes = config.mistakes(attempts, selection);
+  const mistakes = config.mistakes(attempts, selection, secondarySelection);
   const q = questions[index];
   const results = attempts.filter((a) => a.sessionId === sessionId.current);
   const feedback = q && results.find((a) => a.questionId === q.id);
@@ -64,7 +66,7 @@ export function TypedPractice({
     else if (feedback) nextButton.current?.focus();
   }, [q, feedback]);
   function start(review = false) {
-    const pool = review ? shuffle(mistakes) : config.select(selection);
+    const pool = review ? shuffle(mistakes) : config.select(selection, secondarySelection);
     if (!pool.length) return;
     sessionId.current = crypto.randomUUID();
     locked.current = false;
@@ -113,10 +115,16 @@ export function TypedPractice({
               </select>
             </>
           )}
+          {config.secondarySelection && <>
+            <label className="field" htmlFor={config.id + "-secondary"}>{config.secondarySelection.label}</label>
+            <select id={config.id + "-secondary"} value={secondarySelection} onChange={e=>setSecondarySelection(e.target.value)}>
+              {config.secondarySelection.options.map(o=><option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </>}
           <button className="primary" onClick={() => start()}>
             {config.startLabel}
           </button>
-          <p className="hint">{config.setupHint(selection)}</p>
+          <p className="hint">{config.setupHint(selection, secondarySelection)}</p>
           <button
             className="secondary"
             disabled={!mistakes.length}
