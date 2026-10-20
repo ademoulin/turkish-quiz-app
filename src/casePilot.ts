@@ -1,4 +1,10 @@
 import {
+  phraseConcepts,
+  matchesPhrase,
+  type PhraseConcept,
+  type PhraseQuestion,
+} from "./nounPhrases";
+import {
   possessiveConcepts,
   type PossessiveConcept,
   type PossessiveQuestion,
@@ -439,7 +445,7 @@ export const caseQuestions: CaseQuestion[] = (
 export const matchesCase = (answer: string, expected: string) =>
   answer.normalize("NFC").trim().toLocaleLowerCase("tr") ===
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
-export type TypedQuestion = CaseQuestion | PossessiveQuestion;
+export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion;
 export interface PilotAttempt {
   id: string;
   sessionId: string;
@@ -448,12 +454,17 @@ export interface PilotAttempt {
     | "mixed_cases"
     | "mistake_review"
     | "single_possessive"
-    | "mixed_possessives";
+    | "mixed_possessives"
+    | "noun_phrases";
   questionId: string;
-  conceptId: Concept | PossessiveConcept;
+  conceptId: Concept | PossessiveConcept | PhraseConcept;
+  possessor?: string;
+  possessed?: string;
+  possessorNumber?: "singular";
+  possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "typed_form_completion";
+  exerciseType: "typed_form_completion" | "typed_noun_phrase";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -482,11 +493,22 @@ export function recordPilot(
       questionId: q.id,
       conceptId: q.conceptId,
       ...("owner" in q ? { owner: q.owner, nounNumber: q.nounNumber } : {}),
+      ...("possessor" in q
+        ? {
+            possessor: q.possessor,
+            possessed: q.possessed,
+            possessorNumber: q.possessorNumber,
+            possessedNumber: q.possessedNumber,
+          }
+        : {}),
       exerciseType: q.exerciseType,
       supportingRuleIds: q.supportingRuleIds,
       answer: answer.trim(),
       expected: q.answer,
-      correct: matchesCase(answer, q.answer),
+      correct:
+        q.exerciseType === "typed_noun_phrase"
+          ? matchesPhrase(answer, q.answer)
+          : matchesCase(answer, q.answer),
       manual: false,
       time: new Date().toISOString(),
     },
@@ -519,9 +541,11 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "mistake_review",
           "single_possessive",
           "mixed_possessives",
+          "noun_phrases",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
-        !Object.hasOwn(possessiveConcepts, a.conceptId)) ||
+        !Object.hasOwn(possessiveConcepts, a.conceptId) &&
+        !Object.hasOwn(phraseConcepts, a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
@@ -529,7 +553,15 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
-      a.exerciseType !== "typed_form_completion" ||
+      (Object.hasOwn(phraseConcepts, a.conceptId)
+        ? a.exerciseType !== "typed_noun_phrase" ||
+          typeof a.possessor !== "string" ||
+          !a.possessor.trim() ||
+          typeof a.possessed !== "string" ||
+          !a.possessed.trim() ||
+          a.possessorNumber !== "singular" ||
+          a.possessedNumber !== "singular"
+        : a.exerciseType !== "typed_form_completion") ||
       !Array.isArray(a.supportingRuleIds) ||
       !a.supportingRuleIds.every((r) => typeof r === "string") ||
       typeof a.correct !== "boolean" ||

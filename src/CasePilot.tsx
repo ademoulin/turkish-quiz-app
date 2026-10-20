@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { shuffle } from "./shuffle";
+import React from "react";
+import {
+  TypedPractice,
+  type PracticeProps,
+  type PracticeConfig,
+} from "./TypedPractice";
 import {
   caseQuestions,
   concepts,
-  recordPilot,
-  correctPilot,
   pilotMistakes,
   selectPilotQuestions,
   type CaseSelection,
-  type TypedQuestion,
-  type PilotAttempt,
+  type Concept,
 } from "./casePilot";
 import {
   possessiveConcepts,
@@ -17,297 +18,123 @@ import {
   selectPossessiveQuestions,
   possessiveMistakes,
   type PossessiveSelection,
+  type PossessiveConcept,
 } from "./possessives";
-type Props = {
-  family?: "cases" | "possessives";
-  attempts: PilotAttempt[];
-  updateAttempts: (update: (a: PilotAttempt[]) => PilotAttempt[]) => void;
+import {
+  phraseQuestions,
+  phraseMistakes,
+  selectPhraseQuestions,
+} from "./nounPhrases";
+const cases: PracticeConfig = {
+  id: "pilot",
+  region: "Typed case pilot",
+  title: "Typed endings · Case pilot",
+  description:
+    "50 newly authored draft questions across five cases; independent linguistic review pending. Type the complete word with Turkish spelling. Attempts are saved; no mastery rating yet.",
+  bank: caseQuestions,
+  initialSelection: "locative",
+  selectionLabel: "Required case",
+  selections: [
+    { id: "mixed", label: "Mixed cases · 12 questions" },
+    ...Object.entries(concepts).map(([id, label]) => ({ id, label })),
+  ],
+  select: (s) => selectPilotQuestions(s as CaseSelection),
+  mistakes: (a, s) => pilotMistakes(a, s as CaseSelection),
+  mode: (s) => (s === "mixed" ? "mixed_cases" : "single_case"),
+  startLabel: "Start typed case practice",
+  setupHint: (s) =>
+    s === "mixed"
+      ? "Mixed practice: two or three questions per case, shuffled together. Each question still names the required case."
+      : "Practice all 10 questions for this case.",
+  reviewLabel: "Review grammar mistakes",
+  sessionLabel: (m) =>
+    m === "mistake_review"
+      ? "Reviewing grammar mistakes"
+      : m === "mixed_cases"
+        ? "Mixed case practice"
+        : "Single case practice",
+  cue: (q) => `Required case: ${concepts[q.conceptId as Concept]}`,
+  answerLabel: "Complete inflected word",
+  completionLabel: "Typed case session complete",
 };
-export function CasePilot({
-  attempts,
-  updateAttempts,
-  family = "cases",
-}: Props) {
-  const possessive = family === "possessives";
-  const prefix = possessive ? "possessive" : "pilot";
-  const labels: Record<string, string> = possessive
-    ? possessiveConcepts
-    : concepts;
-  const bank = possessive ? possessiveQuestions : caseQuestions;
-  const knownIds = new Set(bank.map((q) => q.id));
-  const familyAttempts = attempts.filter((a) => knownIds.has(a.questionId));
-  const required = possessive ? "Required owner" : "Required case";
-  const [concept, setConcept] = useState<CaseSelection | PossessiveSelection>(
-    possessive ? "possessive_ben" : "locative",
-  );
-  const [questions, setQuestions] = useState<TypedQuestion[]>([]);
-  const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [practiceMode, setPracticeMode] =
-    useState<NonNullable<PilotAttempt["practiceMode"]>>("single_case");
-  const mistakes = possessive
-    ? possessiveMistakes(attempts, concept as PossessiveSelection)
-    : pilotMistakes(attempts, concept as CaseSelection);
-  const sessionId = useRef("");
-  const input = useRef<HTMLInputElement>(null);
-  const checkButton = useRef<HTMLButtonElement>(null);
-  const locked = useRef(false);
-  const q = questions[index];
-  const results = attempts.filter((a) => a.sessionId === sessionId.current);
-  const feedback = q && results.find((a) => a.questionId === q.id);
-  useEffect(() => {
-    if (q && !feedback) input.current?.focus();
-    else if (feedback) checkButton.current?.focus();
-  }, [q, feedback]);
-  function start(review = false) {
-    const pool = review
-      ? shuffle<TypedQuestion>(mistakes)
-      : possessive
-        ? selectPossessiveQuestions(concept as PossessiveSelection)
-        : selectPilotQuestions(concept as CaseSelection);
-    if (!pool.length) return;
-    sessionId.current = crypto.randomUUID();
-    setPracticeMode(
-      review
-        ? "mistake_review"
-        : concept === "mixed"
-          ? possessive
-            ? "mixed_possessives"
-            : "mixed_cases"
-          : possessive
-            ? "single_possessive"
-            : "single_case",
-    );
-    setIndex(0);
-    setAnswer("");
-    locked.current = false;
-    setQuestions(pool);
-  }
-  function check() {
-    if (!q || feedback || locked.current || !answer.trim()) return;
-    locked.current = true;
-    updateAttempts((a) =>
-      recordPilot(a, q, answer, sessionId.current, practiceMode),
-    );
-  }
-  function insert(c: string) {
-    const el = input.current;
-    const start = el?.selectionStart ?? answer.length;
-    const end = el?.selectionEnd ?? start;
-    setAnswer(answer.slice(0, start) + c + answer.slice(end));
-    requestAnimationFrame(() => {
-      el?.focus();
-      el?.setSelectionRange(start + 1, start + 1);
-    });
-  }
-  return (
-    <section
-      className="panel"
-      aria-label={possessive ? "Typed possessive practice" : "Typed case pilot"}
-    >
-      <h3>
-        {possessive
-          ? "Typed endings · Possessive forms"
-          : "Typed endings · Case pilot"}
-      </h3>
-      <p className="hint">
-        {possessive
-          ? "24 newly authored draft questions across six owners, mapped to Ödkem rule 20. Type only the possessed noun for the stated owner and noun number. Independent linguistic review pending. Attempts are saved; no mastery rating yet."
-          : "50 newly authored draft questions across five cases; independent linguistic review pending. Type the complete word with Turkish spelling. Attempts are saved; no mastery rating yet."}
+const possessives: PracticeConfig = {
+  id: "possessive",
+  region: "Typed possessive practice",
+  title: "Typed endings · Possessive forms",
+  description:
+    "24 newly authored draft questions across six owners, mapped to Ödkem rule 20. Type only the possessed noun for the stated owner and noun number. Independent linguistic review pending. Attempts are saved; no mastery rating yet.",
+  bank: possessiveQuestions,
+  initialSelection: "possessive_ben",
+  selectionLabel: "Required owner",
+  selections: [
+    { id: "mixed", label: "Mixed owners · 12 questions" },
+    ...Object.entries(possessiveConcepts).map(([id, label]) => ({ id, label })),
+  ],
+  select: (s) => selectPossessiveQuestions(s as PossessiveSelection),
+  mistakes: (a, s) => possessiveMistakes(a, s as PossessiveSelection),
+  mode: (s) => (s === "mixed" ? "mixed_possessives" : "single_possessive"),
+  startLabel: "Start possessive practice",
+  setupHint: (s) =>
+    s === "mixed"
+      ? "Mixed practice: two questions per owner, shuffled together. Each question names the owner and noun number."
+      : "Practice all four questions for this owner.",
+  reviewLabel: "Review possessive mistakes",
+  sessionLabel: (m) =>
+    m === "mistake_review"
+      ? "Reviewing possessive mistakes"
+      : m === "mixed_possessives"
+        ? "Mixed possessive practice"
+        : "Single owner practice",
+  cue: (q) =>
+    `Required owner: ${possessiveConcepts[q.conceptId as PossessiveConcept]}`,
+  detail: (q) =>
+    "nounNumber" in q ? (
+      <p>
+        Noun number: <strong>{q.nounNumber}</strong>. Type only the possessed
+        noun, without the owner.
       </p>
-      {!questions.length ? (
-        <>
-          <label className="field" htmlFor={prefix + "-concept"}>
-            {required}
-          </label>
-          <select
-            id={prefix + "-concept"}
-            value={concept}
-            onChange={(e) =>
-              setConcept(e.target.value as CaseSelection | PossessiveSelection)
-            }
-          >
-            <option value="mixed">
-              {possessive
-                ? "Mixed owners · 12 questions"
-                : "Mixed cases · 12 questions"}
-            </option>
-            {Object.entries(labels).map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-          <button className="primary" onClick={() => start()}>
-            {possessive
-              ? "Start possessive practice"
-              : "Start typed case practice"}
-          </button>
-          <p className="hint">
-            {concept === "mixed"
-              ? possessive
-                ? "Mixed practice: two questions per owner, shuffled together. Each question names the owner and noun number."
-                : "Mixed practice: two or three questions per case, shuffled together. Each question still names the required case."
-              : possessive
-                ? "Practice all four questions for this owner."
-                : "Practice all 10 questions for this case."}
-          </p>
-          <button
-            className="secondary"
-            disabled={!mistakes.length}
-            onClick={() => start(true)}
-          >
-            {possessive
-              ? "Review possessive mistakes"
-              : "Review grammar mistakes"}{" "}
-            ({mistakes.length})
-          </button>
-          <p className="hint">
-            {mistakes.length
-              ? "Reviews the latest missed forms in your selection. A later correct answer or manual correction clears that question until you miss it again."
-              : "No grammar mistakes to review in this selection. Missed answers will appear here."}
-          </p>
-          <p>
-            {familyAttempts.length} saved typed attempts ·{" "}
-            {familyAttempts.filter((a) => a.correct).length} correct, including
-            self-corrections
-          </p>
-        </>
-      ) : (
-        <>
-          <p>
-            {practiceMode === "mistake_review"
-              ? possessive
-                ? "Reviewing possessive mistakes"
-                : "Reviewing grammar mistakes"
-              : practiceMode === "mixed_cases" ||
-                  practiceMode === "mixed_possessives"
-                ? possessive
-                  ? "Mixed possessive practice"
-                  : "Mixed case practice"
-                : possessive
-                  ? "Single owner practice"
-                  : "Single case practice"}
-          </p>
-          <p role="status">
-            {results.filter((a) => a.correct).length} / {results.length} typed
-            answers correct / attempted
-          </p>
-          {q ? (
-            <div>
-              <p>
-                Question {index + 1} of {questions.length} · {required}:{" "}
-                {labels[q.conceptId]}
-              </p>
-              {"nounNumber" in q && (
-                <p>
-                  Noun number: <strong>{q.nounNumber}</strong>. Type only the
-                  possessed noun, without the owner.
-                </p>
-              )}
-              <p lang="tr">{q.sentence}</p>
-              <p>
-                Base word: <strong lang="tr">{q.base}</strong>
-              </p>
-              <label className="field" htmlFor={prefix + "-answer"}>
-                Complete inflected word
-              </label>
-              <input
-                ref={input}
-                id={prefix + "-answer"}
-                className="answer"
-                lang="tr"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-                    e.preventDefault();
-                    check();
-                  }
-                }}
-                disabled={!!feedback}
-                autoComplete="off"
-                autoCapitalize="none"
-                spellCheck={false}
-              />
-              {!feedback && (
-                <div className="characters" aria-label="Turkish letters">
-                  {"çğıöşü".split("").map((c) => (
-                    <button key={c} type="button" onClick={() => insert(c)}>
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {feedback ? (
-                <>
-                  <div
-                    role="status"
-                    className={
-                      "feedback " + (feedback.correct ? "correct" : "incorrect")
-                    }
-                  >
-                    <strong>
-                      {feedback.correct ? "Correct." : "Incorrect."}
-                    </strong>
-                    <p lang="tr">Correct answer: {q.answer}</p>
-                    <p>{q.explanation}</p>
-                    {feedback.manual && <p>Marked correct by you.</p>}
-                  </div>
-                  {!feedback.correct && (
-                    <button
-                      type="button"
-                      className="secondary"
-                      onClick={() =>
-                        updateAttempts((a) => correctPilot(a, feedback.id))
-                      }
-                    >
-                      My answer was correct
-                    </button>
-                  )}
-                  <button
-                    ref={checkButton}
-                    type="button"
-                    className="primary"
-                    onClick={() => {
-                      setIndex((i) => i + 1);
-                      setAnswer("");
-                      locked.current = false;
-                    }}
-                  >
-                    {index + 1 === questions.length
-                      ? "See typed results"
-                      : "Next typed question"}
-                  </button>
-                </>
-              ) : (
-                <button
-                  ref={checkButton}
-                  className="primary"
-                  type="button"
-                  onClick={check}
-                  disabled={!answer.trim()}
-                >
-                  Check typed answer
-                </button>
-              )}
-            </div>
-          ) : (
-            <h4>
-              {possessive
-                ? "Possessive session complete"
-                : "Typed case session complete"}
-            </h4>
-          )}
-          <button className="text-button" onClick={() => setQuestions([])}>
-            {q ? "End typed session" : "Restart typed practice"}
-          </button>
-        </>
-      )}
-    </section>
-  );
+    ) : null,
+  answerLabel: "Complete inflected word",
+  completionLabel: "Possessive session complete",
+};
+const phrases: PracticeConfig = {
+  id: "noun-phrase",
+  region: "Typed noun phrase practice",
+  title: "Build a noun phrase · Genitive + possessive",
+  description:
+    "20 newly authored draft questions, mapped to Ödkem rule 21. Produce both words of the definite genitive–possessive phrase. Independent linguistic review pending. Results are saved; no mastery rating yet.",
+  bank: phraseQuestions,
+  initialSelection: "genitive_possessive_phrase",
+  select: () => selectPhraseQuestions(),
+  mistakes: (a) => phraseMistakes(a),
+  mode: () => "noun_phrases",
+  startLabel: "Start noun phrase practice",
+  setupHint: () =>
+    "Practice all 20 phrases in shuffled order. Use the supplied nouns and meaning; add endings to both words. Do not add a sentence or a case suffix.",
+  reviewLabel: "Review noun phrase mistakes",
+  sessionLabel: (m) =>
+    m === "mistake_review"
+      ? "Reviewing noun phrase mistakes"
+      : "Genitive + possessive phrase practice",
+  cue: () => "Required construction: definite genitive–possessive phrase",
+  detail: () => (
+    <p>
+      Possessor: <strong>singular</strong> · Possessed item:{" "}
+      <strong>singular</strong>.
+    </p>
+  ),
+  sentenceLanguage: "en",
+  sentenceLabel: "Meaning: ",
+  baseLabel: "Given nouns (possessor + possessed)",
+  answerLabel: "Complete Turkish noun phrase",
+  completionLabel: "Noun phrase session complete",
+};
+export function CasePilot(props: PracticeProps) {
+  return <TypedPractice {...props} config={cases} />;
 }
-
-export function PossessivePractice(props: Omit<Props, "family">) {
-  return <CasePilot {...props} family="possessives" />;
+export function PossessivePractice(props: PracticeProps) {
+  return <TypedPractice {...props} config={possessives} />;
+}
+export function NounPhrasePractice(props: PracticeProps) {
+  return <TypedPractice {...props} config={phrases} />;
 }
