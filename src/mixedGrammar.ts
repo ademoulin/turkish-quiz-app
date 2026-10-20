@@ -1,3 +1,4 @@
+import {pronounCaseQuestions} from './pronounCases';
 import {caseQuestions,type TypedQuestion,type PilotAttempt} from './casePilot';
 import {possessiveQuestions} from './possessives';
 import {phraseQuestions} from './nounPhrases';
@@ -5,9 +6,10 @@ import {possessedCaseQuestions} from './possessedCases';
 import {suffixChainQuestions} from './suffixChains';
 import {latestMistakes} from './practiceReview';
 import {shuffle} from './shuffle';
-/** Reuse the original question objects and evidence IDs. No new authored content. */
+/** Reuse the original question objects and evidence IDs. The pronoun family adds authored drafts; every session reuses the registered objects. */
 export const mixedGrammarFamilies={
  cases:caseQuestions,
+ pronoun_cases:pronounCaseQuestions,
  possessives:possessiveQuestions,
  phrases:phraseQuestions,
  add_case:possessedCaseQuestions,
@@ -16,12 +18,13 @@ export const mixedGrammarFamilies={
 export type MixedGrammarFamily=keyof typeof mixedGrammarFamilies;
 export const mixedGrammarQuestions:TypedQuestion[]=Object.values(mixedGrammarFamilies).flat();
 export function mixedGrammarFamily(q:TypedQuestion):MixedGrammarFamily {
+ if(q.exerciseType==='typed_pronoun_case')return 'pronoun_cases';
  if(q.exerciseType==='typed_suffix_chain')return 'build_from_base';
  if(q.exerciseType==='typed_possessed_case')return 'add_case';
  if(q.exerciseType==='typed_noun_phrase')return 'phrases';
  return 'owner' in q?'possessives':'cases';
 }
-/** Rotate through shuffled families: 2–3 of each for a full 12-question session.
+/** Rotate through shuffled families: two of each of six families for a full 12-question session.
  * Scarce review families contribute all they can; never pad with cleared items.
  */
 export function selectMixedGrammarPool(pool:TypedQuestion[],random=Math.random):TypedQuestion[]{

@@ -12,8 +12,8 @@ async function current(area:import('@playwright/test').Locator){
  const id=await area.locator('[data-question-id]').getAttribute('data-question-id');
  return bank.find(q=>q.id===id)!;
 }
-const labels={cases:'Complete inflected word',possessives:'Complete inflected word',phrases:'Complete Turkish noun phrase',add_case:'Complete inflected word or phrase',build_from_base:'Complete word built from base'};
-const titles={cases:'Case Forms',possessives:'Typed endings · Possessive forms',phrases:'Build a noun phrase · Genitive + possessive',add_case:'Combine endings · Possessive + case',build_from_base:'Build from base · Number + possessive + case'};
+const labels={pronoun_cases:'Complete inflected pronoun',cases:'Complete inflected word',possessives:'Complete inflected word',phrases:'Complete Turkish noun phrase',add_case:'Complete inflected word or phrase',build_from_base:'Complete word built from base'};
+const titles={pronoun_cases:'Case Forms · Personal pronouns',cases:'Case Forms',possessives:'Typed endings · Possessive forms',phrases:'Build a noun phrase · Genitive + possessive',add_case:'Combine endings · Possessive + case',build_from_base:'Build from base · Number + possessive + case'};
 test('12 balanced typed tasks keep their own instructions, grading, keyboard/touch and original evidence',async({page})=>{
  const area=await open(page);
  await expect(area.getByRole('button',{name:'Review previous grammar mistakes (0)',exact:true})).toBeDisabled();
@@ -44,7 +44,7 @@ test('12 balanced typed tasks keep their own instructions, grading, keyboard/tou
   await area.getByRole('button',{name:i===11?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Mixed grammar session complete')).toBeVisible();
- expect(families.size).toBe(5);expect([...families.values()].every(n=>n===2||n===3)).toBe(true);
+ expect(families.size).toBe(6);expect([...families.values()].every(n=>n===2)).toBe(true);
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
  expect(saved).toHaveLength(12);expect(new Set(saved.map((a:any)=>a.sessionId)).size).toBe(1);expect(saved.every((a:any)=>a.practiceMode==='mixed_grammar')).toBe(true);
  expect(saved.filter((a:any)=>a.manual)).toHaveLength(1);
@@ -56,13 +56,13 @@ test('mixed mistakes review is short when scarce, clears focused queues, and rou
  const seed=Object.values(mixedGrammarFamilies).flatMap(qs=>recordPilot([],qs[0],'wrong','focused-'+qs[0].id));
  await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}');s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},seed);
  await page.reload();await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('mixed-review');
- await area.getByRole('button',{name:'Review previous grammar mistakes (5)',exact:true}).click();
- await expect(area.getByText(/Question 1 of 5/)).toBeVisible();
+ await area.getByRole('button',{name:'Review previous grammar mistakes (6)',exact:true}).click();
+ await expect(area.getByText(/Question 1 of 6/)).toBeVisible();
  const seen=new Set<string>();
- for(let i=0;i<5;i++){
+ for(let i=0;i<6;i++){
   const q=await current(area);expect(seed.some(a=>a.questionId===q.id)).toBe(true);expect(seen.has(q.id)).toBe(false);seen.add(q.id);
   await area.getByLabel(labels[mixedGrammarFamily(q)],{exact:true}).fill(q.answer);await area.getByRole('button',{name:'Check typed answer'}).click();
-  await area.getByRole('button',{name:i===4?'See typed results':'Next typed question'}).click();
+  await area.getByRole('button',{name:i===5?'See typed results':'Next typed question'}).click();
  }
  await area.getByRole('button',{name:'Restart typed practice'}).click();
  await expect(area.getByRole('button',{name:'Review previous grammar mistakes (0)',exact:true})).toBeDisabled();
@@ -77,13 +77,16 @@ test('mixed mistakes review is short when scarce, clears focused queues, and rou
  }
  await page.getByLabel('Practice method',{exact:true}).selectOption('build-from-base');
  await expect(page.getByRole('region',{name:'Build endings from base',exact:true}).getByRole('button',{name:'Review build-from-base mistakes (0)',exact:true})).toBeDisabled();
+ await page.getByLabel('Practice activity',{exact:true}).selectOption('cases');
+ await page.getByLabel('Case word type',{exact:true}).selectOption('personal-pronouns');
+ await expect(page.getByRole('region',{name:'Personal pronoun case forms',exact:true}).getByRole('button',{name:'Review pronoun case mistakes (0)',exact:true})).toBeDisabled();
  await page.getByRole('button',{name:'Your progress',exact:true}).click();const download=page.waitForEvent('download');
  await page.getByRole('button',{name:'Export progress',exact:true}).click();await page.locator('input[type=file]').setInputFiles((await(await download).path())!);
- await expect(page.getByText(/Imported 10 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 12 typed grammar results/)).toBeVisible();
  await page.locator('input[type=file]').setInputFiles({name:'legacy.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,attempts:[]}))});
  await expect(page.getByText(/Imported 0 typed grammar results/)).toBeVisible();
- const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(10);
- expect(saved.filter((a:any)=>a.practiceMode==='mixed_grammar_review')).toHaveLength(5);
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);
+ expect(saved.filter((a:any)=>a.practiceMode==='mixed_grammar_review')).toHaveLength(6);
 });
 test('mixed sessions retain unfinished answers when switching activities and reset on close',async({page})=>{
  const area=await open(page);await area.getByRole('button',{name:'Start mixed grammar review'}).click();const q=await current(area);

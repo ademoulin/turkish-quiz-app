@@ -324,10 +324,9 @@ linguistic review and the dedicated plural catalog mapping remain pending.
 ### Mixed Grammar Review
 
 Choose **Grammar practice → Practice activity → Mixed Grammar Review**.
-All questions starts 12 shuffled questions across the five typed families:
-case forms, possessives, noun phrases, Add case only, and Build from base.
-Every family contributes two or three questions, with the extra two slots
-rotating randomly. Multiple choice remains its own activity.
+All questions starts 12 shuffled questions across six typed families:
+noun case forms, personal pronoun cases, possessives, noun phrases, Add case only,
+and Build from base. Every family contributes exactly two questions. Multiple choice remains its own activity.
 
 Follow the Task heading for each question. The original instructions, owner,
 number, case, base label and one-word/two-word answer format are shown.
@@ -340,9 +339,35 @@ added to fill a session. With fewer than 12 mistakes, review is shorter.
 A later correct answer or manual correction clears the same question from both
 mixed and focused queues. Active review pools remain fixed while answering.
 
-The original 214 question objects and IDs are reused; no new content or mastery
-classification is introduced. Attempts keep the original concept, exercise
+Mixed review reuses the 238 registered question objects and their IDs; the
+pronoun activity supplies 24 new authored drafts, and mixed review adds no
+further question content or mastery classification. Attempts keep the original concept, exercise
 type, supporting rules and prompt context. Optional practiceMode values
 mixed_grammar and mixed_grammar_review identify the session source in version-1
 backups while older backups remain supported. Existing strict Turkish spelling,
 phrase whitespace policy, correction and scoring are unchanged.
+
+### Personal pronoun case forms
+
+Open **Case Forms → Case word type → Personal pronouns**. Nouns remains the default
+and keeps all 50 existing questions. Personal pronouns has 24 new authored
+drafts: ben/sen/o/biz/siz/onlar × locative, dative, ablative and accusative.
+Choose all 24 or six forms for one case. Type only the complete inflected
+pronoun. A worked setup example and post-check explanations cover bana/sana,
+singular o → on- before case endings, and harmony on onlar.
+
+Locative sentences naturally describe an item being with a person / in their
+keeping (Anahtar bende), rather than treating every locative pronoun as a house
+location. Genitive and possessive forms are outside this small batch.
+Yeni Hitit 1 case sections §2.2 p.29 and §6.1 p.73 guide scope; Ödkem case rules
+14/15/16/35 and supporting harmony/buffer rules 2/3/8 apply as partial case-rule
+mapping. Exact dedicated catalog mapping for irregular bana/sana remains pending.
+Exercises are authored drafts, not textbook quotations; independent review is
+pending.
+
+Pronoun attempts retain pronoun and requiredCase snapshots under distinct
+pronoun_* concepts and typed_pronoun_case exercise type. Their focused queue
+is separate from noun cases; Mixed Grammar Review now has six families and
+samples two of each in 12-question sessions. Correct mixed results clear the
+same pronoun question. Version-1 exports/imports support old and new histories,
+and manual corrections update the original attempt. No mastery labels.
