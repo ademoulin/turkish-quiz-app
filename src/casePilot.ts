@@ -567,7 +567,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           a.conceptId !== `possessed_${a.requiredCase}` ||
           !["word", "phrase"].includes(a.answerScope || "") ||
           (a.answerScope === "phrase") !== a.givenForm.trim().includes(" ") ||
-          typeof a.owner !== "string" || !a.owner.trim() || a.nounNumber !== "singular")) ||
+          typeof a.owner !== "string" || !a.owner.trim() || !["singular", "plural"].includes(a.nounNumber || ""))) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||

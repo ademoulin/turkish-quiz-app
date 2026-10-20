@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {possessedCaseQuestions as bank, possessedCaseConcepts, possessedCaseCatalogMapping, selectPossessedCaseQuestions, possessedCaseMistakes} from './possessedCases';
+import {singularPossessedCaseQuestions as bank, possessedCaseConcepts, possessedCaseCatalogMapping, selectPossessedCaseQuestions, possessedCaseMistakes} from './possessedCases';
 import {caseQuestions, recordPilot, correctPilot, validatePilotImport, pilotMistakes} from './casePilot';
 import {possessiveQuestions, possessiveMistakes} from './possessives';
 import {phraseQuestions, phraseMistakes} from './nounPhrases';
@@ -66,7 +66,7 @@ test('version-1 backups round-trip new and old histories, rejecting missing or i
  const all=[a,old,recordPilot([],possessiveQuestions[0],'wrong','p')[0],recordPilot([],phraseQuestions[0],'wrong','f')[0]];
  assert.deepEqual(validatePilotImport(JSON.parse(JSON.stringify({version:1,pilotAttempts:all}))),all);
  assert.deepEqual(validatePilotImport({version:1,attempts:[]}),[]);
- for(const patch of [{givenForm:undefined},{requiredCase:'genitive'},{requiredCase:'dative'},{answerScope:undefined},{answerScope:'phrase'},{owner:''},{nounNumber:'plural'},{exerciseType:'typed_form_completion'}]) assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a,...patch}]}));
+ for(const patch of [{givenForm:undefined},{requiredCase:'genitive'},{requiredCase:'dative'},{answerScope:undefined},{answerScope:'phrase'},{owner:''},{nounNumber:undefined},{exerciseType:'typed_form_completion'}]) assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a,...patch}]}));
  assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,exerciseType:'typed_possessed_case'}]}));
 });
 

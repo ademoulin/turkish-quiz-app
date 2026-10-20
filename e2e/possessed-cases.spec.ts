@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {possessedCaseQuestions as bank} from '../src/possessedCases';
+import {singularPossessedCaseQuestions as bank} from '../src/possessedCases';
 test.use({hasTouch:true});
 async function open(page:import('@playwright/test').Page){
  await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');
