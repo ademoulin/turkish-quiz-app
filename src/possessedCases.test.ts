@@ -4,26 +4,26 @@ import {possessedCaseQuestions as bank, possessedCaseConcepts, possessedCaseCata
 import {caseQuestions, recordPilot, correctPilot, validatePilotImport, pilotMistakes} from './casePilot';
 import {possessiveQuestions, possessiveMistakes} from './possessives';
 import {phraseQuestions, phraseMistakes} from './nounPhrases';
-test('24 distinct authored possessed-case prompts, six per case, with explicit supplied possession',()=>{
- assert.equal(bank.length,24);
- assert.equal(new Set([...caseQuestions,...possessiveQuestions,...phraseQuestions,...bank].map(q=>q.id)).size,118);
- for(const c of Object.keys(possessedCaseConcepts)) assert.equal(bank.filter(q=>q.conceptId===c).length,6);
+test('48 distinct authored possessed-case prompts, twelve per case, with explicit supplied possession',()=>{
+ assert.equal(bank.length,48);
+ assert.equal(new Set([...caseQuestions,...possessiveQuestions,...phraseQuestions,...bank].map(q=>q.id)).size,142);
+ for(const c of Object.keys(possessedCaseConcepts)) assert.equal(bank.filter(q=>q.conceptId===c).length,12);
  for(const q of bank){
   assert.equal(q.conceptId,`possessed_${q.requiredCase}`);
   assert.equal(q.base,q.givenForm); assert.equal(q.nounNumber,'singular');
   assert.equal(q.source,'newly_authored'); assert.equal(q.reviewStatus,'draft_needs_independent_review');
-  assert.ok(q.sentence.includes('___')); assert.ok(q.explanation.includes(q.answer));
+  assert.ok(q.givenMeaning); assert.ok(q.sentence.includes('___')); assert.ok(q.explanation.includes(q.answer));
   assert.ok(q.answer.startsWith(q.givenForm));
   assert.equal(q.answerScope==='phrase',q.givenForm.includes(' '));
   if(q.answerScope==='phrase') assert.equal(q.answer.split(' ')[0],q.givenForm.split(' ')[0]);
  }
- assert.equal(bank.filter(q=>q.supportingRuleIds.includes('buffer_n')).length,8);
+ assert.equal(bank.filter(q=>q.supportingRuleIds.includes('buffer_n')).length,16);
  assert.equal(possessedCaseCatalogMapping.testedRules.accusative,35);
 });
 test('correct stacked endings include third-person n and four-way accusative harmony',()=>{
  const expected=['evimde','çantanda','arabasında','köyümüzde','ofisinizde','çocuğun odasında','okuluma','odana','bahçesine','evimize','arabanıza','öğretmenin masasına','odamdan','cebinden','ofisinden','okulumuzdan','bahçenizden','kedinin yatağından','kalemimi','çantanı','gözünü','topumuzu','kedinizi','çocuğun kitabını'];
- assert.deepEqual(bank.map(q=>q.answer),expected);
- for(const [i,q] of bank.entries()) assert.equal(recordPilot([],q,' '+expected[i].normalize('NFD')+' ','s','mixed_possessed_cases')[0].correct,true);
+ assert.deepEqual(bank.filter(q=>Number(q.id.slice(-2))<=6).map(q=>q.answer),expected);
+ for(const q of bank) assert.equal(recordPilot([],q,' '+q.answer.normalize('NFD')+' ','s','mixed_possessed_cases')[0].correct,true);
  for(const [given,wrong] of [['arabası','arabasıda'],['bahçesi','bahçesiye'],['ofisi','ofisiden'],['gözü','gözüyü'],['çantan','çantayı'],['evim','evinde']]){
   const q=bank.find(q=>q.givenForm===given)!;
   assert.equal(recordPilot([],q,wrong,'bad')[0].correct,false);
@@ -33,18 +33,18 @@ test('stacked grading keeps Turkish spelling, punctuation and answer scope stric
  const q=bank.find(q=>q.answer==='gözünü')!;
  for(const wrong of ['gozunu','gözuni','gözünü.','onun gözünü','gö zünü']) assert.equal(recordPilot([],q,wrong,'s')[0].correct,false);
  assert.equal(recordPilot([],q,' GÖZÜNÜ ','s')[0].correct,true);
- const phrase=bank.at(-1)!;
+ const phrase=bank.find(q=>q.id==='possessed-accusative-06')!;
  assert.equal(recordPilot([],phrase,' çocuğun   kitabını ','s')[0].correct,true);
  for(const wrong of ['kitabını','çocuğun kitabı','çocugun kitabını','çocuğun kitabını.','kitabını çocuğun']) assert.equal(recordPilot([],phrase,wrong,'s')[0].correct,false);
 });
 test('selection shuffles without mutating the bank and filters review by deliberate concept',()=>{
  const before=JSON.stringify(bank);
- assert.equal(selectPossessedCaseQuestions().length,24);
+ assert.equal(selectPossessedCaseQuestions().length,48);
  assert.notDeepEqual(selectPossessedCaseQuestions('mixed',()=>.1),selectPossessedCaseQuestions('mixed',()=>.9));
  const q=bank[0], a=recordPilot([],q,'wrong','s');
  assert.deepEqual(possessedCaseMistakes(a,'possessed_locative'),[q]);
  assert.deepEqual(possessedCaseMistakes(a,'possessed_dative'),[]);
- assert.equal(selectPossessedCaseQuestions('possessed_accusative').length,6);
+ assert.equal(selectPossessedCaseQuestions('possessed_accusative').length,12);
  assert.equal(JSON.stringify(bank),before);
 });
 test('stored snapshots, double-score lock, correction and later success preserve separate evidence',()=>{
@@ -68,4 +68,15 @@ test('version-1 backups round-trip new and old histories, rejecting missing or i
  assert.deepEqual(validatePilotImport({version:1,attempts:[]}),[]);
  for(const patch of [{givenForm:undefined},{requiredCase:'genitive'},{requiredCase:'dative'},{answerScope:undefined},{answerScope:'phrase'},{owner:''},{nounNumber:'plural'},{exerciseType:'typed_form_completion'}]) assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a,...patch}]}));
  assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,exerciseType:'typed_possessed_case'}]}));
+});
+
+test('owner contrasts keep distinct questions despite identical second/third-person surfaces',()=>{
+ for(const [c,second,third] of [['locative','evinde','evinde'],['dative','evine','evine'],['ablative','evinden','evinden'],['accusative','evini','evini']]){
+  const sen=bank.find(q=>q.requiredCase===c&&q.givenForm==='evin')!;
+  const o=bank.find(q=>q.requiredCase===c&&q.givenForm==='evi')!;
+  assert.equal(sen.owner,'sen');assert.equal(sen.givenMeaning,'your house');assert.equal(sen.answer,second);
+  assert.equal(o.owner,'o');assert.equal(o.givenMeaning,'his/her house');assert.equal(o.answer,third);
+  assert.ok(!sen.supportingRuleIds.includes('buffer_n'));assert.ok(o.supportingRuleIds.includes('buffer_n'));
+  const missed=recordPilot([],sen,'wrong','s');assert.deepEqual(possessedCaseMistakes(missed),[sen]);
+ }
 });

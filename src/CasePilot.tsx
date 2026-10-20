@@ -26,7 +26,17 @@ import {
   phraseMistakes,
   selectPhraseQuestions,
 } from "./nounPhrases";
+const ownerLabels: Record<string,string> = {ben:"ben · I / my", sen:"sen · you / your (singular)", o:"o · he/she / his/her", biz:"biz · we / our", siz:"siz · you / your (plural or formal)"};
+const caseInstructions: Record<Concept,string> = {
+ locative:"Add the ending for location: ‘in’, ‘on’ or ‘at’, as the sentence requires.",
+ dative:"Add the ending for direction or a target: ‘to’ or ‘toward’.",
+ ablative:"Add the ending meaning ‘from’ in this sentence.",
+ accusative:"Add the ending that marks the specific thing the action affects (the direct object). It has no single English word equivalent.",
+ genitive:"Add the ending meaning ‘of’ or ‘belonging to’. The next word is already supplied; type only the given word with its ending.",
+};
 const cases: PracticeConfig = {
+  guide:<><h4>How to practice</h4><p>Read the required case and the base word. Add the ending and type the complete word into the blank, using Turkish spelling. Do not type the whole sentence.</p><p><strong>Worked example (not scored):</strong> şehir (city), locative (‘in/at’) → <span lang="tr">şehirde</span>. Type şehirde, then press Check typed answer or Enter.</p></>,
+  instruction:q=>caseInstructions[q.conceptId as Concept],
   id: "pilot",
   region: "Case Forms",
   title: "Case Forms",
@@ -59,6 +69,8 @@ const cases: PracticeConfig = {
   completionLabel: "Typed case session complete",
 };
 const possessives: PracticeConfig = {
+  guide:<><h4>How to practice</h4><p>Change the base noun to show the stated owner: my, your, his/her, our or their. The prompt tells you whether there is one item or more than one. Type only the complete possessed noun.</p><p><strong>Worked example (not scored):</strong> bilet (ticket) + my, one ticket → <span lang="tr">biletim</span> (my ticket). Type biletim, without benim.</p></>,
+  instruction:q=>`Make the base word show this owner: ${possessiveConcepts[q.conceptId as PossessiveConcept]}.`,
   id: "possessive",
   region: "Typed possessive practice",
   title: "Typed endings · Possessive forms",
@@ -99,6 +111,8 @@ const possessives: PracticeConfig = {
   completionLabel: "Possessive session complete",
 };
 const phrases: PracticeConfig = {
+  guide:<><h4>How to practice</h4><p>Use the two given nouns to say who owns what. Add endings to both nouns and type the complete two-word phrase, keeping the given order.</p><p><strong>Worked example (not scored):</strong> misafir + bavul, ‘the guest’s suitcase’ → <span lang="tr">misafirin bavulu</span>. Type both words, without a sentence.</p></>,
+  instruction:()=>"Use both given nouns to express the English meaning below. Type both words with their endings.",
   id: "noun-phrase",
   region: "Typed noun phrase practice",
   title: "Build a noun phrase · Genitive + possessive",
@@ -141,20 +155,22 @@ export function NounPhrasePractice(props: PracticeProps) {
 }
 
 const possessedCases: PracticeConfig = {
+ guide:<><h4>How to practice</h4><p>The given word already means my/your/his/her/our something. Keep that ownership and add the requested case ending. Type the whole changed word. If two words are given, type both and change only the last word.</p><p><strong>Worked example (not scored):</strong> bavulu (his/her suitcase) + from (ablative) → <span lang="tr">bavulundan</span>. After the third-person possessive ending, use n before the case ending: bavulu + n + dan.</p></>,
+ instruction:q=>'requiredCase' in q ? caseInstructions[q.requiredCase] : '',
  id:'possessed-case', region:'Typed possessed case practice',
  title:'Combine endings · Possessive + case',
- description:'24 newly authored draft questions. Add the named case to the supplied possessed form. Singular possessions only; independent linguistic review pending. Attempts are saved; no mastery rating yet.',
+ description:'48 newly authored draft questions. Add the named case to the supplied possessed form. Singular possessions only; independent linguistic review pending. Attempts are saved; no mastery rating yet.',
  bank:possessedCaseQuestions, initialSelection:'mixed', selectionLabel:'Required case on possessed noun',
- selections:[{id:'mixed',label:'Mixed cases · 24 questions'},...Object.entries(possessedCaseConcepts).map(([id,label])=>({id,label}))],
+ selections:[{id:'mixed',label:'Mixed cases · 48 questions'},...Object.entries(possessedCaseConcepts).map(([id,label])=>({id,label}))],
  select:s=>selectPossessedCaseQuestions(s as PossessedCaseSelection),
  mistakes:(a,s)=>possessedCaseMistakes(a,s as PossessedCaseSelection),
  mode:s=>s==='mixed'?'mixed_possessed_cases':'single_possessed_case',
  startLabel:'Start possessed case practice',
- setupHint:s=>s==='mixed'?'Practice all 24 questions: six per case, shuffled together. Each question names the required case.':'Practice all six questions for this case on possessed nouns.',
+ setupHint:s=>s==='mixed'?'Practice all 48 questions: 12 per case, shuffled together. Each question names the required case.':'Practice all 12 questions for this case on possessed nouns.',
  reviewLabel:'Review possessed case mistakes',
  sessionLabel:m=>m==='mistake_review'?'Reviewing possessed case mistakes':'Case endings on possessed nouns',
  cue:q=>'requiredCase' in q ? `Required case: ${concepts[q.requiredCase]}` : '',
- detail:q=>'givenForm' in q ? <p>The given form already includes possession. Possessed item: <strong>singular</strong>. {q.answerScope==='phrase'?'Type the complete phrase; keep its first word unchanged.':'Type the complete inflected word; do not add an owner.'}</p> : null,
+ detail:q=>'givenForm' in q ? <p>Given meaning: <strong>{q.givenMeaning}</strong>. Owner: <strong>{ownerLabels[q.owner] || q.owner}</strong>. The given form already includes possession. Possessed item: <strong>singular</strong>. {q.answerScope==='phrase'?'Type the complete phrase; keep its first word unchanged.':'Type the complete inflected word; do not add an owner.'}</p> : null,
  baseLabel:'Given possessed form', answerLabel:'Complete inflected word or phrase',
  completionLabel:'Possessed case session complete',
 };
