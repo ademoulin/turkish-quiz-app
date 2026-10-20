@@ -1,5 +1,6 @@
-import {suffixChainConcepts,suffixChainQuestions,selectSuffixChainQuestions,suffixChainMistakes,type SuffixChainSelection} from "./suffixChains";
-import {possessedCaseConcepts, possessedCaseQuestions, possessedCaseMistakes, selectPossessedCaseQuestions, type PossessedCaseSelection, type PossessedNumberSelection} from "./possessedCases";
+import {ownerSelections,type OwnerSelection} from './practiceOwners';
+import {suffixChainConcepts,suffixChainQuestions,selectSuffixChainQuestions,suffixChainMistakes,countSuffixChainQuestions,type SuffixChainSelection} from "./suffixChains";
+import {possessedCaseConcepts, possessedCaseQuestions, possessedCaseMistakes, selectPossessedCaseQuestions, countPossessedCaseQuestions, type PossessedCaseSelection, type PossessedNumberSelection} from "./possessedCases";
 import React from "react";
 import {
   TypedPractice,
@@ -164,11 +165,13 @@ const possessedCases: PracticeConfig = {
  bank:possessedCaseQuestions, initialSelection:'mixed', selectionLabel:'Required case on possessed noun',
  selections:[{id:'mixed',label:'All four cases'},...Object.entries(possessedCaseConcepts).map(([id,label])=>({id,label}))],
  secondarySelection:{label:'Possessed noun number',initial:'singular',options:[{id:'singular',label:'Singular · 48 questions'},{id:'plural',label:'Plural · 24 questions'},{id:'mixed',label:'Mixed · 72 questions'}]},
- select:(s,n)=>selectPossessedCaseQuestions(s as PossessedCaseSelection,Math.random,(n||'singular') as PossessedNumberSelection),
- mistakes:(a,s,n)=>possessedCaseMistakes(a,s as PossessedCaseSelection,(n||'singular') as PossessedNumberSelection),
+ ownerSelection:{initial:'mixed',options:[...ownerSelections,{id:'named',label:'Named owner · noun phrases'}]},
+ count:(s,n,o)=>countPossessedCaseQuestions(s as PossessedCaseSelection,(n||'singular') as PossessedNumberSelection,(o||'mixed') as OwnerSelection),
+ select:(s,n,o)=>selectPossessedCaseQuestions(s as PossessedCaseSelection,Math.random,(n||'singular') as PossessedNumberSelection,(o||'mixed') as OwnerSelection),
+ mistakes:(a,s,n,o)=>possessedCaseMistakes(a,s as PossessedCaseSelection,(n||'singular') as PossessedNumberSelection,(o||'mixed') as OwnerSelection),
  mode:s=>s==='mixed'?'mixed_possessed_cases':'single_possessed_case',
  startLabel:'Start possessed case practice',
- setupHint:(s,n)=>{const total=n==='plural'?24:n==='mixed'?72:48;return `Practice ${s==='mixed'?total:total/4} questions for ${n||'singular'} possessions, shuffled. Each question names the owner, number and required case.`;},
+ setupHint:(s,n,o)=>{const count=countPossessedCaseQuestions(s as PossessedCaseSelection,(n||'singular') as PossessedNumberSelection,(o||'mixed') as OwnerSelection);return `Practice ${count} questions for ${n||'singular'} possessions, shuffled. Each question names the owner, number and required case.`;},
  reviewLabel:'Review possessed case mistakes',
  sessionLabel:m=>m==='mistake_review'?'Reviewing possessed case mistakes':'Case endings on possessed nouns',
  cue:q=>'requiredCase' in q ? `Required case: ${concepts[q.requiredCase]}` : '',
@@ -178,15 +181,17 @@ const possessedCases: PracticeConfig = {
 };
 const suffixChains: PracticeConfig = {
  id:'suffix-chain',region:'Build endings from base',title:'Build from base · Number + possessive + case',
- description:'24 newly authored draft questions. Build all the endings from a bare noun using the stated owner, number and case. Independent linguistic review pending. Results are saved separately from Add case only; no mastery rating yet.',
+ description:'48 newly authored draft questions. Build all the endings from a bare noun using the stated owner, number and case. Independent linguistic review pending. Results are saved separately from Add case only; no mastery rating yet.',
  guide:<><h4>How to practice</h4><p>Start with the base noun. Add plural -lar/-ler only when plural possessions are requested, add the owner’s possessive ending, then add the required case. Type one complete word, without the owner pronoun or a sentence.</p><p><strong>Worked example (not scored):</strong> bavul (suitcase), our, plural, from (ablative) → <span lang="tr">bavullarımızdan</span>. Build it as bavul → bavullar → bavullarımız → bavullarımızdan.</p><p>For their, these questions explicitly request plural possessions. Do not double the plural ending. The correct build-up and explanation appear after you check.</p></>,
  bank:suffixChainQuestions,initialSelection:'mixed',selectionLabel:'Required case to build',
  selections:[{id:'mixed',label:'All four cases'},...Object.entries(suffixChainConcepts).map(([id,label])=>({id,label}))],
- secondarySelection:{label:'Possessed noun number',initial:'mixed',options:[{id:'singular',label:'Singular · 12 questions'},{id:'plural',label:'Plural · 12 questions'},{id:'mixed',label:'Mixed · 24 questions'}]},
- select:(s,n)=>selectSuffixChainQuestions(s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection),
- mistakes:(a,s,n)=>suffixChainMistakes(a,s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection),
+ secondarySelection:{label:'Possessed noun number',initial:'mixed',options:[{id:'singular',label:'Singular · 24 questions'},{id:'plural',label:'Plural · 24 questions'},{id:'mixed',label:'Mixed · 48 questions'}]},
+ ownerSelection:{initial:'mixed',options:[...ownerSelections]},
+ count:(s,n,o)=>countSuffixChainQuestions(s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection,(o||'mixed') as OwnerSelection),
+ select:(s,n,o)=>selectSuffixChainQuestions(s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection,Math.random,(o||'mixed') as OwnerSelection),
+ mistakes:(a,s,n,o)=>suffixChainMistakes(a,s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection,(o||'mixed') as OwnerSelection),
  mode:()=> 'build_from_base',startLabel:'Start building from base',
- setupHint:(s,n)=>`Practice ${s==='mixed'?(n==='mixed'?24:12):(n==='mixed'?6:3)} questions. Build every required ending; number and owner are always stated.`,
+ setupHint:(s,n,o)=>`Practice ${countSuffixChainQuestions(s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection,(o||'mixed') as OwnerSelection)} questions. Build every required ending; number and owner are always stated.`,
  reviewLabel:'Review build-from-base mistakes',
  sessionLabel:m=>m==='mistake_review'?'Reviewing build-from-base mistakes':'Building the full ending chain',
  cue:q=>'baseNoun' in q ? `Required case: ${concepts[q.requiredCase]}` : '',

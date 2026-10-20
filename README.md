@@ -302,3 +302,21 @@ catalog row was not identified in the provided snapshot; that exact mapping is
 pending rather than invented. Exercises are newly authored drafts, not textbook
 quotations; independent linguistic review remains pending. No case-choice task,
 sentence production or mastery labels are added.
+
+### Owner-focused practice
+
+Both Combine endings methods now have **Owner to practice** alongside case and
+possession number. Choose my/your/his-her/our/their or All owners. Add case only
+also offers Named owner for supplied noun phrases; these are kept separate from
+the personal his/her choice. Filters apply to both practice and latest-mistake
+review. Session pools are fixed after starting. Empty combinations explain which
+filters to change and disable Start; their + singular possessions remains outside
+the authored scope.
+
+Build from base now has 48 authored draft questions: 12 per case (six singular,
+six plural), two per owner per case. New IDs 07–12 append to the original 01–06.
+The additional ev contrasts deliberately keep identical surfaces such as evinde
+or evlerinde as separate questions with explicit owner/number evidence. The
+original 24 questions, all Add case only questions, grading and backups remain
+unchanged. Sources and draft review status remain as described above; independent
+linguistic review and the dedicated plural catalog mapping remain pending.
