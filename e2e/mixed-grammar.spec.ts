@@ -82,9 +82,9 @@ test('mixed mistakes review is short when scarce, clears focused queues, and rou
  await expect(page.getByRole('region',{name:'Personal pronoun case forms',exact:true}).getByRole('button',{name:'Review pronoun case mistakes (0)',exact:true})).toBeDisabled();
  await page.getByRole('button',{name:'Your progress',exact:true}).click();const download=page.waitForEvent('download');
  await page.getByRole('button',{name:'Export progress',exact:true}).click();await page.locator('input[type=file]').setInputFiles((await(await download).path())!);
- await expect(page.getByText(/Imported 12 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 12 grammar results/)).toBeVisible();
  await page.locator('input[type=file]').setInputFiles({name:'legacy.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,attempts:[]}))});
- await expect(page.getByText(/Imported 0 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 0 grammar results/)).toBeVisible();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);
  expect(saved.filter((a:any)=>a.practiceMode==='mixed_grammar_review')).toHaveLength(6);
 });

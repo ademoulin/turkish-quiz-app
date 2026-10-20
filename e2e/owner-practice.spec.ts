@@ -42,9 +42,9 @@ test('owner-specific full-chain sessions and review intersect case/number, and s
  await page.getByRole('button',{name:'Your progress',exact:true}).click();
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress',exact:true}).click();
  await page.locator('input[type=file]').setInputFiles((await(await download).path())!);
- await expect(page.getByText(/Imported 4 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 4 grammar results/)).toBeVisible();
  await page.locator('input[type=file]').setInputFiles({name:'legacy.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,attempts:[]}))});
- await expect(page.getByText(/Imported 0 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 0 grammar results/)).toBeVisible();
  const attempts=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
  expect(attempts).toHaveLength(4);expect(attempts.every((a:any)=>['sen','o'].includes(a.owner))).toBe(true);
 });

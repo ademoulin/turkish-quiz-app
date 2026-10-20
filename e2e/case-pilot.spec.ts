@@ -87,7 +87,7 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
   const path = await file.path();
   await page.locator("input[type=file]").setInputFiles(path!);
   await expect(
-    page.getByText(/Imported 10 typed grammar results/),
+    page.getByText(/Imported 10 grammar results/),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -102,7 +102,7 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
     buffer: Buffer.from(JSON.stringify({ version: 1, attempts: [] })),
   });
   await expect(
-    page.getByText(/Imported 0 typed grammar results/),
+    page.getByText(/Imported 0 grammar results/),
   ).toBeVisible();
   expect(
     await page.evaluate(

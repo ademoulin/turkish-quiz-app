@@ -1,3 +1,4 @@
+import {verbNounConcepts,type VerbNounConcept,type VerbNounLesson,type VerbNounTask} from "./verbNouns";
 import {pronounCaseConcepts,personalPronouns,type PersonalPronoun,type PronounCaseConcept,type PronounCaseQuestion} from './pronounCases';
 import {suffixChainConcepts, type SuffixChainConcept, type SuffixChainQuestion} from "./suffixChains";
 import { possessedCaseConcepts, type PossessedCaseConcept, type PossessedCaseQuestion } from "./possessedCases";
@@ -465,10 +466,16 @@ export interface PilotAttempt {
     | "mixed_grammar"
     | "mixed_grammar_review"
     | "pronoun_cases"
-    | "choose_case";
+    | "choose_case"
+    | "verb_noun_lesson";
   questionId: string;
-  conceptId: `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
+  conceptId: VerbNounConcept | `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
+  lessonId?: VerbNounLesson;
+  lessonTask?: VerbNounTask;
+  exampleId?: string;
+  selectedOptionId?: string;
+  expectedOptionId?: string;
   verbPatternId?: string;
   verbLemma?: string;
   selectedCase?: "locative" | "dative" | "ablative" | "accusative" | "bare";
@@ -484,7 +491,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
+  exerciseType: "verb_noun_meaning" | "verb_noun_structure" | "typed_verb_noun" | "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -572,6 +579,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "mixed_grammar_review",
           "pronoun_cases",
           "choose_case",
+          "verb_noun_lesson",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
@@ -579,6 +587,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
         !Object.hasOwn(suffixChainConcepts, a.conceptId) &&
         !Object.hasOwn(pronounCaseConcepts, a.conceptId) &&
+        !Object.hasOwn(verbNounConcepts,a.conceptId) &&
         !["case_choice_locative","case_choice_dative","case_choice_ablative","case_choice_accusative","case_choice_bare"].includes(a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
@@ -608,10 +617,23 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         (a.exerciseType !== "case_choice_completion" ||
           typeof a.verbPatternId !== "string" || !/^verb_case_[a-z_]+$/.test(a.verbPatternId) ||
           typeof a.verbLemma !== "string" || !a.verbLemma.trim())) ||
+      ((a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
+        !Object.hasOwn(verbNounConcepts,a.conceptId)) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
-      (a.conceptId.startsWith("case_choice_")
+      (Object.hasOwn(verbNounConcepts,a.conceptId)
+        ? !["activity","cases"].includes(a.lessonId || "") ||
+          !["meaning","structure","type"].includes(a.lessonTask || "") ||
+          a.conceptId !== `vn_${a.lessonId}_${a.lessonTask}` ||
+          typeof a.exampleId !== "string" || !a.exampleId.trim() ||
+          a.exerciseType !== (a.lessonTask === "type" ? "typed_verb_noun" : `verb_noun_${a.lessonTask}`) ||
+          (a.lessonTask === "type"
+            ? a.selectedOptionId !== undefined || a.expectedOptionId !== undefined || (!a.manual && a.correct !== matchesCase(a.answer,a.expected))
+            : typeof a.selectedOptionId !== "string" || !a.selectedOptionId.trim() ||
+              typeof a.expectedOptionId !== "string" || !a.expectedOptionId.trim() ||
+              (!a.manual && a.correct !== (a.selectedOptionId === a.expectedOptionId)))
+        : a.conceptId.startsWith("case_choice_")
         ? a.exerciseType !== "case_choice_completion" ||
           !["locative","dative","ablative","accusative","bare"].includes(a.requiredCase || "") ||
           a.conceptId !== `case_choice_${a.requiredCase}` ||

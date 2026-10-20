@@ -155,7 +155,7 @@ test("mixed possessives balance owners; review, persistence and backup preserve 
     .locator("input[type=file]")
     .setInputFiles((await (await download).path())!);
   await expect(
-    page.getByText(/Imported 13 typed grammar results/),
+    page.getByText(/Imported 13 grammar results/),
   ).toBeVisible();
   expect(
     await page.evaluate(

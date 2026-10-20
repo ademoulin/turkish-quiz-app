@@ -1,3 +1,4 @@
+import {VerbNounLessons} from './VerbNounLessons';
 import {ChooseCase} from './ChooseCase';
 import React, { useState } from 'react';
 import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
@@ -18,12 +19,13 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
   const result = session && score(session);
   return <section className="panel grammar-preview" aria-label="Grammar practice">
     <h2>Yeni Hitit 1 · Grammar practice</h2>
-    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Multiple-choice scores stay in this session only; typed grammar attempts are saved.</p>
+    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Grammar Multiple Choice scores stay in this session only; other grammar results, including lesson checks, are saved.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
       <select id="grammar-activity" value={activity} onChange={e => setActivity(e.target.value)}>
         <option value="cases">Case Forms</option>
         <option value="choose-case">Choose the Case</option>
+        <option value="verb-nouns">Verb nouns and clauses</option>
         <option value="possessives">Typed endings · Possessive forms</option>
         <option value="phrases">Build a noun phrase · Genitive + possessive</option>
         <option value="possessed-cases">Combine endings · Possessive + case</option>
@@ -31,6 +33,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         <option value="multiple-choice">Grammar Multiple Choice</option>
       </select>
       <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
+      <div hidden={activity !== 'verb-nouns'}><VerbNounLessons attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'choose-case'}><ChooseCase attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
