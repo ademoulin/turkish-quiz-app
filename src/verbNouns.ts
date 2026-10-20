@@ -1,27 +1,30 @@
+import {negationExamples,type NegationScope} from './verbNounNegation';
 import {clauseCaseExamples,type NominalCase} from './verbNounClauseCases';
 import {subjectExamples,nominalSubjects,type NominalSubject} from './verbNounSubjects';
 /** Newly authored lesson content, not quotations. Yeni Hitit 1 §12.1 p.145
  * and §12.2 p.149 guide scope. Independent review and exact Ödkem mapping pending.
- * No finite-verb conjugation, explicit embedded subject, negation or possessive
- * production is assessed in these first two lessons. */
+ * Finite predicates are supplied; production targets nominalized forms. */
 export const verbNounLessons = {
  activity: '1 · Actions as nouns',
  cases: '2 · Action nouns with case endings',
  subjects: '3 · The action has its own subject',
  clause_cases: '4 · Case endings on the whole clause',
+ negation: '5 · Negation and meaningful contrasts',
 } as const;
 export type VerbNounLesson = keyof typeof verbNounLessons;
 export const verbNounTasks = {meaning:'Understand the meaning',structure:'Unpack the structure',type:'Build the action noun'} as const;
 export type VerbNounTask = keyof typeof verbNounTasks;
 export const verbNounConcepts = {
+ vn_negation_meaning:'Negation contrasts · meaning',vn_negation_structure:'Negation contrasts · suffix role and scope',vn_negation_type:'Negation contrasts · production',
  vn_activity_meaning:'Activity noun · meaning',vn_activity_structure:'Activity noun · structure',vn_activity_type:'Activity noun · production',
  vn_cases_meaning:'Action noun + case · meaning',vn_cases_structure:'Action noun + case · structure',vn_cases_type:'Action noun + case · production',
  vn_clause_cases_meaning:'Whole clause + case · meaning',vn_clause_cases_structure:'Whole clause + case · connection',vn_clause_cases_type:'Whole clause + case · production',
  vn_subjects_meaning:'Action subject · meaning',vn_subjects_structure:'Action subject · who acts',vn_subjects_type:'Action subject · production',
 } as const;
 export type VerbNounConcept = keyof typeof verbNounConcepts;
-export type NominalForm = 'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative'|'ma_possessive'|'ma_possessive_case';
+export type NominalForm = 'contrast_infinitive'|'contrast_possessive'|'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative'|'ma_possessive'|'ma_possessive_case';
 export interface VerbNounExample {
+ negationScope?:NegationScope;structurePrompt?:string;structureAnswer?:string;structureDistractors?:[string,string];
  nominalCase?:NominalCase;connection?:string;
  nominalSubject?:NominalSubject;subjectGenitive?:string;subjectAlternatives?:[NominalSubject,NominalSubject];
  id:string;lessonId:VerbNounLesson;stem:string;verbMeaning:string;form:NominalForm;
@@ -65,10 +68,11 @@ const cases:VerbNounExample[]=caseRows.map(([stem,verbMeaning,form,sentence,mean
  id:`vn2-${String(i+1).padStart(2,'0')}`,lessonId:'cases',stem,verbMeaning,form,sentence,meaning,distractors:[d1,d2],unit,main,template,answer,breakdown,explanation,
  supportingRuleIds:form==='mak_ablative'?['two_way_vowel_harmony','voiceless_assimilation']:['two_way_vowel_harmony','buffer_y',...(form==='ma_accusative'?['four_way_vowel_harmony']:[])],
 }));
-export const verbNounExamples:VerbNounExample[]=[...activity,...cases,...subjectExamples,...clauseCaseExamples];
-export const nominalFormLabels:Record<NominalForm,string>={ma_possessive_case:'Use -ma / -me + possessive agreement + the stated outer case ending.',ma_possessive:'Use -ma / -me + the possessive ending matching the supplied subject. Do not add an outer case ending.',mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
+export const verbNounExamples:VerbNounExample[]=[...activity,...cases,...subjectExamples,...clauseCaseExamples,...negationExamples];
+export const nominalFormLabels:Record<NominalForm,string>={contrast_infinitive:"Use -mak/-mek after any required action negation. The main verb is supplied.",contrast_possessive:"Use -ma/-me with the supplied subject’s possessive agreement and stated outer case, if any. Add action negation only when requested.",ma_possessive_case:'Use -ma / -me + possessive agreement + the stated outer case ending.',ma_possessive:'Use -ma / -me + the possessive ending matching the supplied subject. Do not add an outer case ending.',mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
 export interface LessonOption {id:string;text:string}
 export interface VerbNounQuestion {
+ negationScope?:NegationScope;
  nominalCase?:NominalCase;
  nominalSubject?:NominalSubject;
  id:string;lessonId:VerbNounLesson;conceptId:VerbNounConcept;task:VerbNounTask;exampleId:string;
@@ -77,14 +81,15 @@ export interface VerbNounQuestion {
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
 export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>(['meaning','structure','type'] as const).map(task=>({
+ ...(e.negationScope?{negationScope:e.negationScope}:{}),
  ...(e.nominalCase?{nominalCase:e.nominalCase}:{}),
  ...(e.nominalSubject?{nominalSubject:e.nominalSubject}:{}),
  id:`${e.id}-${task}`,lessonId:e.lessonId,exampleId:e.id,task,conceptId:`vn_${e.lessonId}_${task}` as VerbNounConcept,
  exerciseType:task==='type'?'typed_verb_noun':task==='meaning'?'verb_noun_meaning':'verb_noun_structure',
- prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?(e.nominalCase?'What does the outer case ending connect the whole action clause to?':e.nominalSubject?'Who performs the action inside the noun-like clause?':'Which complete chunk names the action and its details?'):'Complete the action noun. The main verb or description is already supplied.',
+ prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?(e.structurePrompt?e.structurePrompt:e.nominalCase?'What does the outer case ending connect the whole action clause to?':e.nominalSubject?'Who performs the action inside the noun-like clause?':'Which complete chunk names the action and its details?'):'Complete the action noun. The main verb or description is already supplied.',
  sentence:task==='type'?e.template:e.sentence,
- expected:task==='type'?e.answer:task==='meaning'?e.meaning:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit,
- ...(task==='type'?{}:{expectedOptionId:'target',options:[{id:'target',text:task==='meaning'?e.meaning:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit},{id:'other-1',text:task==='meaning'?e.distractors[0]:e.connection?'The outer case ending connects only the genitive subject to the action noun.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[0]]:e.main},{id:'other-2',text:task==='meaning'?e.distractors[1]:e.connection?'The ending marks finite tense or person on the main verb.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[1]]:e.sentence}]}),
+ expected:task==='type'?e.answer:task==='meaning'?e.meaning:e.structureAnswer?e.structureAnswer:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit,
+ ...(task==='type'?{}:{expectedOptionId:'target',options:[{id:'target',text:task==='meaning'?e.meaning:e.structureAnswer?e.structureAnswer:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit},{id:'other-1',text:task==='meaning'?e.distractors[0]:e.structureDistractors?e.structureDistractors[0]:e.connection?'The outer case ending connects only the genitive subject to the action noun.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[0]]:e.main},{id:'other-2',text:task==='meaning'?e.distractors[1]:e.structureDistractors?e.structureDistractors[1]:e.connection?'The ending marks finite tense or person on the main verb.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[1]]:e.sentence}]}),
  // Supporting spelling is deliberately assessed only in production questions.
  supportingRuleIds:task==='type'?e.supportingRuleIds:[],source:'newly_authored',reviewStatus:'draft_needs_independent_review',
 })));

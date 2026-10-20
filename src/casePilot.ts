@@ -473,6 +473,7 @@ export interface PilotAttempt {
   questionId: string;
   conceptId: VerbNounConcept | `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
+  negationScope?: "none"|"action"|"main";
   nominalCase?: NominalCase;
   nominalSubject?: NominalSubject;
   lessonId?: VerbNounLesson;
@@ -621,17 +622,18 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         (a.exerciseType !== "case_choice_completion" ||
           typeof a.verbPatternId !== "string" || !/^verb_case_[a-z_]+$/.test(a.verbPatternId) ||
           typeof a.verbLemma !== "string" || !a.verbLemma.trim())) ||
-      ((a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
+      ((a.negationScope !== undefined || a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
         !Object.hasOwn(verbNounConcepts,a.conceptId)) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
       (Object.hasOwn(verbNounConcepts,a.conceptId)
-        ? !["activity","cases","subjects","clause_cases"].includes(a.lessonId || "") ||
+        ? !["activity","cases","subjects","clause_cases","negation"].includes(a.lessonId || "") ||
           !["meaning","structure","type"].includes(a.lessonTask || "") ||
           a.conceptId !== `vn_${a.lessonId}_${a.lessonTask}` ||
-          (["subjects","clause_cases"].includes(a.lessonId || "") ? typeof a.nominalSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalSubject) : a.nominalSubject !== undefined) ||
-          (a.lessonId === "clause_cases" ? !["accusative","dative","ablative"].includes(a.nominalCase || "") : a.nominalCase !== undefined) ||
+          (a.lessonId === "negation" ? (a.nominalSubject !== undefined && (typeof a.nominalSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalSubject))) : ["subjects","clause_cases"].includes(a.lessonId || "") ? typeof a.nominalSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalSubject) : a.nominalSubject !== undefined) ||
+          (a.lessonId === "negation" ? (a.nominalCase !== undefined && (a.nominalCase !== "accusative" || a.nominalSubject === undefined)) : a.lessonId === "clause_cases" ? !["accusative","dative","ablative"].includes(a.nominalCase || "") : a.nominalCase !== undefined) ||
+          (a.lessonId === "negation" ? !["none","action","main"].includes(a.negationScope || "") : a.negationScope !== undefined) ||
           typeof a.exampleId !== "string" || !a.exampleId.trim() ||
           a.exerciseType !== (a.lessonTask === "type" ? "typed_verb_noun" : `verb_noun_${a.lessonTask}`) ||
           (a.lessonTask === "type"
