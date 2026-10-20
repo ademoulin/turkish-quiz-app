@@ -469,6 +469,8 @@ export interface PilotAttempt {
   questionId: string;
   conceptId: `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
+  verbPatternId?: string;
+  verbLemma?: string;
   selectedCase?: "locative" | "dative" | "ablative" | "accusative" | "bare";
   caseCorrect?: boolean;
   formCorrect?: boolean;
@@ -602,6 +604,10 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           typeof a.pronoun !== "string" || !Object.hasOwn(personalPronouns,a.pronoun) ||
           !["locative","dative","ablative","accusative"].includes(a.requiredCase || "") ||
           a.conceptId !== `pronoun_${a.requiredCase}`)) ||
+      ((a.verbPatternId !== undefined || a.verbLemma !== undefined) &&
+        (a.exerciseType !== "case_choice_completion" ||
+          typeof a.verbPatternId !== "string" || !/^verb_case_[a-z_]+$/.test(a.verbPatternId) ||
+          typeof a.verbLemma !== "string" || !a.verbLemma.trim())) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
