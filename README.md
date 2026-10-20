@@ -198,3 +198,22 @@ Both use the same strict Turkish spelling, keyboard/touch controls, manual
 correction and browser history. Export/import preserves owner and noun-number
 evidence alongside existing case results; old version-1 backups remain supported.
 There are no grammar mastery labels or thresholds.
+
+### Whole genitive–possessive noun phrases
+
+Open **Grammar practice → Build a noun phrase · Genitive + possessive**.
+A session contains 20 shuffled draft exercises. Each gives two base nouns in
+possessor + possessed order, the intended meaning, and singular number for both.
+Type the complete two-word Turkish phrase, adding endings to both nouns.
+
+These are newly authored drafts guided by Yeni Hitit 1 §3.2, printed p.40 and
+Ödkem rule 21; independent linguistic review remains pending. The construction
+is explicitly requested. Plural noun phrases, case stacking, choosing a
+construction from context and full sentence production are deferred.
+
+Turkish spelling, word order and both words' endings count. Extra internal or
+surrounding whitespace does not affect phrase grading; punctuation and extra
+words do. Phrase attempts use their own exercise type, retain both noun bases
+and number constraints, and appear in a separate mistake-review queue. Existing
+case/possessive histories and old progress backups remain supported. No grammar
+mastery classifications are assigned.
