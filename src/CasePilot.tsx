@@ -1,3 +1,4 @@
+import {suffixChainConcepts,suffixChainQuestions,selectSuffixChainQuestions,suffixChainMistakes,type SuffixChainSelection} from "./suffixChains";
 import {possessedCaseConcepts, possessedCaseQuestions, possessedCaseMistakes, selectPossessedCaseQuestions, type PossessedCaseSelection, type PossessedNumberSelection} from "./possessedCases";
 import React from "react";
 import {
@@ -175,6 +176,33 @@ const possessedCases: PracticeConfig = {
  baseLabel:'Given possessed form', answerLabel:'Complete inflected word or phrase',
  completionLabel:'Possessed case session complete',
 };
+const suffixChains: PracticeConfig = {
+ id:'suffix-chain',region:'Build endings from base',title:'Build from base · Number + possessive + case',
+ description:'24 newly authored draft questions. Build all the endings from a bare noun using the stated owner, number and case. Independent linguistic review pending. Results are saved separately from Add case only; no mastery rating yet.',
+ guide:<><h4>How to practice</h4><p>Start with the base noun. Add plural -lar/-ler only when plural possessions are requested, add the owner’s possessive ending, then add the required case. Type one complete word, without the owner pronoun or a sentence.</p><p><strong>Worked example (not scored):</strong> bavul (suitcase), our, plural, from (ablative) → <span lang="tr">bavullarımızdan</span>. Build it as bavul → bavullar → bavullarımız → bavullarımızdan.</p><p>For their, these questions explicitly request plural possessions. Do not double the plural ending. The correct build-up and explanation appear after you check.</p></>,
+ bank:suffixChainQuestions,initialSelection:'mixed',selectionLabel:'Required case to build',
+ selections:[{id:'mixed',label:'All four cases'},...Object.entries(suffixChainConcepts).map(([id,label])=>({id,label}))],
+ secondarySelection:{label:'Possessed noun number',initial:'mixed',options:[{id:'singular',label:'Singular · 12 questions'},{id:'plural',label:'Plural · 12 questions'},{id:'mixed',label:'Mixed · 24 questions'}]},
+ select:(s,n)=>selectSuffixChainQuestions(s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection),
+ mistakes:(a,s,n)=>suffixChainMistakes(a,s as SuffixChainSelection,(n||'mixed') as PossessedNumberSelection),
+ mode:()=> 'build_from_base',startLabel:'Start building from base',
+ setupHint:(s,n)=>`Practice ${s==='mixed'?(n==='mixed'?24:12):(n==='mixed'?6:3)} questions. Build every required ending; number and owner are always stated.`,
+ reviewLabel:'Review build-from-base mistakes',
+ sessionLabel:m=>m==='mistake_review'?'Reviewing build-from-base mistakes':'Building the full ending chain',
+ cue:q=>'baseNoun' in q ? `Required case: ${concepts[q.requiredCase]}` : '',
+ instruction:q=>'baseNoun' in q ? caseInstructions[q.requiredCase] : '',
+ detail:q=>'baseNoun' in q ? <p>Base meaning: <strong>{q.baseMeaning}</strong>. Owner: <strong>{ownerLabels[q.owner]}</strong>. Possessed noun number: <strong>{q.nounNumber}</strong>. Build the complete word from the base below. Do not add the owner pronoun.</p> : null,
+ baseLabel:'Base noun',answerLabel:'Complete word built from base',completionLabel:'Build-from-base session complete',
+};
 export function PossessedCasePractice(props: PracticeProps) {
- return <TypedPractice {...props} config={possessedCases} />;
+ const [method,setMethod]=React.useState('add-case');
+ return <div>
+  <label className="field" htmlFor="combined-practice-method">Practice method</label>
+  <select id="combined-practice-method" value={method} onChange={e=>setMethod(e.target.value)}>
+   <option value="add-case">Add case only</option><option value="build-from-base">Build from base</option>
+  </select>
+  <p className="hint">Add case only supplies the possessed form. Build from base asks you to produce every ending. You can switch methods and return to your current question while grammar practice stays open.</p>
+  <div hidden={method!=='add-case'}><TypedPractice {...props} config={possessedCases} /></div>
+  <div hidden={method!=='build-from-base'}><TypedPractice {...props} config={suffixChains} /></div>
+ </div>;
 }

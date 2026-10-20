@@ -273,3 +273,32 @@ the existing case/possessive source and Ödkem mappings apply. Plural production
 is supporting context, not separate mastery evidence. Independent review remains
 pending. Old singular questions and histories remain unchanged. Version-1 backups
 now also accept plural possessed-case snapshots; no new backup version is needed.
+
+### Build endings from the base noun
+
+Inside **Combine endings**, choose **Practice method → Build from base**.
+The default **Add case only** method and its 72 questions remain available.
+Build from base has 24 new authored drafts: six per case, one per owner, with
+12 singular and 12 plural possessions. All four cases + Mixed number includes
+all 24; choosing one case gives six, and one case + one number gives three.
+Their questions always request plural possessions.
+
+Read the bare noun, owner, possession number and named case. Produce one
+complete Turkish word, building plural (when required), possession and case.
+Do not type the owner pronoun or a sentence. Setup includes an unscored example;
+question answers and the build-up appear only after checking.
+
+These full-chain attempts use distinct suffix_chain_* concepts and
+typed_suffix_chain exercise type with baseNoun, owner, nounNumber and
+requiredCase snapshots. Their mistake queue is separate from Add case only,
+and respects both case and number. Switching methods preserves unfinished
+sessions while grammar practice stays open. Corrections update original results;
+version-1 progress exports/imports retain new and older evidence.
+
+Source scope: Yeni Hitit 1 plural forms printed p.11, possessives p.37, cases
+pp.29/73 and grammar appendix §7.5(i). Ödkem maps possession (20), cases
+(14/15/16/35) and supporting harmony/phonology (2/3/4/8). A dedicated plural-noun
+catalog row was not identified in the provided snapshot; that exact mapping is
+pending rather than invented. Exercises are newly authored drafts, not textbook
+quotations; independent linguistic review remains pending. No case-choice task,
+sentence production or mastery labels are added.
