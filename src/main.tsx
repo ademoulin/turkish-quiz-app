@@ -33,6 +33,7 @@ import {
 import { matchesConjugation } from "./grading";
 import "./style.css";
 import { validatePilotImport } from "./casePilot";
+import {verbNounLessons,verbNounTasks} from "./verbNouns";
 import { GrammarPractice } from "./GrammarPractice";
 declare const __GRAMMAR_PREVIEW__: boolean;
 type Question = {
@@ -986,7 +987,7 @@ function App() {
                 </div>
                 <h3>Typed grammar evidence</h3>
                 <p>{(store.pilotAttempts || []).length} saved grammar attempts · {(store.pilotAttempts || []).filter(a => a.correct).length} correct, including self-corrections. No mastery ratings yet.</p>
-                <div className="history">{(store.pilotAttempts || []).slice(-20).reverse().map(a => <div key={a.id}><span><strong>{a.lessonId ? `Verb nouns · ${a.lessonId} · ${a.lessonTask}` : a.exerciseType === "case_choice_completion" ? `Choose the Case · ${a.verbLemma ? a.verbLemma + " · " : ""}${a.baseNoun} · choice: ${a.caseCorrect ? "correct" : "incorrect"} · form: ${a.formCorrect ? "correct" : "incorrect"}` : a.exerciseType === "typed_pronoun_case" ? `Pronoun · ${a.pronoun} · ${a.requiredCase}` : a.exerciseType === "typed_suffix_chain" ? `Build from base · ${a.baseNoun} · ${a.owner} · ${a.nounNumber} · ${a.requiredCase}` : a.exerciseType === "typed_possessed_case" ? `Possessive + ${a.requiredCase} · ${a.givenForm}` : a.exerciseType === "typed_noun_phrase" ? "Genitive + possessive phrase" : `${a.owner || a.conceptId} · ${a.questionId}`}</strong><small>{a.correct ? 'Correct' : 'Incorrect'}{a.manual ? ' · marked correct by you' : ''}</small></span><span>{a.answer}</span></div>)}</div>
+                <div className="history">{(store.pilotAttempts || []).slice(-20).reverse().map(a => <div key={a.id}><span><strong>{a.lessonId ? `Verb nouns · ${verbNounLessons[a.lessonId] || "Lesson"} · ${a.lessonTask ? verbNounTasks[a.lessonTask] : "Lesson practice"}` : a.exerciseType === "case_choice_completion" ? `Choose the Case · ${a.verbLemma ? a.verbLemma + " · " : ""}${a.baseNoun} · choice: ${a.caseCorrect ? "correct" : "incorrect"} · form: ${a.formCorrect ? "correct" : "incorrect"}` : a.exerciseType === "typed_pronoun_case" ? `Pronoun · ${a.pronoun} · ${a.requiredCase}` : a.exerciseType === "typed_suffix_chain" ? `Build from base · ${a.baseNoun} · ${a.owner} · ${a.nounNumber} · ${a.requiredCase}` : a.exerciseType === "typed_possessed_case" ? `Possessive + ${a.requiredCase} · ${a.givenForm}` : a.exerciseType === "typed_noun_phrase" ? "Genitive + possessive phrase" : `${a.owner || a.conceptId} · ${a.questionId}`}</strong><small>{a.correct ? 'Correct' : 'Incorrect'}{a.manual ? ' · marked correct by you' : ''}</small></span><span>{a.answer}</span></div>)}</div>
                 <h3>Keep a copy</h3>
                 <p className="hint">
                   Progress is saved only in this browser on this device.

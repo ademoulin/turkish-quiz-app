@@ -4,15 +4,15 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('36 authored model sentences produce 108 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,36);assert.equal(bank.length,108);assert.equal(new Set(bank.map(q=>q.id)).size,108);
- for(const lesson of ['activity','cases','subjects'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
+test('48 authored model sentences produce 144 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,48);assert.equal(bank.length,144);assert.equal(new Set(bank.map(q=>q.id)).size,144);
+ for(const lesson of ['activity','cases','subjects','clause_cases'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal(e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'){assert.equal(q.options?.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(examples.filter(e=>e.form==='ma_accusative').length,4);assert.equal(examples.filter(e=>e.form==='ma_dative').length,4);assert.equal(examples.filter(e=>e.form==='mak_ablative').length,4);
 });
 test('mixed sessions balance tasks without reusing model sentences; focused sessions cover their whole task',()=>{
- for(const lesson of ['activity','cases','subjects'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
+ for(const lesson of ['activity','cases','subjects','clause_cases'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
  for(const task of ['meaning','structure','type'] as const){const pool=selectLessonQuestions(lesson,task);assert.equal(pool.length,12);assert.equal(pool.every(q=>q.task===task&&q.lessonId===lesson),true);}}
 });
 test('option identity grades meanings and structures; blank, unknown and duplicate submissions do not score',()=>{
@@ -55,4 +55,14 @@ test('subject lesson covers each person twice and separates who-acts recognition
  const fixed=correctPilot(wrong,wrong[0].id);assert.equal(fixed[0].id,wrong[0].id);assert.equal(fixed[0].time,wrong[0].time);assert.equal(fixed[0].nominalSubject,choice.nominalSubject);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
  const a=recordLesson([],choice,'target','s')[0];for(const patch of [{nominalSubject:undefined},{nominalSubject:'unknown'},{nominalSubject:42},{lessonId:'cases'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a,...patch}]}));
  const old=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,nominalSubject:'ben'}]}));
+});
+
+test('whole-clause case lesson balances cases and people, preserving both snapshots and separate structure evidence',()=>{
+ const pool=lessonPool('clause_cases','type');assert.equal(pool.length,12);for(const c of ['accusative','dative','ablative'])assert.equal(pool.filter(q=>q.nominalCase===c).length,4);for(const p of ['ben','sen','o','biz','siz','onlar'])assert.equal(pool.filter(q=>q.nominalSubject===p).length,2);
+ for(const q of lessonPool('clause_cases')){const a=recordLesson([],q,q.task==='type'?q.expected:'target','s');assert.equal(a[0].nominalCase,q.nominalCase);assert.equal(a[0].nominalSubject,q.nominalSubject);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);if(q.task==='structure'){assert.match(q.prompt,/outer case/);assert.match(q.expected,/connects the whole action clause/);}}
+ const forms=['gelmeni','gelmesini','kalkmamızı','konuşmanızı','gelmeme','etmemize','gelmenize','gelmelerine','beklememden','konuşmandan','çalışmasından','çalışmalarından'];assert.deepEqual(pool.map(q=>q.expected),forms);
+ for(const [expected,bad] of [['gelmeni','gelmen'],['gelmesini','gelmesii'],['gelmeme','gelmeye'],['gelmelerine','gelmelere'],['çalışmasından','çalışmasıdan'],['çalışmalarından','çalışmaların'],['kalkmamızı','kalkmamizi']]){const q=pool.find(q=>q.expected===expected)!;assert.equal(recordLesson([],q,bad,'s')[0].correct,false);}
+ const examplesById=new Map(examples.map(e=>[e.id,e]));for(const q of pool){const e=examplesById.get(q.exampleId)!;assert.equal(e.supportingRuleIds.includes('buffer_n'),['o','onlar'].includes(q.nominalSubject!));}
+ const q=lessonPool('clause_cases','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'clause_cases','structure').length,1);assert.equal(lessonMistakes(wrong,'subjects').length,0);assert.equal(lessonMistakes(wrong,'clause_cases','type').length,0);const fixed=correctPilot(wrong,wrong[0].id);assert.equal(fixed[0].id,wrong[0].id);assert.equal(fixed[0].time,wrong[0].time);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
+ const a=recordLesson([],q,'target','s')[0];for(const patch of [{nominalCase:undefined},{nominalCase:'locative'},{nominalSubject:undefined},{nominalSubject:'unknown'},{lessonId:'subjects'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a,...patch}]}));const prior=recordLesson([],lessonPool('subjects')[0],'target','prior')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...prior,nominalCase:'dative'}]}));
 });
