@@ -8,11 +8,13 @@ test('activity chooser shows one activity and preserves sessions when switching'
   const cases = page.getByRole('region', {name:'Typed case pilot', exact:true});
   const possessives = page.getByRole('region', {name:'Typed possessive practice', exact:true});
   const phrases = page.getByRole('region', {name:'Typed noun phrase practice', exact:true});
+  const combined = page.getByRole('region', {name:'Typed possessed case practice', exact:true});
   const mc = page.getByRole('button', {name:'Start grammar practice', exact:true});
   await expect(cases).toBeVisible();
   await expect(possessives).not.toBeVisible();
   await expect(phrases).not.toBeVisible();
   await expect(mc).not.toBeVisible();
+  await expect(combined).not.toBeVisible();
   await cases.getByRole('button', {name:'Start typed case practice', exact:true}).click();
   await cases.getByLabel('Complete inflected word').fill('unfinished');
   for (const [value, area] of [['possessives', possessives], ['phrases', phrases]] as const) {
@@ -22,7 +24,14 @@ test('activity chooser shows one activity and preserves sessions when switching'
     await expect(mc).not.toBeVisible();
     await expect(value === 'phrases' ? possessives : phrases).not.toBeVisible();
   }
+  await chooser.selectOption('possessed-cases');
+  await expect(combined).toBeVisible();
+  await expect(cases).not.toBeVisible();
+  await expect(possessives).not.toBeVisible();
+  await expect(phrases).not.toBeVisible();
+  await expect(mc).not.toBeVisible();
   await chooser.selectOption('multiple-choice');
+  await expect(combined).not.toBeVisible();
   await expect(mc).toBeVisible();
   await expect(cases).not.toBeVisible();
   await expect(possessives).not.toBeVisible();

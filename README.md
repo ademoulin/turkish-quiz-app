@@ -190,8 +190,8 @@ possessions; the other owners request one possessed item.
 
 There are 24 newly authored draft exercises, guided by Yeni Hitit 1 §3.1,
 printed p.37 and Ödkem rule 20. Independent linguistic review is pending. This
-batch tests possessive forms; full genitive–possessive noun phrases, possessive
-plus case combinations, and singular possessions with plural owners are deferred.
+batch tests possessive forms only; whole phrases and possessed-case combinations
+have their own separate activities. Singular possessions with plural owners are deferred.
 
 Possessive mistakes have their own review button. Case practice stays separate.
 Both use the same strict Turkish spelling, keyboard/touch controls, manual
@@ -208,8 +208,8 @@ Type the complete two-word Turkish phrase, adding endings to both nouns.
 
 These are newly authored drafts guided by Yeni Hitit 1 §3.2, printed p.40 and
 Ödkem rule 21; independent linguistic review remains pending. The construction
-is explicitly requested. Plural noun phrases, case stacking, choosing a
-construction from context and full sentence production are deferred.
+is explicitly requested. Case stacking has its own separate activity; plural noun
+phrases, construction choice and full sentence production remain deferred.
 
 Turkish spelling, word order and both words' endings count. Extra internal or
 surrounding whitespace does not affect phrase grading; punctuation and extra
@@ -217,3 +217,27 @@ words do. Phrase attempts use their own exercise type, retain both noun bases
 and number constraints, and appear in a separate mistake-review queue. Existing
 case/possessive histories and old progress backups remain supported. No grammar
 mastery classifications are assigned.
+
+### Case endings on possessed nouns
+
+Open **Grammar practice → Practice activity → Combine endings · Possessive + case**.
+Choose all 24 shuffled questions or one of four cases (six questions each).
+Each prompt names the required case and supplies the possessed form, including
+its existing possessive ending. Add only the case ending. For a supplied two-word
+phrase, return both words and keep the first word unchanged.
+
+These are newly authored drafts guided by Yeni Hitit 1 case and possessive sections
+and grammar appendix §7.5(i), which explicitly covers third-person possessive n
+before case suffixes. Ödkem mappings: tested cases 14/15/16/35; supporting rules
+20 (supplied possession), 21 (supplied phrases), 2/3 (harmony), and 8 (partial buffer
+mapping). The n is required even before -de/-den. Independent review is pending.
+Only singular possessions are included; no genitive case stacking or third-person
+plural-owner ambiguity. This activity tests adding a named case, not choosing a
+case or producing the underlying possessive form.
+
+Word answers retain strict Turkish spelling and existing word normalization.
+Two-word answers also normalize repeated internal whitespace. Each saved result
+has a distinct possessed-case concept and exercise type, supplied form, case,
+answer scope, owner and noun-number context. Review remains separate. Corrections
+update original attempts; version-1 export/import supports both new evidence and
+older backups. No grammar mastery labels or thresholds are added.

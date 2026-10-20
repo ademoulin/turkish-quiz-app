@@ -1,3 +1,4 @@
+import { possessedCaseConcepts, type PossessedCaseConcept, type PossessedCaseQuestion } from "./possessedCases";
 import {
   phraseConcepts,
   matchesPhrase,
@@ -445,7 +446,7 @@ export const caseQuestions: CaseQuestion[] = (
 export const matchesCase = (answer: string, expected: string) =>
   answer.normalize("NFC").trim().toLocaleLowerCase("tr") ===
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
-export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion;
+export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion;
 export interface PilotAttempt {
   id: string;
   sessionId: string;
@@ -455,16 +456,21 @@ export interface PilotAttempt {
     | "mistake_review"
     | "single_possessive"
     | "mixed_possessives"
-    | "noun_phrases";
+    | "noun_phrases"
+    | "single_possessed_case"
+    | "mixed_possessed_cases";
   questionId: string;
-  conceptId: Concept | PossessiveConcept | PhraseConcept;
+  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept;
+  givenForm?: string;
+  requiredCase?: Exclude<Concept, "genitive">;
+  answerScope?: "word" | "phrase";
   possessor?: string;
   possessed?: string;
   possessorNumber?: "singular";
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "typed_form_completion" | "typed_noun_phrase";
+  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -501,12 +507,13 @@ export function recordPilot(
             possessedNumber: q.possessedNumber,
           }
         : {}),
+      ...("givenForm" in q ? {givenForm:q.givenForm, requiredCase:q.requiredCase, answerScope:q.answerScope} : {}),
       exerciseType: q.exerciseType,
       supportingRuleIds: q.supportingRuleIds,
       answer: answer.trim(),
       expected: q.answer,
       correct:
-        q.exerciseType === "typed_noun_phrase"
+        q.exerciseType === "typed_noun_phrase" || (q.exerciseType === "typed_possessed_case" && q.answerScope === "phrase")
           ? matchesPhrase(answer, q.answer)
           : matchesCase(answer, q.answer),
       manual: false,
@@ -542,14 +549,25 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "single_possessive",
           "mixed_possessives",
           "noun_phrases",
+          "single_possessed_case",
+          "mixed_possessed_cases",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
-        !Object.hasOwn(phraseConcepts, a.conceptId)) ||
+        !Object.hasOwn(phraseConcepts, a.conceptId) &&
+        !Object.hasOwn(possessedCaseConcepts, a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
           a.nounNumber === undefined)) ||
+      (Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
+        (a.exerciseType !== "typed_possessed_case" ||
+          typeof a.givenForm !== "string" || !a.givenForm.trim() ||
+          !["locative", "dative", "ablative", "accusative"].includes(a.requiredCase || "") ||
+          a.conceptId !== `possessed_${a.requiredCase}` ||
+          !["word", "phrase"].includes(a.answerScope || "") ||
+          (a.answerScope === "phrase") !== a.givenForm.trim().includes(" ") ||
+          typeof a.owner !== "string" || !a.owner.trim() || a.nounNumber !== "singular")) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
@@ -561,7 +579,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           !a.possessed.trim() ||
           a.possessorNumber !== "singular" ||
           a.possessedNumber !== "singular"
-        : a.exerciseType !== "typed_form_completion") ||
+        : Object.hasOwn(possessedCaseConcepts, a.conceptId)
+          ? a.exerciseType !== "typed_possessed_case"
+          : a.exerciseType !== "typed_form_completion") ||
       !Array.isArray(a.supportingRuleIds) ||
       !a.supportingRuleIds.every((r) => typeof r === "string") ||
       typeof a.correct !== "boolean" ||
