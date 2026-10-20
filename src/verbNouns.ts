@@ -1,3 +1,4 @@
+import {subjectExamples,nominalSubjects,type NominalSubject} from './verbNounSubjects';
 /** Newly authored lesson content, not quotations. Yeni Hitit 1 §12.1 p.145
  * and §12.2 p.149 guide scope. Independent review and exact Ödkem mapping pending.
  * No finite-verb conjugation, explicit embedded subject, negation or possessive
@@ -5,6 +6,7 @@
 export const verbNounLessons = {
  activity: '1 · Actions as nouns',
  cases: '2 · Action nouns with case endings',
+ subjects: '3 · The action has its own subject',
 } as const;
 export type VerbNounLesson = keyof typeof verbNounLessons;
 export const verbNounTasks = {meaning:'Understand the meaning',structure:'Unpack the structure',type:'Build the action noun'} as const;
@@ -12,10 +14,12 @@ export type VerbNounTask = keyof typeof verbNounTasks;
 export const verbNounConcepts = {
  vn_activity_meaning:'Activity noun · meaning',vn_activity_structure:'Activity noun · structure',vn_activity_type:'Activity noun · production',
  vn_cases_meaning:'Action noun + case · meaning',vn_cases_structure:'Action noun + case · structure',vn_cases_type:'Action noun + case · production',
+ vn_subjects_meaning:'Action subject · meaning',vn_subjects_structure:'Action subject · who acts',vn_subjects_type:'Action subject · production',
 } as const;
 export type VerbNounConcept = keyof typeof verbNounConcepts;
-export type NominalForm = 'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative';
+export type NominalForm = 'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative'|'ma_possessive';
 export interface VerbNounExample {
+ nominalSubject?:NominalSubject;subjectGenitive?:string;subjectAlternatives?:[NominalSubject,NominalSubject];
  id:string;lessonId:VerbNounLesson;stem:string;verbMeaning:string;form:NominalForm;
  sentence:string;meaning:string;distractors:[string,string];unit:string;main:string;
  template:string;answer:string;breakdown:string;explanation:string;supportingRuleIds:string[];
@@ -57,22 +61,24 @@ const cases:VerbNounExample[]=caseRows.map(([stem,verbMeaning,form,sentence,mean
  id:`vn2-${String(i+1).padStart(2,'0')}`,lessonId:'cases',stem,verbMeaning,form,sentence,meaning,distractors:[d1,d2],unit,main,template,answer,breakdown,explanation,
  supportingRuleIds:form==='mak_ablative'?['two_way_vowel_harmony','voiceless_assimilation']:['two_way_vowel_harmony','buffer_y',...(form==='ma_accusative'?['four_way_vowel_harmony']:[])],
 }));
-export const verbNounExamples:VerbNounExample[]=[...activity,...cases];
-export const nominalFormLabels:Record<NominalForm,string>={mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
+export const verbNounExamples:VerbNounExample[]=[...activity,...cases,...subjectExamples];
+export const nominalFormLabels:Record<NominalForm,string>={ma_possessive:'Use -ma / -me + the possessive ending matching the supplied subject. Do not add an outer case ending.',mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
 export interface LessonOption {id:string;text:string}
 export interface VerbNounQuestion {
+ nominalSubject?:NominalSubject;
  id:string;lessonId:VerbNounLesson;conceptId:VerbNounConcept;task:VerbNounTask;exampleId:string;
  exerciseType:'verb_noun_meaning'|'verb_noun_structure'|'typed_verb_noun';
  prompt:string;sentence:string;expected:string;options?:LessonOption[];expectedOptionId?:string;
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
 export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>(['meaning','structure','type'] as const).map(task=>({
+ ...(e.nominalSubject?{nominalSubject:e.nominalSubject}:{}),
  id:`${e.id}-${task}`,lessonId:e.lessonId,exampleId:e.id,task,conceptId:`vn_${e.lessonId}_${task}` as VerbNounConcept,
  exerciseType:task==='type'?'typed_verb_noun':task==='meaning'?'verb_noun_meaning':'verb_noun_structure',
- prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?'Which complete chunk names the action and its details?':'Complete the action noun. The main verb or description is already supplied.',
+ prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?(e.nominalSubject?'Who performs the action inside the noun-like clause?':'Which complete chunk names the action and its details?'):'Complete the action noun. The main verb or description is already supplied.',
  sentence:task==='type'?e.template:e.sentence,
- expected:task==='type'?e.answer:task==='meaning'?e.meaning:e.unit,
- ...(task==='type'?{}:{expectedOptionId:'target',options:[{id:'target',text:task==='meaning'?e.meaning:e.unit},{id:'other-1',text:task==='meaning'?e.distractors[0]:e.main},{id:'other-2',text:task==='meaning'?e.distractors[1]:e.sentence}]}),
+ expected:task==='type'?e.answer:task==='meaning'?e.meaning:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit,
+ ...(task==='type'?{}:{expectedOptionId:'target',options:[{id:'target',text:task==='meaning'?e.meaning:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit},{id:'other-1',text:task==='meaning'?e.distractors[0]:e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[0]]:e.main},{id:'other-2',text:task==='meaning'?e.distractors[1]:e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[1]]:e.sentence}]}),
  // Supporting spelling is deliberately assessed only in production questions.
  supportingRuleIds:task==='type'?e.supportingRuleIds:[],source:'newly_authored',reviewStatus:'draft_needs_independent_review',
 })));
