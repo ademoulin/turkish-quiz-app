@@ -5,7 +5,7 @@ test('activity chooser shows one activity and preserves sessions when switching'
   await page.goto('/');
   await page.getByRole('button', {name:'Open grammar practice'}).click();
   const chooser = page.getByLabel('Practice activity', {exact:true});
-  const cases = page.getByRole('region', {name:'Typed case pilot', exact:true});
+  const cases = page.getByRole('region', {name:'Case Forms', exact:true});
   const possessives = page.getByRole('region', {name:'Typed possessive practice', exact:true});
   const phrases = page.getByRole('region', {name:'Typed noun phrase practice', exact:true});
   const combined = page.getByRole('region', {name:'Typed possessed case practice', exact:true});

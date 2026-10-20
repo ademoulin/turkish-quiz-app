@@ -11,7 +11,7 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
   );
   await page.goto("/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
-  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  const pilot = page.getByRole("region", { name: "Case Forms" });
   await pilot
     .getByLabel("Required case", { exact: true })
     .selectOption("dative");
@@ -119,7 +119,7 @@ test("all case pools use strict spelling and touch letters; production project p
   await page.route("https://docs.google.com/**", (r) => r.abort());
   await page.goto("http://127.0.0.1:4173/turkish-quiz-app/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
-  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  const pilot = page.getByRole("region", { name: "Case Forms" });
   for (const concept of [
     "locative",
     "dative",
@@ -172,7 +172,7 @@ test("typed checking works inside a preview sandbox without form permission", as
   );
   const frame = page.frameLocator("iframe");
   await frame.getByRole("button", { name: "Open grammar practice" }).click();
-  const pilot = frame.getByRole("region", { name: "Typed case pilot" });
+  const pilot = frame.getByRole("region", { name: "Case Forms" });
   await pilot
     .getByRole("button", { name: "Start typed case practice" })
     .click();
@@ -193,7 +193,7 @@ test("mixed sessions balance cases and mistake review resolves only corrected qu
   await page.route("https://docs.google.com/**", (r) => r.abort());
   await page.goto("/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
-  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  const pilot = page.getByRole("region", { name: "Case Forms" });
   await expect(
     pilot.getByRole("button", {
       name: "Review grammar mistakes (0)",
@@ -301,7 +301,7 @@ test("accusative and genitive each complete ten unique typed questions", async (
   await page.route("https://docs.google.com/**", (r) => r.abort());
   await page.goto("/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
-  const pilot = page.getByRole("region", { name: "Typed case pilot" });
+  const pilot = page.getByRole("region", { name: "Case Forms" });
   for (const concept of ["accusative", "genitive"]) {
     await pilot
       .getByLabel("Required case", { exact: true })

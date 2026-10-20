@@ -145,9 +145,9 @@ On another checkout, import with `git fetch /path/to/yeni-hitit-v82-integration.
 codex/yeni-hitit-v82-integration:codex/yeni-hitit-v82-integration`, then check out
 that branch. A bundle includes commit history and needs no GitHub connection.
 
-## Typed case pilot
+## Case Forms
 
-Open **Grammar practice → Typed endings · Case pilot**, select the required case,
+Open **Grammar practice → Case Forms**, select the required case,
 and start a 10-question session. Type the complete inflected base word; Turkish
 letters count. Enter checks an answer; the focused Next button advances after
 feedback. Turkish-letter buttons are available for touch and keyboard users.

@@ -79,7 +79,7 @@ test("all six owners: 24 unique questions, explicit number, touch, keyboard and 
     ),
   ).toBe(true);
   await page.getByLabel("Practice activity", {exact:true}).selectOption("cases");
-  const cases = page.getByRole("region", { name: "Typed case pilot" });
+  const cases = page.getByRole("region", { name: "Case Forms" });
   await expect(
     cases.getByText(
       "0 saved typed attempts · 0 correct, including self-corrections",
