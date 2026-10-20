@@ -1,3 +1,4 @@
+import {suffixChainConcepts, type SuffixChainConcept, type SuffixChainQuestion} from "./suffixChains";
 import { possessedCaseConcepts, type PossessedCaseConcept, type PossessedCaseQuestion } from "./possessedCases";
 import {
   phraseConcepts,
@@ -446,7 +447,7 @@ export const caseQuestions: CaseQuestion[] = (
 export const matchesCase = (answer: string, expected: string) =>
   answer.normalize("NFC").trim().toLocaleLowerCase("tr") ===
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
-export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion;
+export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion | SuffixChainQuestion;
 export interface PilotAttempt {
   id: string;
   sessionId: string;
@@ -458,9 +459,11 @@ export interface PilotAttempt {
     | "mixed_possessives"
     | "noun_phrases"
     | "single_possessed_case"
-    | "mixed_possessed_cases";
+    | "mixed_possessed_cases"
+    | "build_from_base";
   questionId: string;
-  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept;
+  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept;
+  baseNoun?: string;
   givenForm?: string;
   requiredCase?: Exclude<Concept, "genitive">;
   answerScope?: "word" | "phrase";
@@ -470,7 +473,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case";
+  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -508,6 +511,7 @@ export function recordPilot(
           }
         : {}),
       ...("givenForm" in q ? {givenForm:q.givenForm, requiredCase:q.requiredCase, answerScope:q.answerScope} : {}),
+      ...("baseNoun" in q ? {baseNoun:q.baseNoun, requiredCase:q.requiredCase} : {}),
       exerciseType: q.exerciseType,
       supportingRuleIds: q.supportingRuleIds,
       answer: answer.trim(),
@@ -551,11 +555,13 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "noun_phrases",
           "single_possessed_case",
           "mixed_possessed_cases",
+          "build_from_base",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
         !Object.hasOwn(phraseConcepts, a.conceptId) &&
-        !Object.hasOwn(possessedCaseConcepts, a.conceptId)) ||
+        !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
+        !Object.hasOwn(suffixChainConcepts, a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
@@ -568,6 +574,13 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           !["word", "phrase"].includes(a.answerScope || "") ||
           (a.answerScope === "phrase") !== a.givenForm.trim().includes(" ") ||
           typeof a.owner !== "string" || !a.owner.trim() || !["singular", "plural"].includes(a.nounNumber || ""))) ||
+      (Object.hasOwn(suffixChainConcepts, a.conceptId) &&
+        (a.exerciseType !== "typed_suffix_chain" ||
+          typeof a.baseNoun !== "string" || !a.baseNoun.trim() || /\s/u.test(a.baseNoun.trim()) ||
+          !["locative","dative","ablative","accusative"].includes(a.requiredCase || "") ||
+          a.conceptId !== `suffix_chain_${a.requiredCase}` ||
+          !["ben","sen","o","biz","siz","onlar"].includes(a.owner || "") ||
+          !["singular","plural"].includes(a.nounNumber || ""))) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
@@ -581,7 +594,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           a.possessedNumber !== "singular"
         : Object.hasOwn(possessedCaseConcepts, a.conceptId)
           ? a.exerciseType !== "typed_possessed_case"
-          : a.exerciseType !== "typed_form_completion") ||
+          : Object.hasOwn(suffixChainConcepts, a.conceptId)
+            ? a.exerciseType !== "typed_suffix_chain"
+            : a.exerciseType !== "typed_form_completion") ||
       !Array.isArray(a.supportingRuleIds) ||
       !a.supportingRuleIds.every((r) => typeof r === "string") ||
       typeof a.correct !== "boolean" ||
