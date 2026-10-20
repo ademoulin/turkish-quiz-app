@@ -1,0 +1,28 @@
+import React,{useEffect,useRef,useState} from 'react';
+import type {PracticeProps} from './TypedPractice';
+import {choiceCases,choiceMistakes,correctChoice,recordChoice,selectChoiceQuestions,type ChoiceCase,type ChoiceQuestion} from './caseChoice';
+import {shuffle} from './shuffle';
+export function ChooseCase({attempts,updateAttempts}:PracticeProps){
+ const [questions,setQuestions]=useState<ChoiceQuestion[]>([]),[index,setIndex]=useState(0),[selected,setSelected]=useState<ChoiceCase|''>(''),[answer,setAnswer]=useState('');
+ const session=useRef(''),locked=useRef(false),input=useRef<HTMLInputElement>(null),next=useRef<HTMLButtonElement>(null),firstCase=useRef<HTMLInputElement>(null);
+ const q=questions[index],results=attempts.filter(a=>a.sessionId===session.current),feedback=q&&results.find(a=>a.questionId===q.id),mistakes=choiceMistakes(attempts);
+ useEffect(()=>{if(feedback)next.current?.focus();else if(q)firstCase.current?.focus();},[q,feedback]);
+ function start(review=false){session.current=crypto.randomUUID();locked.current=false;setIndex(0);setSelected('');setAnswer('');setQuestions(review?shuffle(mistakes).slice(0,12):selectChoiceQuestions());}
+ function check(){if(!q||feedback||locked.current||!selected||!answer.trim())return;locked.current=true;updateAttempts(a=>recordChoice(a,q,selected,answer,session.current));}
+ function insert(c:string){const el=input.current,start=el?.selectionStart??answer.length,end=el?.selectionEnd??start;setAnswer(answer.slice(0,start)+c+answer.slice(end));requestAnimationFrame(()=>{el?.focus();el?.setSelectionRange(start+1,start+1);});}
+ return <section className="panel" aria-label="Choose the Case"><h3>Choose the Case</h3><p className="hint">30 newly authored draft questions · locative, dative and ablative. Independent linguistic review pending.</p>
+ {!questions.length?<>
+ <section aria-label="How to practice"><h4>How to practice</h4><p>Read the Turkish sentence and its intended English meaning. First choose the case, then type the complete word. Check both together. Case choice and word form are scored separately; the word is checked against the intended sentence, even if you chose another case.</p><p>Location often uses locative, destination dative, and source ablative. Some verbs require a particular case: English prepositions alone are not enough.</p><p><strong>Worked example (not scored):</strong> Çocuklar ___ oynuyor. Base: park. Meaning: The children are playing in the park. Choose locative and type parkta.</p></section>
+ <button className="primary" onClick={()=>start()}>Start case choice practice</button><p className="hint">12 questions per session: four of each case. Correct Turkish letters are required.</p><button className="secondary" disabled={!mistakes.length} onClick={()=>start(true)}>Review case choice mistakes ({mistakes.length})</button><p className="hint">Reviews up to 12 questions where either part was missed. A later fully correct answer or corrections clear the question.</p>
+ </>:<><p role="status">Case choices: {results.filter(a=>a.caseCorrect).length} / {results.length} · Word forms: {results.filter(a=>a.formCorrect).length} / {results.length}</p>
+ {q?<div data-question-id={q.id}><p>Question {index+1} of {questions.length}</p><p lang="tr">{q.sentence}</p><p>Intended meaning: {q.meaning}</p><p>Base word: <strong lang="tr">{q.base}</strong></p>
+ <fieldset disabled={!!feedback}><legend>1. Choose the case</legend>{(Object.keys(choiceCases) as ChoiceCase[]).map((c,i)=><label className="word-row" key={c}><input ref={i===0?firstCase:undefined} type="radio" name="choose-case-answer" value={c} checked={selected===c} onChange={()=>setSelected(c)}/><span>{choiceCases[c]}</span></label>)}</fieldset>
+ <label className="field" htmlFor="choose-case-word">2. Complete inflected word</label><input id="choose-case-word" className="answer" ref={input} lang="tr" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.nativeEvent.isComposing){e.preventDefault();check();}}} disabled={!!feedback} autoComplete="off" autoCapitalize="none" spellCheck={false}/>
+ {!feedback&&<div className="characters" aria-label="Turkish letters">{'çğıöşü'.split('').map(c=><button type="button" key={c} onClick={()=>insert(c)}>{c}</button>)}</div>}
+ {feedback?<><div role="status" className={'feedback '+(feedback.correct?'correct':'incorrect')}><p>Case choice: {feedback.caseCorrect?'Correct':'Incorrect'}. Word form: {feedback.formCorrect?'Correct':'Incorrect'}.</p><p>Correct case: {choiceCases[q.requiredCase]}</p><p lang="tr">Correct answer: {q.answer}</p><p>{q.explanation}</p>{feedback.manual&&<p>Includes a correction by you.</p>}</div>
+ {!feedback.caseCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'case'))}>My case choice was correct</button>}
+ {!feedback.formCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'form'))}>My word form was correct</button>}
+ <button ref={next} className="primary" onClick={()=>{setIndex(i=>i+1);setSelected('');setAnswer('');locked.current=false;}}>{index+1===questions.length?'See case choice results':'Next case choice question'}</button></>:<button className="primary" disabled={!selected||!answer.trim()} onClick={check}>Check case and word</button>}
+ </div>:<h4>Case choice session complete</h4>}<button className="text-button" onClick={()=>setQuestions([])}>{q?'End case choice session':'Restart case choice practice'}</button></>}
+ </section>;
+}
