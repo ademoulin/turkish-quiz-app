@@ -1,3 +1,4 @@
+import {possessedCaseConcepts, possessedCaseQuestions, possessedCaseMistakes, selectPossessedCaseQuestions, type PossessedCaseSelection} from "./possessedCases";
 import React from "react";
 import {
   TypedPractice,
@@ -137,4 +138,26 @@ export function PossessivePractice(props: PracticeProps) {
 }
 export function NounPhrasePractice(props: PracticeProps) {
   return <TypedPractice {...props} config={phrases} />;
+}
+
+const possessedCases: PracticeConfig = {
+ id:'possessed-case', region:'Typed possessed case practice',
+ title:'Combine endings · Possessive + case',
+ description:'24 newly authored draft questions. Add the named case to the supplied possessed form. Singular possessions only; independent linguistic review pending. Attempts are saved; no mastery rating yet.',
+ bank:possessedCaseQuestions, initialSelection:'mixed', selectionLabel:'Required case on possessed noun',
+ selections:[{id:'mixed',label:'Mixed cases · 24 questions'},...Object.entries(possessedCaseConcepts).map(([id,label])=>({id,label}))],
+ select:s=>selectPossessedCaseQuestions(s as PossessedCaseSelection),
+ mistakes:(a,s)=>possessedCaseMistakes(a,s as PossessedCaseSelection),
+ mode:s=>s==='mixed'?'mixed_possessed_cases':'single_possessed_case',
+ startLabel:'Start possessed case practice',
+ setupHint:s=>s==='mixed'?'Practice all 24 questions: six per case, shuffled together. Each question names the required case.':'Practice all six questions for this case on possessed nouns.',
+ reviewLabel:'Review possessed case mistakes',
+ sessionLabel:m=>m==='mistake_review'?'Reviewing possessed case mistakes':'Case endings on possessed nouns',
+ cue:q=>'requiredCase' in q ? `Required case: ${concepts[q.requiredCase]}` : '',
+ detail:q=>'givenForm' in q ? <p>The given form already includes possession. Possessed item: <strong>singular</strong>. {q.answerScope==='phrase'?'Type the complete phrase; keep its first word unchanged.':'Type the complete inflected word; do not add an owner.'}</p> : null,
+ baseLabel:'Given possessed form', answerLabel:'Complete inflected word or phrase',
+ completionLabel:'Possessed case session complete',
+};
+export function PossessedCasePractice(props: PracticeProps) {
+ return <TypedPractice {...props} config={possessedCases} />;
 }

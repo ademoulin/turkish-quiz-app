@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { bank, startSession, submitAnswer, nextQuestion, score, type Session } from './yeniHitit';
 import { sectionLabel, skillLabel } from './grammarLabels';
-import { CasePilot, PossessivePractice, NounPhrasePractice } from './CasePilot';
+import { CasePilot, PossessivePractice, NounPhrasePractice, PossessedCasePractice } from './CasePilot';
 import type { PilotAttempt } from './casePilot';
 export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAttempt[]; updateAttempts: (update: (a:PilotAttempt[])=>PilotAttempt[])=>void}) {
   const [open, setOpen] = useState(false);
@@ -24,12 +24,14 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         <option value="cases">Typed endings · Case pilot</option>
         <option value="possessives">Typed endings · Possessive forms</option>
         <option value="phrases">Build a noun phrase · Genitive + possessive</option>
+        <option value="possessed-cases">Combine endings · Possessive + case</option>
         <option value="multiple-choice">Yeni Hitit · Multiple choice</option>
       </select>
       <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
       <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'phrases'}><NounPhrasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'possessed-cases'}><PossessedCasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'multiple-choice'}>
       {!session ? <>
         <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
