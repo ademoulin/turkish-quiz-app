@@ -24,6 +24,9 @@ export type PracticeConfig = {
   count?: (selection:string, secondarySelection?:string, ownerSelection?:string)=>number;
   select: (selection: string, secondarySelection?: string, ownerSelection?: string) => TypedQuestion[];
   mistakes: (attempts: PilotAttempt[], selection: string, secondarySelection?: string, ownerSelection?: string) => TypedQuestion[];
+  reviewSelect?: (questions:TypedQuestion[])=>TypedQuestion[];
+  reviewMode?: NonNullable<PilotAttempt["practiceMode"]>;
+  questionConfig?: (question:TypedQuestion)=>PracticeConfig;
   mode: (selection: string) => NonNullable<PilotAttempt["practiceMode"]>;
   startLabel: string;
   setupHint: (selection: string, secondarySelection?: string, ownerSelection?: string) => string;
@@ -63,6 +66,7 @@ export function TypedPractice({
   const mistakes = config.mistakes(attempts, selection, secondarySelection, ownerSelection);
   const availableCount = config.count?.(selection, secondarySelection, ownerSelection);
   const q = questions[index];
+  const questionConfig = q ? config.questionConfig?.(q) || config : config;
   const results = attempts.filter((a) => a.sessionId === sessionId.current);
   const feedback = q && results.find((a) => a.questionId === q.id);
   useEffect(() => {
@@ -70,11 +74,11 @@ export function TypedPractice({
     else if (feedback) nextButton.current?.focus();
   }, [q, feedback]);
   function start(review = false) {
-    const pool = review ? shuffle(mistakes) : config.select(selection, secondarySelection, ownerSelection);
+    const pool = review ? (config.reviewSelect ? config.reviewSelect(mistakes) : shuffle(mistakes)) : config.select(selection, secondarySelection, ownerSelection);
     if (!pool.length) return;
     sessionId.current = crypto.randomUUID();
     locked.current = false;
-    setMode(review ? "mistake_review" : config.mode(selection));
+    setMode(review ? config.reviewMode || "mistake_review" : config.mode(selection));
     setIndex(0);
     setAnswer("");
     setQuestions(pool);
@@ -162,22 +166,23 @@ export function TypedPractice({
             answers correct / attempted
           </p>
           {q ? (
-            <div>
+            <div data-question-id={q.id}>
+              {config.questionConfig && <h4>Task: {questionConfig.title}</h4>}
               <p>
-                Question {index + 1} of {questions.length} · {config.cue(q)}
+                Question {index + 1} of {questions.length} · {questionConfig.cue(q)}
               </p>
-              {config.instruction && <p>{config.instruction(q)}</p>}
-              {config.detail?.(q)}
-              <p lang={config.sentenceLanguage || "tr"}>
-                {config.sentenceLabel}
+              {questionConfig.instruction && <p>{questionConfig.instruction(q)}</p>}
+              {questionConfig.detail?.(q)}
+              <p lang={questionConfig.sentenceLanguage || "tr"}>
+                {questionConfig.sentenceLabel}
                 {q.sentence}
               </p>
               <p>
-                {config.baseLabel || "Base word"}:{" "}
+                {questionConfig.baseLabel || "Base word"}:{" "}
                 <strong lang="tr">{q.base}</strong>
               </p>
               <label className="field" htmlFor={config.id + "-answer"}>
-                {config.answerLabel}
+                {questionConfig.answerLabel}
               </label>
               <input
                 id={config.id + "-answer"}

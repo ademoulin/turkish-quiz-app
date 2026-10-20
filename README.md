@@ -320,3 +320,29 @@ or evlerinde as separate questions with explicit owner/number evidence. The
 original 24 questions, all Add case only questions, grading and backups remain
 unchanged. Sources and draft review status remain as described above; independent
 linguistic review and the dedicated plural catalog mapping remain pending.
+
+### Mixed Grammar Review
+
+Choose **Grammar practice → Practice activity → Mixed Grammar Review**.
+All questions starts 12 shuffled questions across the five typed families:
+case forms, possessives, noun phrases, Add case only, and Build from base.
+Every family contributes two or three questions, with the extra two slots
+rotating randomly. Multiple choice remains its own activity.
+
+Follow the Task heading for each question. The original instructions, owner,
+number, case, base label and one-word/two-word answer format are shown.
+Answers and explanations appear only after checking. The setup example is
+unscored and disappears during sessions.
+
+Previous mistakes reviews up to 12 latest missed question IDs across these
+families. Sparse families contribute what is available; no cleared items are
+added to fill a session. With fewer than 12 mistakes, review is shorter.
+A later correct answer or manual correction clears the same question from both
+mixed and focused queues. Active review pools remain fixed while answering.
+
+The original 214 question objects and IDs are reused; no new content or mastery
+classification is introduced. Attempts keep the original concept, exercise
+type, supporting rules and prompt context. Optional practiceMode values
+mixed_grammar and mixed_grammar_review identify the session source in version-1
+backups while older backups remain supported. Existing strict Turkish spelling,
+phrase whitespace policy, correction and scoring are unchanged.
