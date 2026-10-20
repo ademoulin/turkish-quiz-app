@@ -167,7 +167,7 @@ const pronouns:PracticeConfig={
 export function CasePilot(props: PracticeProps) {
  const [wordType,setWordType]=React.useState('nouns');
  return <div>
-  <label className="field" htmlFor="case-word-type">Word type</label>
+  <label className="field" htmlFor="case-word-type">Case word type</label>
   <select id="case-word-type" value={wordType} onChange={e=>setWordType(e.target.value)}>
    <option value="nouns">Nouns · 50 questions</option><option value="personal-pronouns">Personal pronouns · 24 questions</option>
   </select>

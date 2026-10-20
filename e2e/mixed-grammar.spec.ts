@@ -78,7 +78,7 @@ test('mixed mistakes review is short when scarce, clears focused queues, and rou
  await page.getByLabel('Practice method',{exact:true}).selectOption('build-from-base');
  await expect(page.getByRole('region',{name:'Build endings from base',exact:true}).getByRole('button',{name:'Review build-from-base mistakes (0)',exact:true})).toBeDisabled();
  await page.getByLabel('Practice activity',{exact:true}).selectOption('cases');
- await page.getByLabel('Word type',{exact:true}).selectOption('personal-pronouns');
+ await page.getByLabel('Case word type',{exact:true}).selectOption('personal-pronouns');
  await expect(page.getByRole('region',{name:'Personal pronoun case forms',exact:true}).getByRole('button',{name:'Review pronoun case mistakes (0)',exact:true})).toBeDisabled();
  await page.getByRole('button',{name:'Your progress',exact:true}).click();const download=page.waitForEvent('download');
  await page.getByRole('button',{name:'Export progress',exact:true}).click();await page.locator('input[type=file]').setInputFiles((await(await download).path())!);

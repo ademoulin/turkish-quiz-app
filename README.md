@@ -349,7 +349,7 @@ phrase whitespace policy, correction and scoring are unchanged.
 
 ### Personal pronoun case forms
 
-Open **Case Forms → Word type → Personal pronouns**. Nouns remains the default
+Open **Case Forms → Case word type → Personal pronouns**. Nouns remains the default
 and keeps all 50 existing questions. Personal pronouns has 24 new authored
 drafts: ben/sen/o/biz/siz/onlar × locative, dative, ablative and accusative.
 Choose all 24 or six forms for one case. Type only the complete inflected
