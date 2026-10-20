@@ -5,10 +5,10 @@ async function open(page:import('@playwright/test').Page){
  await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('possessed-cases');
  await page.getByLabel('Practice method',{exact:true}).selectOption('build-from-base');return page.getByRole('region',{name:'Build endings from base',exact:true});
 }
-test('24 full chains from bare nouns: explicit constraints, no answer leakage, touch, keyboard and correction',async({page})=>{
+test('48 full chains from bare nouns: explicit constraints, no answer leakage, touch, keyboard and correction',async({page})=>{
  const area=await open(page);await expect(area.getByRole('region',{name:'How to practice'})).toContainText('bavullarımızdan');
  await area.getByRole('button',{name:'Start building from base'}).click();const seen=new Set<string>();
- for(let i=0;i<24;i++){
+ for(let i=0;i<48;i++){
   const text=await area.innerText(),q=bank.find(q=>text.includes(q.sentence))!;expect(q).toBeTruthy();expect(seen.has(q.id)).toBe(false);seen.add(q.id);
   await expect(area.getByRole('region',{name:'How to practice'})).toHaveCount(0);
   await expect(area.getByText(`Base noun: ${q.baseNoun}`,{exact:true})).toBeVisible();
@@ -19,16 +19,16 @@ test('24 full chains from bare nouns: explicit constraints, no answer leakage, t
   else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
   await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
-  await area.getByRole('button',{name:i===23?'See typed results':'Next typed question'}).click();
+  await area.getByRole('button',{name:i===47?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Build-from-base session complete')).toBeVisible();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
- expect(saved).toHaveLength(24);expect(saved.every((a:any)=>a.exerciseType==='typed_suffix_chain'&&a.baseNoun&&a.requiredCase&&a.owner&&a.nounNumber&&!a.givenForm)).toBe(true);expect(saved.filter((a:any)=>a.manual)).toHaveLength(1);
+ expect(saved).toHaveLength(48);expect(saved.every((a:any)=>a.exerciseType==='typed_suffix_chain'&&a.baseNoun&&a.requiredCase&&a.owner&&a.nounNumber&&!a.givenForm)).toBe(true);expect(saved.filter((a:any)=>a.manual)).toHaveLength(1);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('method switching preserves unfinished sessions; filters, separate review, correction and backups',async({page})=>{
  const area=await open(page);await area.getByLabel('Required case to build',{exact:true}).selectOption('suffix_chain_locative');await area.getByLabel('Possessed noun number',{exact:true}).selectOption('plural');
- await area.getByRole('button',{name:'Start building from base'}).click();await expect(area.getByText(/Question 1 of 3/)).toBeVisible();
+ await area.getByRole('button',{name:'Start building from base'}).click();await expect(area.getByText(/Question 1 of 6/)).toBeVisible();
  const text=await area.innerText(),q=bank.find(q=>text.includes(q.sentence))!;
  await area.getByLabel('Complete word built from base').fill('unfinished');
  await page.getByLabel('Practice method',{exact:true}).selectOption('add-case');

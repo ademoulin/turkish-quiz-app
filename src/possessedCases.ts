@@ -1,3 +1,4 @@
+import {matchesOwner,type OwnerSelection} from './practiceOwners';
 import { shuffle } from './shuffle';
 import { latestMistakes } from './practiceReview';
 import type { CaseQuestion, Concept, PilotAttempt } from './casePilot';
@@ -181,7 +182,9 @@ export const pluralPossessedCaseQuestions: PossessedCaseQuestion[] = (Object.key
   source:'newly_authored',reviewStatus:'draft_needs_independent_review',
  })));
 export const possessedCaseQuestions = [...singularPossessedCaseQuestions,...pluralPossessedCaseQuestions];
-export function selectPossessedCaseQuestions(selection:PossessedCaseSelection='mixed', random=Math.random, number:PossessedNumberSelection='singular') {
- return shuffle(possessedCaseQuestions.filter(q=>(selection==='mixed'||q.conceptId===selection)&&(number==='mixed'||q.nounNumber===number)),random);
+export function selectPossessedCaseQuestions(selection:PossessedCaseSelection='mixed', random=Math.random, number:PossessedNumberSelection='singular', owner:OwnerSelection='mixed') {
+ return shuffle(possessedCaseQuestions.filter(q=>(selection==='mixed'||q.conceptId===selection)&&(number==='mixed'||q.nounNumber===number)&&matchesOwner(q.owner,owner)),random);
 }
-export const possessedCaseMistakes=(attempts:PilotAttempt[], selection:PossessedCaseSelection='mixed', number:PossessedNumberSelection='singular')=>latestMistakes(possessedCaseQuestions.filter(q=>number==='mixed'||q.nounNumber===number),attempts,selection);
+export const possessedCaseMistakes=(attempts:PilotAttempt[], selection:PossessedCaseSelection='mixed', number:PossessedNumberSelection='singular',owner:OwnerSelection='mixed')=>latestMistakes(possessedCaseQuestions.filter(q=>(number==='mixed'||q.nounNumber===number)&&matchesOwner(q.owner,owner)),attempts,selection);
+
+export const countPossessedCaseQuestions=(selection:PossessedCaseSelection='mixed',number:PossessedNumberSelection='singular',owner:OwnerSelection='mixed')=>possessedCaseQuestions.filter(q=>(selection==='mixed'||q.conceptId===selection)&&(number==='mixed'||q.nounNumber===number)&&matchesOwner(q.owner,owner)).length;

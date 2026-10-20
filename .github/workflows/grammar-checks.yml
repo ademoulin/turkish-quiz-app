@@ -47,3 +47,11 @@ jobs:
 
       - name: Build grammar preview
         run: npm run build:grammar-preview
+
+      - name: Package review preview (no deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: grammar-review-preview
+          path: dist/quiz-my-turkish.html
+          if-no-files-found: error
+          retention-days: 7

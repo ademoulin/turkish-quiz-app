@@ -5,29 +5,29 @@ import {caseQuestions,recordPilot,correctPilot,validatePilotImport} from './case
 import {possessedCaseQuestions,possessedCaseMistakes} from './possessedCases';
 import {phraseQuestions} from './nounPhrases';
 import {possessiveQuestions} from './possessives';
-test('24 authored whole-chain questions are distinct, balanced and explicit',()=>{
- assert.equal(bank.length,24);assert.equal(bank.filter(q=>q.nounNumber==='singular').length,12);
- assert.equal(new Set([...bank,...caseQuestions,...possessedCaseQuestions,...phraseQuestions,...possessiveQuestions].map(q=>q.id)).size,190);
+test('48 authored whole-chain questions are distinct, balanced and explicit',()=>{
+ assert.equal(bank.length,48);assert.equal(bank.filter(q=>q.nounNumber==='singular').length,24);
+ assert.equal(new Set([...bank,...caseQuestions,...possessedCaseQuestions,...phraseQuestions,...possessiveQuestions].map(q=>q.id)).size,214);
  for(const c of ['locative','dative','ablative','accusative']){
-  const qs=bank.filter(q=>q.requiredCase===c);assert.equal(qs.length,6);assert.equal(qs.filter(q=>q.nounNumber==='plural').length,3);assert.deepEqual(qs.map(q=>q.owner),['ben','sen','o','biz','siz','onlar']);
+  const qs=bank.filter(q=>q.requiredCase===c);assert.equal(qs.length,12);assert.equal(qs.filter(q=>q.nounNumber==='plural').length,6);assert.deepEqual(qs.map(q=>q.owner),['ben','sen','o','biz','siz','onlar','ben','sen','o','biz','siz','onlar']);
  }
  for(const q of bank){assert.equal(q.base,q.baseNoun);assert.ok(q.baseMeaning);assert.equal(q.conceptId,`suffix_chain_${q.requiredCase}`);assert.equal(q.exerciseType,'typed_suffix_chain');assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.ok(q.explanation.includes(q.answer));if(q.owner==='onlar')assert.equal(q.nounNumber,'plural');}
  assert.equal(suffixChainCatalogMapping.testedRules.possession,20);assert.equal(suffixChainCatalogMapping.pluralCatalogRule,null);
 });
 test('complete words require plural/possession/case with softening and third-person n',()=>{
  const expected=['kitabımda','evlerinde','odasında','köylerimizde','okulunuzda','arabalarında','çantalarıma','köpeğine','kedilerine','evimize','bahçenize','odalarına','gözümden','arabandan','evinden','kitaplarımızdan','çantalarınızdan','okullarından','kitaplarımı','çantanı','gözünü','çocuğumuzu','evlerinizi','köpeklerini'];
- assert.deepEqual(bank.map(q=>q.answer),expected);
- for(const [i,q] of bank.entries())assert.equal(recordPilot([],q,' '+expected[i].normalize('NFD')+' ','s','build_from_base')[0].correct,true);
+ assert.deepEqual(bank.filter(q=>Number(q.id.slice(-2))<=6).map(q=>q.answer),expected);
+ for(const q of bank)assert.equal(recordPilot([],q,' '+q.answer.normalize('NFD')+' ','s','build_from_base')[0].correct,true);
  for(const wrong of ['kitapta','kitabım','kitapımda','kitaplarımda','kitabında','kitabimda','benim kitabımda','kitabımda.'])assert.equal(recordPilot([],bank[0],wrong,'s')[0].correct,false);
  assert.equal(recordPilot([],bank[0],' KİTABIMDA ','s')[0].correct,true);
  assert.equal(recordPilot([],bank[2],'odasıda','s')[0].correct,false);
- assert.equal(recordPilot([],bank[23],'köpeklerlerini','s')[0].correct,false);
+ assert.equal(recordPilot([],bank.find(q=>q.id==='suffix-chain-accusative-06')!,'köpeklerlerini','s')[0].correct,false);
 });
-test('case and number filters select 24, 12, 6 or 3 without mutation',()=>{
+test('case and number filters select 48, 24, 12 or 6 without mutation',()=>{
  const before=JSON.stringify(bank);
- assert.equal(selectSuffixChainQuestions().length,24);
- for(const n of ['singular','plural'] as const){assert.equal(selectSuffixChainQuestions('mixed',n).length,12);assert.equal(selectSuffixChainQuestions('suffix_chain_locative',n).length,3);}
- assert.equal(selectSuffixChainQuestions('suffix_chain_dative','mixed').length,6);
+ assert.equal(selectSuffixChainQuestions().length,48);
+ for(const n of ['singular','plural'] as const){assert.equal(selectSuffixChainQuestions('mixed',n).length,24);assert.equal(selectSuffixChainQuestions('suffix_chain_locative',n).length,6);}
+ assert.equal(selectSuffixChainQuestions('suffix_chain_dative','mixed').length,12);
  assert.notDeepEqual(selectSuffixChainQuestions('mixed','mixed',()=>.1),selectSuffixChainQuestions('mixed','mixed',()=>.9));assert.equal(JSON.stringify(bank),before);
 });
 test('full-chain evidence snapshots differ from add-case evidence and correction updates the original',()=>{
