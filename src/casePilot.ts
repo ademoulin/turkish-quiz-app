@@ -1,3 +1,4 @@
+import {pronounCaseConcepts,personalPronouns,type PersonalPronoun,type PronounCaseConcept,type PronounCaseQuestion} from './pronounCases';
 import {suffixChainConcepts, type SuffixChainConcept, type SuffixChainQuestion} from "./suffixChains";
 import { possessedCaseConcepts, type PossessedCaseConcept, type PossessedCaseQuestion } from "./possessedCases";
 import {
@@ -447,7 +448,7 @@ export const caseQuestions: CaseQuestion[] = (
 export const matchesCase = (answer: string, expected: string) =>
   answer.normalize("NFC").trim().toLocaleLowerCase("tr") ===
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
-export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion | SuffixChainQuestion;
+export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion | SuffixChainQuestion | PronounCaseQuestion;
 export interface PilotAttempt {
   id: string;
   sessionId: string;
@@ -462,9 +463,11 @@ export interface PilotAttempt {
     | "mixed_possessed_cases"
     | "build_from_base"
     | "mixed_grammar"
-    | "mixed_grammar_review";
+    | "mixed_grammar_review"
+    | "pronoun_cases";
   questionId: string;
-  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept;
+  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
+  pronoun?: PersonalPronoun;
   baseNoun?: string;
   givenForm?: string;
   requiredCase?: Exclude<Concept, "genitive">;
@@ -475,7 +478,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain";
+  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -514,6 +517,7 @@ export function recordPilot(
         : {}),
       ...("givenForm" in q ? {givenForm:q.givenForm, requiredCase:q.requiredCase, answerScope:q.answerScope} : {}),
       ...("baseNoun" in q ? {baseNoun:q.baseNoun, requiredCase:q.requiredCase} : {}),
+      ...("pronoun" in q ? {pronoun:q.pronoun,requiredCase:q.requiredCase} : {}),
       exerciseType: q.exerciseType,
       supportingRuleIds: q.supportingRuleIds,
       answer: answer.trim(),
@@ -560,12 +564,14 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "build_from_base",
           "mixed_grammar",
           "mixed_grammar_review",
+          "pronoun_cases",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
         !Object.hasOwn(phraseConcepts, a.conceptId) &&
         !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
-        !Object.hasOwn(suffixChainConcepts, a.conceptId)) ||
+        !Object.hasOwn(suffixChainConcepts, a.conceptId) &&
+        !Object.hasOwn(pronounCaseConcepts, a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
@@ -585,6 +591,11 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           a.conceptId !== `suffix_chain_${a.requiredCase}` ||
           !["ben","sen","o","biz","siz","onlar"].includes(a.owner || "") ||
           !["singular","plural"].includes(a.nounNumber || ""))) ||
+      (Object.hasOwn(pronounCaseConcepts, a.conceptId) &&
+        (a.exerciseType !== "typed_pronoun_case" ||
+          typeof a.pronoun !== "string" || !Object.hasOwn(personalPronouns,a.pronoun) ||
+          !["locative","dative","ablative","accusative"].includes(a.requiredCase || "") ||
+          a.conceptId !== `pronoun_${a.requiredCase}`)) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
@@ -600,7 +611,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           ? a.exerciseType !== "typed_possessed_case"
           : Object.hasOwn(suffixChainConcepts, a.conceptId)
             ? a.exerciseType !== "typed_suffix_chain"
-            : a.exerciseType !== "typed_form_completion") ||
+            : Object.hasOwn(pronounCaseConcepts, a.conceptId)
+              ? a.exerciseType !== "typed_pronoun_case"
+              : a.exerciseType !== "typed_form_completion") ||
       !Array.isArray(a.supportingRuleIds) ||
       !a.supportingRuleIds.every((r) => typeof r === "string") ||
       typeof a.correct !== "boolean" ||
