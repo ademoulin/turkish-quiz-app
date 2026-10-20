@@ -1,9 +1,11 @@
+import {verbCaseQuestions} from './verbCasePatterns';
 import {caseQuestions, matchesCase, type PilotAttempt} from './casePilot';
 import {shuffle} from './shuffle';
 import {latestMistakes} from './practiceReview';
 export const choiceCases = {locative:'Locative · at / in / on',dative:'Dative · to / toward',ablative:'Ablative · from / out of',accusative:'Accusative · specific direct object',bare:'No case ending · nonspecific object / activity'} as const;
 export type ChoiceCase = keyof typeof choiceCases;
 export interface ChoiceQuestion {
+ verbPatternId?:string; verbLemma?:string;
  id:string; conceptId:`case_choice_${ChoiceCase}`; requiredCase:ChoiceCase;
  base:string; sentence:string; meaning:string; answer:string; explanation:string; supportingRuleIds:string[];
  exerciseType:'case_choice_completion'; source:'newly_authored'; reviewStatus:'draft_needs_independent_review';
@@ -75,21 +77,25 @@ const rows:Record<ChoiceCase,[string,string,string,string,string][]> = {
  ['mektup','Boş zamanlarımda ___ yazıyorum.','I write letters in my free time, as an activity; no particular letter is meant.','mektup','Mektup yazmak describes letter-writing as an activity. Use the unmarked object before yazıyorum. Type mektup unchanged.'],
  ]
 };
-export const choiceQuestions:ChoiceQuestion[]=(Object.keys(rows) as ChoiceCase[]).flatMap(requiredCase=>rows[requiredCase].map(([base,sentence,meaning,answer,explanation],i)=>{
+const originalChoiceQuestions:ChoiceQuestion[]=(Object.keys(rows) as ChoiceCase[]).flatMap(requiredCase=>rows[requiredCase].map(([base,sentence,meaning,answer,explanation],i)=>{
  const last=base.at(-1)!;
  const supportingRuleIds=requiredCase==='bare'?[]:requiredCase==='accusative'?['four_way_vowel_harmony',...(['gazete','dergi','kahve','su'].includes(base)?['buffer_y']:[]),...(['kitap','ekmek','mektup'].includes(base)?['consonant_softening']:[])]:['two_way_vowel_harmony',...((requiredCase!=='dative' && 'fstkçşhp'.includes(last))?['voiceless_assimilation']:[]),...((requiredCase==='dative' && 'aeıioöuü'.includes(last))?['buffer_y']:[]),...((requiredCase==='dative' && ['kitap','çocuk'].includes(base))?['consonant_softening']:[])];
  return {id:`choose-${requiredCase}-${String(i+1).padStart(2,'0')}`,conceptId:`case_choice_${requiredCase}`,requiredCase,base,sentence,meaning,answer,explanation:(requiredCase==='accusative'||requiredCase==='bare')?explanation:explanation+' Form: '+base+' → '+answer+'. '+(caseQuestions.find(q=>q.answer===answer)?.explanation || (answer==='müzede'?'Front vowel e selects -de.':'Front vowel e selects e; voiceless k requires t.')),supportingRuleIds,exerciseType:'case_choice_completion',source:'newly_authored',reviewStatus:'draft_needs_independent_review'};
 }));
-export function selectChoiceQuestions(){
- const categories=shuffle(Object.keys(choiceCases) as ChoiceCase[]);
- // Twelve questions, two per category plus one extra for two randomized categories.
- return shuffle(categories.flatMap((c,i)=>shuffle(choiceQuestions.filter(q=>q.requiredCase===c)).slice(0,i<2?3:2)));
+export const choiceQuestions:ChoiceQuestion[]=[...originalChoiceQuestions,...verbCaseQuestions];
+export type ChoiceFocus = 'all' | 'verb_patterns';
+export const choicePool=(focus:ChoiceFocus='all')=>focus==='verb_patterns'?verbCaseQuestions:choiceQuestions;
+export function selectChoiceQuestions(focus:ChoiceFocus='all'){
+ const bank=choicePool(focus);
+ const categories=shuffle((Object.keys(choiceCases) as ChoiceCase[]).filter(c=>bank.some(q=>q.requiredCase===c)));
+ // Keep twelve questions balanced across the categories available in this focus.
+ return shuffle(categories.flatMap((c,i)=>shuffle(bank.filter(q=>q.requiredCase===c)).slice(0,Math.floor(12/categories.length)+(i<12%categories.length?1:0))));
 }
-export const choiceMistakes=(attempts:PilotAttempt[])=>latestMistakes(choiceQuestions,attempts);
+export const choiceMistakes=(attempts:PilotAttempt[],focus:ChoiceFocus='all')=>latestMistakes(choicePool(focus),attempts);
 export function recordChoice(attempts:PilotAttempt[],q:ChoiceQuestion,selectedCase:ChoiceCase,answer:string,sessionId:string):PilotAttempt[]{
  if(!Object.hasOwn(choiceCases,selectedCase)||!answer.trim()||attempts.some(a=>a.sessionId===sessionId&&a.questionId===q.id))return attempts;
  const caseCorrect=selectedCase===q.requiredCase,formCorrect=matchesCase(answer,q.answer);
- return [...attempts,{id:crypto.randomUUID(),sessionId,practiceMode:'choose_case',questionId:q.id,conceptId:q.conceptId,exerciseType:q.exerciseType,baseNoun:q.base,requiredCase:q.requiredCase,selectedCase,caseCorrect,formCorrect,answer:answer.trim(),expected:q.answer,supportingRuleIds:q.supportingRuleIds,correct:caseCorrect&&formCorrect,manual:false,time:new Date().toISOString()}];
+ return [...attempts,{id:crypto.randomUUID(),sessionId,practiceMode:'choose_case',questionId:q.id,conceptId:q.conceptId,exerciseType:q.exerciseType,baseNoun:q.base,requiredCase:q.requiredCase,...(q.verbPatternId?{verbPatternId:q.verbPatternId,verbLemma:q.verbLemma}:{}),selectedCase,caseCorrect,formCorrect,answer:answer.trim(),expected:q.answer,supportingRuleIds:q.supportingRuleIds,correct:caseCorrect&&formCorrect,manual:false,time:new Date().toISOString()}];
 }
 export function correctChoice(attempts:PilotAttempt[],id:string,part:'case'|'form'){
  return attempts.map(a=>{if(a.id!==id||a.exerciseType!=='case_choice_completion')return a; const caseCorrect=part==='case'?true:!!a.caseCorrect,formCorrect=part==='form'?true:!!a.formCorrect;return {...a,caseCorrect,formCorrect,correct:caseCorrect&&formCorrect,manual:true};});

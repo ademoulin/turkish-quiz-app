@@ -1,0 +1,28 @@
+import {test,expect} from '@playwright/test';
+import {choiceQuestions,choicePool,recordChoice} from '../src/caseChoice';
+test.use({hasTouch:true});
+async function open(page:import('@playwright/test').Page){await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('choose-case');return page.getByRole('region',{name:'Choose the Case',exact:true});}
+test('common verb focus uses supplied verbs, balanced case choices and original strict typed interaction',async({page})=>{
+ const area=await open(page);await area.getByLabel('Practice focus',{exact:true}).selectOption('verb_patterns');await area.getByRole('button',{name:'Start case choice practice'}).tap();const counts=new Map<string,number>();
+ for(let i=0;i<12;i++){
+  const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=choicePool('verb_patterns').find(q=>q.id===id)!;expect(q).toBeTruthy();counts.set(q.requiredCase,(counts.get(q.requiredCase)||0)+1);
+  await expect(area.getByLabel('Practice focus',{exact:true})).toHaveCount(0);await expect(area.getByText(q.sentence,{exact:true})).toBeVisible();await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);
+  await area.locator(`input[value="${q.requiredCase}"]`).check();await area.getByLabel('2. Complete inflected word',{exact:true}).fill(' '+q.answer.normalize('NFD')+' ');await area.getByLabel('2. Complete inflected word',{exact:true}).press('Enter');await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
+ }
+ expect(Object.fromEntries(counts)).toEqual({dative:4,ablative:4,accusative:4});await expect(area.getByText('Case choices: 12 / 12 · Word forms: 12 / 12',{exact:true})).toBeVisible();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.verbPatternId&&a.verbLemma&&a.exerciseType==='case_choice_completion')).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+test('24 verb-pattern mistakes share all/focused evidence, original corrections and old/new backups',async({page})=>{
+ const area=await open(page),bank=choicePool('verb_patterns');const seed=[...recordChoice([],choiceQuestions[0],'bare','wrong','legacy'),...bank.flatMap(q=>recordChoice([],q,'bare',q.answer,'seed-'+q.id))];
+ await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}');s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},seed);await page.reload();await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('choose-case');await expect(area.getByRole('button',{name:'Review case choice mistakes (25)',exact:true})).toBeEnabled();await area.getByLabel('Practice focus',{exact:true}).selectOption('verb_patterns');const seen=new Set<string>();
+ for(const remaining of [24,12]){
+  await area.getByRole('button',{name:`Review case choice mistakes (${remaining})`,exact:true}).click();
+  for(let i=0;i<12;i++){
+   const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=bank.find(q=>q.id===id)!;expect(seen.has(q.id)).toBe(false);seen.add(q.id);await area.locator(`input[value="${i===0?'bare':q.requiredCase}"]`).check();await area.getByLabel('2. Complete inflected word',{exact:true}).fill(q.answer);await area.getByRole('button',{name:'Check case and word',exact:true}).click();
+   if(i===0){const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));await area.getByRole('button',{name:'My case choice was correct',exact:true}).click();const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);expect(after.verbPatternId).toBe(q.verbPatternId);expect(after.selectedCase).toBe('bare');}
+   await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
+  }
+  await area.getByRole('button',{name:'Restart case choice practice'}).click();
+ }
+ expect(seen.size).toBe(24);await expect(area.getByRole('button',{name:'Review case choice mistakes (0)',exact:true})).toBeDisabled();await area.getByLabel('Practice focus',{exact:true}).selectOption('all');await expect(area.getByRole('button',{name:'Review case choice mistakes (1)',exact:true})).toBeEnabled();
+ await page.getByRole('button',{name:'Your progress',exact:true}).click();const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress',exact:true}).click();await page.locator('input[type=file]').setInputFiles((await(await download).path())!);await expect(page.getByText(/Imported 49 typed grammar results/)).toBeVisible();await page.locator('input[type=file]').setInputFiles({name:'legacy.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,attempts:[]}))});await expect(page.getByText(/Imported 0 typed grammar results/)).toBeVisible();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(49);expect(saved.filter((a:any)=>a.verbPatternId)).toHaveLength(48);expect(saved.filter((a:any)=>a.manual)).toHaveLength(2);
+});

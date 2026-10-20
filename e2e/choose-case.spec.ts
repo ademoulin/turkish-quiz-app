@@ -31,7 +31,7 @@ test('two-part checks work inside the restricted preview on the Pages route',asy
 });
 
 test('new accusative and bare choices share review, corrections and version-1 backups with earlier questions',async({page})=>{
- const area=await open(page);const added=bank.filter(q=>['accusative','bare'].includes(q.requiredCase));
+ const area=await open(page);const added=bank.filter(q=>q.id.startsWith('choose-accusative-')||q.id.startsWith('choose-bare-'));
  const seed=[...recordChoice([],bank[0],'locative',bank[0].answer,'legacy-choice'),...added.flatMap(q=>recordChoice([],q,'locative','wrong','seed-'+q.id))];
  await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}');s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},seed);
  await page.reload();await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('choose-case');
