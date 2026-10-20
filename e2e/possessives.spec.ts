@@ -5,6 +5,7 @@ async function open(page: import("@playwright/test").Page) {
   await page.route("https://docs.google.com/**", (r) => r.abort());
   await page.goto("/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("possessives");
   return page.getByRole("region", { name: "Typed possessive practice" });
 }
 test("all six owners: 24 unique questions, explicit number, touch, keyboard and correction", async ({
@@ -77,6 +78,7 @@ test("all six owners: 24 unique questions, explicit number, touch, keyboard and 
         a.owner && a.nounNumber && a.practiceMode === "single_possessive",
     ),
   ).toBe(true);
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("cases");
   const cases = page.getByRole("region", { name: "Typed case pilot" });
   await expect(
     cases.getByText(
@@ -135,6 +137,7 @@ test("mixed possessives balance owners; review, persistence and backup preserve 
   ).toBeDisabled();
   await page.reload();
   await page.getByRole("button", { name: "Open grammar practice" }).click();
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("possessives");
   await expect(
     area.getByText(
       "13 saved typed attempts · 12 correct, including self-corrections",
@@ -172,6 +175,7 @@ test("possessive checking works in a sandbox with no form permission on the Page
   );
   const frame = page.frameLocator("iframe");
   await frame.getByRole("button", { name: "Open grammar practice" }).click();
+  await frame.getByLabel("Practice activity", {exact:true}).selectOption("possessives");
   const area = frame.getByRole("region", { name: "Typed possessive practice" });
   await area.getByRole("button", { name: "Start possessive practice" }).click();
   await area.getByLabel("Complete inflected word").fill("wrong");

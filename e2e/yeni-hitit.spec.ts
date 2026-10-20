@@ -5,6 +5,7 @@ test('grammar preview filters, keyboard check, score, completion and reset on mo
  await page.route('https://docs.google.com/**',r=>r.fulfill({status:200,body:'ID,Verb,Type,Meaning\nv001,gelmek,vi,come'}));
  await page.goto('/');
  await page.getByRole('button',{name:'Open grammar practice'}).click();
+ await page.getByLabel('Practice activity',{exact:true}).selectOption('multiple-choice');
  await page.getByLabel('Section',{exact:true}).selectOption('4.1');
  await page.getByLabel('Skill',{exact:true}).selectOption('YH1-04-01-S01');
  await page.getByRole('button',{name:'Start grammar practice'}).click();
