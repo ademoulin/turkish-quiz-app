@@ -34,6 +34,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
       <div hidden={activity !== 'possessed-cases'}><PossessedCasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'multiple-choice'}>
       {!session ? <>
+        <section aria-label="How to practice"><h4>How to practice</h4><p>Choose a section or skill, or leave both set to All. Start a session, select one answer, then press Check grammar answer. The answer and explanation appear after checking.</p><p><strong>Worked example (not scored):</strong> Choose the Turkish word meaning ‘we’: ben / biz. Select biz, then check. Ben means ‘I’.</p></section>
         <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
         <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>
         <button className="primary" onClick={() => {setSession(startSession(section, skill)); setSelected('');}}>Start grammar practice</button>

@@ -221,7 +221,7 @@ mastery classifications are assigned.
 ### Case endings on possessed nouns
 
 Open **Grammar practice → Practice activity → Combine endings · Possessive + case**.
-Choose all 24 shuffled questions or one of four cases (six questions each).
+Choose all 48 shuffled questions or one of four cases (12 questions each).
 Each prompt names the required case and supplies the possessed form, including
 its existing possessive ending. Add only the case ending. For a supplied two-word
 phrase, return both words and keep the first word unchanged.
@@ -241,3 +241,19 @@ has a distinct possessed-case concept and exercise type, supplied form, case,
 answer scope, owner and noun-number context. Review remains separate. Corrections
 update original attempts; version-1 export/import supports both new evidence and
 older backups. No grammar mastery labels or thresholds are added.
+
+### Practice guidance and repeated contrasts
+
+Every grammar activity includes plain-English instructions and an unscored worked
+example before starting. Examples disappear during a session so they cannot
+reveal the current answer. Typed case questions include short meaning cues;
+accusative is explained as marking a specific direct object rather than assigning
+it a misleading English preposition. Possessed-case prompts show the English
+meaning and owner of the supplied form, and explain whether to type one word or
+both words of a phrase.
+
+Possessed-case practice now includes 48 authored draft questions (12 per case),
+including repeated my/your/his-her house contrasts. The original 24 question IDs,
+answers and saved evidence remain valid; the 24 additions keep singular
+possessions and the same textbook/catalog scope. Plural forms and case choice
+remain future work. Independent linguistic review remains pending.

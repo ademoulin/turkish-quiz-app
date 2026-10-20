@@ -7,15 +7,16 @@ async function open(page:import('@playwright/test').Page){
  await page.getByLabel('Practice activity',{exact:true}).selectOption('possessed-cases');
  return page.getByRole('region',{name:'Typed possessed case practice',exact:true});
 }
-test('all 24 possessed-case answers, touch, keyboard, reveal, scoring and correction',async({page})=>{
+test('all 48 possessed-case answers, touch, keyboard, reveal, scoring and correction',async({page})=>{
  const area=await open(page); await area.getByRole('button',{name:'Start possessed case practice'}).click();
  const seen=new Set<string>();
- for(let i=0;i<24;i++){
+ for(let i=0;i<48;i++){
   const text=await area.innerText(),q=bank.find(q=>text.includes(q.sentence))!;
   expect(seen.has(q.id)).toBe(false);seen.add(q.id);
   await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);
   await expect(area.getByText(`Given possessed form: ${q.givenForm}`,{exact:true})).toBeVisible();
   await expect(area.getByText(/Required case:/)).toBeVisible();
+  await expect(area.getByText(new RegExp('Given meaning:'))).toContainText(q.givenMeaning);
   const field=area.getByLabel('Complete inflected word or phrase');await expect(field).toBeFocused();
   if(i===0){
    await area.getByRole('button',{name:'ş',exact:true}).tap();await expect(field).toHaveValue('ş');
@@ -27,11 +28,11 @@ test('all 24 possessed-case answers, touch, keyboard, reveal, scoring and correc
   }else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
   await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
-  await area.getByRole('button',{name:i===23?'See typed results':'Next typed question'}).click();
+  await area.getByRole('button',{name:i===47?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Possessed case session complete')).toBeVisible();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
- expect(saved).toHaveLength(24);expect(saved.every((a:any)=>a.exerciseType==='typed_possessed_case'&&a.givenForm&&a.requiredCase&&a.answerScope&&a.nounNumber==='singular')).toBe(true);
+ expect(saved).toHaveLength(48);expect(saved.every((a:any)=>a.exerciseType==='typed_possessed_case'&&a.givenForm&&a.requiredCase&&a.answerScope&&a.nounNumber==='singular')).toBe(true);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('possessed-case review, selection, reload and old/new backups stay separate',async({page})=>{

@@ -24,6 +24,8 @@ export type PracticeConfig = {
   mode: (selection: string) => NonNullable<PilotAttempt["practiceMode"]>;
   startLabel: string;
   setupHint: (selection: string) => string;
+  guide: React.ReactNode;
+  instruction?: (q: TypedQuestion) => React.ReactNode;
   reviewLabel: string;
   sessionLabel: (mode: NonNullable<PilotAttempt["practiceMode"]>) => string;
   cue: (q: TypedQuestion) => React.ReactNode;
@@ -92,6 +94,7 @@ export function TypedPractice({
       <p className="hint">{config.description}</p>
       {!questions.length ? (
         <>
+          <section aria-label="How to practice">{config.guide}</section>
           {config.selections && (
             <>
               <label className="field" htmlFor={config.id + "-concept"}>
@@ -144,6 +147,7 @@ export function TypedPractice({
               <p>
                 Question {index + 1} of {questions.length} · {config.cue(q)}
               </p>
+              {config.instruction && <p>{config.instruction(q)}</p>}
               {config.detail?.(q)}
               <p lang={config.sentenceLanguage || "tr"}>
                 {config.sentenceLabel}
