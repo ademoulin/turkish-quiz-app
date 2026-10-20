@@ -56,9 +56,9 @@ test('possessed-case review, selection, reload and old/new backups stay separate
  await page.getByRole('button',{name:'Your progress',exact:true}).click();
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export progress',exact:true}).click();
  await page.locator('input[type=file]').setInputFiles((await(await download).path())!);
- await expect(page.getByText(/Imported 2 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 2 grammar results/)).toBeVisible();
  await page.locator('input[type=file]').setInputFiles({name:'legacy.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,attempts:[]}))});
- await expect(page.getByText(/Imported 0 typed grammar results/)).toBeVisible();
+ await expect(page.getByText(/Imported 0 grammar results/)).toBeVisible();
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.length)).toBe(2);
 });
 test('possessed-case checking works in embedded sandbox on Pages route',async({page})=>{

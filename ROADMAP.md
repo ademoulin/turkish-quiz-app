@@ -1,25 +1,32 @@
 # Grammar practice priorities
 
-## Product boundaries
+## Product boundary
 
-Keep all tasks whose goal is conjugating a supplied verb in the existing Conjugation section. Grammar activities may supply conjugated verbs to test case choice, noun phrases, constructions and sentence structure. Do not create a parallel verb conjugation drill in Grammar practice.
+All tasks whose goal is conjugating a supplied verb stay in Conjugation, across all tenses. Grammar supplies finite verbs when testing case, noun phrases and sentence constructions. Forming a nominalized action unit belongs in the grammar sequence below; it does not ask the learner to conjugate a finite verb.
 
-## Current increment: common verbs and case choice
+## Deep sequence: verb nouns, noun clauses, participles and converbs
 
-Expand Choose the Case with authored common-verb patterns and supplied finite verbs. Practise learning the Turkish construction rather than substituting an English preposition. Keep word-form and case-choice evidence separate. Use the existing activity and review behavior.
+The learner explicitly wants to get very comfortable understanding how Turkish packages actions and whole clauses into noun-like units, with many questions per lesson and space to experiment. This is a major multi-increment section, not a small optional addition.
 
-## Next priority: nominalized verbs and subordinate clauses
+Lessons 1–2 are implemented in the current branch. All remaining lessons are planned and need separate content/design review before implementation.
 
-The learner explicitly wants to become very comfortable understanding how Turkish turns actions and whole subordinate clauses into noun-like units. This is the next major grammar learning sequence after common-verb case choice, rather than a small optional addition.
+| Lesson | Scope | Status |
+| --- | --- | --- |
+| 1 | Actions as nouns: -mak/-mek; subject and activity complement | 12 models, 36 meaning/structure/production exercises |
+| 2 | The whole activity takes case: -mAyI, -mAyA, -mAktAn | 12 models, 36 meaning/structure/production exercises |
+| 3 | The action has its own subject: genitive subject + -mA + possessive agreement | Planned |
+| 4 | Put that nominalized clause into a larger sentence; add required case | Planned |
+| 5 | Negation and contrasts, including -mA nominalization versus verbal negation and same/different subjects | Planned |
+| 6 | -DIK content clauses, subject agreement and nonfuture reference without treating -DIK as always past | Planned |
+| 7 | -(y)AcAK future content clauses, with embedded and main-clause time/subjects distinguished | Planned |
+| 8 | Contrast -mA, -DIK and -(y)AcAK in meaningful constructions | Planned |
+| 9 | Subject relative clauses with -(y)An: describe the person/thing doing the action | Planned |
+| 10 | Complement relative clauses with -DIK / -(y)AcAK + possessive agreement | Planned |
+| 11 | Converbs in small sublessons: -ip, -erek, -meden, -ince, -ken, before/after and related temporal constructions | Planned |
+| 12 | Mixed interpretation, clause boundaries, sentence building and supported free production | Planned |
 
-Proposed progression, to refine against the textbooks before implementation:
+Weave -(y)Iş action nouns into the early noun group after the central pattern is comfortable. Later advanced extensions can draw on Yeni Hitit 3 once the foundations are solid.
 
-1. Understand -mak/-mek activity nouns and their role inside a larger sentence.
-2. Understand -ma/-me nominalizations, including an explicit genitive subject and possessive agreement (senin gelmen), and distinguish nominalizing -ma/-me from verbal negation in context.
-3. Follow the whole clause as one unit taking a case ending required by the main verb. Show how subject, nominalizer, possessive ending, buffer and case fit together. Contrast common constructions with their real meanings; do not imply that nominalizers are interchangeable.
-4. Extend to -DIK and -(y)AcAK content clauses, with explicit subject/time context to disambiguate readings. Separate the embedded subject and time from the main verb's subject and time.
-5. Build and interpret complete sentences using these constructions, with supported variation and multiple acceptable answers where appropriate.
+Every lesson should move through understanding, unpacking, guided building, production and meaningful contrasts. Show explicit bracketed chunks and explain each suffix's job. Begin with comprehension and who-does-what, rather than isolated suffix drilling. Distinguish noun clauses from adverbial converbs instead of calling all nonfinite forms gerunds. Explicit subjects/time context should disambiguate forms when needed. Multiple acceptable answers need careful handling when production becomes open-ended.
 
-Begin with comprehension, clause boundaries, role identification and annotated breakdowns; move into guided form building and complete sentences. The goal is both understanding and fluent production, rather than memorizing isolated suffixes. Keep gerund/converb constructions that act adverbially distinct from noun clauses; introduce those as a separate branch when appropriate.
-
-No implementation of the nominalization sequence is included in the current increment. It needs a content and interaction design pass against Yeni Hitit and the tutor catalog. Authored exercises must retain honest review status. No mastery thresholds are decided yet.
+The current 72 exercises are 3 task views of 24 models, not 72 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.

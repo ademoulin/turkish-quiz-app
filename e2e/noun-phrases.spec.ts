@@ -146,7 +146,7 @@ test("phrase mistake review, reload and backup stay separate from word-form evid
     .locator("input[type=file]")
     .setInputFiles((await (await download).path())!);
   await expect(
-    page.getByText(/Imported 2 typed grammar results/),
+    page.getByText(/Imported 2 grammar results/),
   ).toBeVisible();
   await page
     .locator("input[type=file]")
@@ -156,7 +156,7 @@ test("phrase mistake review, reload and backup stay separate from word-form evid
       buffer: Buffer.from(JSON.stringify({ version: 1, attempts: [] })),
     });
   await expect(
-    page.getByText(/Imported 0 typed grammar results/),
+    page.getByText(/Imported 0 grammar results/),
   ).toBeVisible();
   expect(
     await page.evaluate(
