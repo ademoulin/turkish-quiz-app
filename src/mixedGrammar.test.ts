@@ -24,7 +24,7 @@ test('12-question practice balances every family with two or three, no repeats o
 test('previous-mistake pools cap at 12, fill scarce families, never pad or duplicate',()=>{
  assert.deepEqual(selectMixedGrammarPool([]),[]);
  const one=mixedGrammarFamilies.phrases[0];assert.deepEqual(selectMixedGrammarPool([one,one]),[one]);
- const scarce=[one,...caseQuestions.slice(0,20)];const chosen=selectMixedGrammarPool(scarce,()=>.2);
+ const scarce: typeof bank=[one,...caseQuestions.slice(0,20)];const chosen=selectMixedGrammarPool(scarce,()=>.2);
  assert.equal(chosen.length,12);assert.ok(chosen.includes(one));assert.ok(chosen.every(q=>scarce.includes(q)));assert.equal(new Set(chosen.map(q=>q.id)).size,12);
  const five=Object.values(mixedGrammarFamilies).map(qs=>qs[0]);assert.equal(selectMixedGrammarPool(five).length,5);
 });
