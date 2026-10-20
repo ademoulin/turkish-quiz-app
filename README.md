@@ -371,3 +371,7 @@ is separate from noun cases; Mixed Grammar Review now has six families and
 samples two of each in 12-question sessions. Correct mixed results clear the
 same pronoun question. Version-1 exports/imports support old and new histories,
 and manual corrections update the original attempt. No mastery labels.
+
+### Choose the Case
+
+Grammar practice → Practice activity → **Choose the Case**. Read the sentence and intended English meaning, choose locative/dative/ablative, and type the complete inflected word. **Check case and word** (or Enter in the word field) checks both together. Case choice and intended word form have separate scores and correction buttons. Turkish spelling is strict; Turkish-letter buttons support touch input. Normal sessions have 12 questions, four per case, sampled from 30 authored drafts. A separate mistake queue reviews up to 12 questions where either part was missed. Attempts and both component scores use the existing local progress history and version-1 backups. This activity is not yet included in Mixed Grammar Review. Content needs independent linguistic review; exact tutor-catalog usage mapping remains pending.

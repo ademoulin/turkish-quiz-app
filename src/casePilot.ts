@@ -464,10 +464,14 @@ export interface PilotAttempt {
     | "build_from_base"
     | "mixed_grammar"
     | "mixed_grammar_review"
-    | "pronoun_cases";
+    | "pronoun_cases"
+    | "choose_case";
   questionId: string;
-  conceptId: Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
+  conceptId: `case_choice_${"locative" | "dative" | "ablative"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
+  selectedCase?: "locative" | "dative" | "ablative";
+  caseCorrect?: boolean;
+  formCorrect?: boolean;
   baseNoun?: string;
   givenForm?: string;
   requiredCase?: Exclude<Concept, "genitive">;
@@ -478,7 +482,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
+  exerciseType: "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -565,13 +569,15 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "mixed_grammar",
           "mixed_grammar_review",
           "pronoun_cases",
+          "choose_case",
         ].includes(a.practiceMode)) ||
       (!Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
         !Object.hasOwn(phraseConcepts, a.conceptId) &&
         !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
         !Object.hasOwn(suffixChainConcepts, a.conceptId) &&
-        !Object.hasOwn(pronounCaseConcepts, a.conceptId)) ||
+        !Object.hasOwn(pronounCaseConcepts, a.conceptId) &&
+        !["case_choice_locative","case_choice_dative","case_choice_ablative"].includes(a.conceptId)) ||
       (Object.hasOwn(possessiveConcepts, a.conceptId) &&
         (typeof a.owner !== "string" ||
           !a.owner.trim() ||
@@ -599,7 +605,16 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
-      (Object.hasOwn(phraseConcepts, a.conceptId)
+      (a.conceptId.startsWith("case_choice_")
+        ? a.exerciseType !== "case_choice_completion" ||
+          !["locative","dative","ablative"].includes(a.requiredCase || "") ||
+          a.conceptId !== `case_choice_${a.requiredCase}` ||
+          !["locative","dative","ablative"].includes(a.selectedCase || "") ||
+          typeof a.baseNoun !== "string" || !a.baseNoun.trim() ||
+          typeof a.caseCorrect !== "boolean" || typeof a.formCorrect !== "boolean" ||
+          a.correct !== (a.caseCorrect && a.formCorrect) ||
+          (!a.manual && (a.caseCorrect !== (a.selectedCase === a.requiredCase) || a.formCorrect !== matchesCase(a.answer,a.expected)))
+        : Object.hasOwn(phraseConcepts, a.conceptId)
         ? a.exerciseType !== "typed_noun_phrase" ||
           typeof a.possessor !== "string" ||
           !a.possessor.trim() ||
