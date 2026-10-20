@@ -5,6 +5,7 @@ async function open(page: import("@playwright/test").Page) {
   await page.route("https://docs.google.com/**", (r) => r.abort());
   await page.goto("/");
   await page.getByRole("button", { name: "Open grammar practice" }).click();
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("phrases");
   return page.getByRole("region", { name: "Typed noun phrase practice" });
 }
 test("all 20 noun phrases: full phrase input, explicit relationship/number, touch, feedback and correction", async ({
@@ -115,13 +116,15 @@ test("phrase mistake review, reload and backup stay separate from word-form evid
   ).toBeDisabled();
   await page.reload();
   await page.getByRole("button", { name: "Open grammar practice" }).click();
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("phrases");
   await expect(
     area.getByText(
       "2 saved typed attempts · 1 correct, including self-corrections",
       { exact: true },
     ),
   ).toBeVisible();
-  for (const name of ["Typed case pilot", "Typed possessive practice"])
+  for (const [name, activity] of [["Typed case pilot", "cases"], ["Typed possessive practice", "possessives"]]) {
+    await page.getByLabel("Practice activity", {exact:true}).selectOption(activity);
     await expect(
       page
         .getByRole("region", { name, exact: true })
@@ -130,6 +133,8 @@ test("phrase mistake review, reload and backup stay separate from word-form evid
           { exact: true },
         ),
     ).toBeVisible();
+  }
+  await page.getByLabel("Practice activity", {exact:true}).selectOption("phrases");
   await page
     .getByRole("button", { name: "Your progress", exact: true })
     .click();
@@ -171,6 +176,7 @@ test("phrase checking works in the embedded preview sandbox and on the Pages pat
   );
   const frame = page.frameLocator("iframe");
   await frame.getByRole("button", { name: "Open grammar practice" }).click();
+  await frame.getByLabel("Practice activity", {exact:true}).selectOption("phrases");
   const area = frame.getByRole("region", {
     name: "Typed noun phrase practice",
   });

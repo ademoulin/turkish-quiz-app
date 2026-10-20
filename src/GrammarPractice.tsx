@@ -5,6 +5,7 @@ import { CasePilot, PossessivePractice, NounPhrasePractice } from './CasePilot';
 import type { PilotAttempt } from './casePilot';
 export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAttempt[]; updateAttempts: (update: (a:PilotAttempt[])=>PilotAttempt[])=>void}) {
   const [open, setOpen] = useState(false);
+  const [activity, setActivity] = useState('cases');
   const [section, setSection] = useState('');
   const [skill, setSkill] = useState('');
   const [session, setSession] = useState<Session | null>(null);
@@ -18,9 +19,18 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
     <h2>Yeni Hitit 1 · Grammar practice</h2>
     <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Multiple-choice scores stay in this session only; typed pilot attempts are saved.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
-      <CasePilot attempts={attempts} updateAttempts={updateAttempts} />
-      <PossessivePractice attempts={attempts} updateAttempts={updateAttempts} />
-      <NounPhrasePractice attempts={attempts} updateAttempts={updateAttempts} />
+      <label className="field" htmlFor="grammar-activity">Practice activity</label>
+      <select id="grammar-activity" value={activity} onChange={e => setActivity(e.target.value)}>
+        <option value="cases">Typed endings · Case pilot</option>
+        <option value="possessives">Typed endings · Possessive forms</option>
+        <option value="phrases">Build a noun phrase · Genitive + possessive</option>
+        <option value="multiple-choice">Yeni Hitit · Multiple choice</option>
+      </select>
+      <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
+      <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'phrases'}><NounPhrasePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'multiple-choice'}>
       {!session ? <>
         <label className="field" htmlFor="grammar-section">Section</label><select id="grammar-section" value={section} onChange={e => {setSection(e.target.value); setSkill('');}}><option value="">All sections</option>{sections.map(s => <option key={s} value={s}>{sectionLabel(s)}</option>)}</select>
         <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>
@@ -38,6 +48,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         </> : <h3>Grammar session complete</h3>}
         <button className="secondary" onClick={() => {setSession(null); setSelected('');}}>Restart grammar practice</button>
       </>}
+      </div>
       <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar practice</button>
     </>}
   </section>;

@@ -1,0 +1,47 @@
+import {test, expect} from '@playwright/test';
+
+test('activity chooser shows one activity and preserves sessions when switching', async ({page}) => {
+  await page.route('https://docs.google.com/**', r => r.fulfill({status:200, body:'ID,Verb,Type,Meaning\nv001,gelmek,vi,come'}));
+  await page.goto('/');
+  await page.getByRole('button', {name:'Open grammar practice'}).click();
+  const chooser = page.getByLabel('Practice activity', {exact:true});
+  const cases = page.getByRole('region', {name:'Typed case pilot', exact:true});
+  const possessives = page.getByRole('region', {name:'Typed possessive practice', exact:true});
+  const phrases = page.getByRole('region', {name:'Typed noun phrase practice', exact:true});
+  const mc = page.getByRole('button', {name:'Start grammar practice', exact:true});
+  await expect(cases).toBeVisible();
+  await expect(possessives).not.toBeVisible();
+  await expect(phrases).not.toBeVisible();
+  await expect(mc).not.toBeVisible();
+  await cases.getByRole('button', {name:'Start typed case practice', exact:true}).click();
+  await cases.getByLabel('Complete inflected word').fill('unfinished');
+  for (const [value, area] of [['possessives', possessives], ['phrases', phrases]] as const) {
+    await chooser.selectOption(value);
+    await expect(area).toBeVisible();
+    await expect(cases).not.toBeVisible();
+    await expect(mc).not.toBeVisible();
+    await expect(value === 'phrases' ? possessives : phrases).not.toBeVisible();
+  }
+  await chooser.selectOption('multiple-choice');
+  await expect(mc).toBeVisible();
+  await expect(cases).not.toBeVisible();
+  await expect(possessives).not.toBeVisible();
+  await expect(phrases).not.toBeVisible();
+  await mc.click();
+  const radio = page.getByRole('radio').first();
+  const chosen = await radio.inputValue();
+  await radio.check();
+  await chooser.selectOption('cases');
+  await expect(cases.getByLabel('Complete inflected word')).toHaveValue('unfinished');
+  await cases.getByRole('button', {name:'Check typed answer'}).click();
+  await chooser.selectOption('multiple-choice');
+  await expect(page.getByRole('radio').first()).toBeChecked();
+  await expect(page.getByRole('radio').first()).toHaveValue(chosen);
+  await chooser.selectOption('cases');
+  await expect(cases.getByRole('button', {name:'Check typed answer'})).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.length)).toBe(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole('button', {name:'Close grammar practice'}).click();
+  await page.getByRole('button', {name:'Open grammar practice'}).click();
+  await expect(cases.getByRole('button', {name:'Start typed case practice', exact:true})).toBeVisible();
+});
