@@ -8,7 +8,7 @@ All tasks whose goal is conjugating a supplied verb stay in Conjugation, across 
 
 The learner explicitly wants to get very comfortable understanding how Turkish packages actions and whole clauses into noun-like units, with many questions per lesson and space to experiment. This is a major multi-increment section, not a small optional addition.
 
-Lessons 1–10 and 11A–D are implemented in the current branch. All remaining lessons are planned and need separate content/design review before implementation.
+Lessons 1–10 and 11A–E are implemented in the current branch. All remaining lessons are planned and need separate content/design review before implementation.
 
 | Lesson | Scope | Status |
 | --- | --- | --- |
@@ -22,11 +22,11 @@ Lessons 1–10 and 11A–D are implemented in the current branch. All remaining 
 | 8 | Contrast -mA, -DIK and -(y)AcAK in meaningful constructions | 12 models, 36 meaning/construction-choice/production exercises |
 | 9 | Subject relative clauses with -(y)An: describe the person/thing doing the action | 12 models, 36 meaning/actor-modifier-time/participle exercises |
 | 10 | Complement relative clauses with -DIK / -(y)AcAK + possessive agreement | 12 direct-object models, 36 meaning/actor-head/production exercises; other complement roles remain for expansion |
-| 11 | Converbs in small sublessons: -ip, -erek, -meden, -ince, -ken, before/after and related temporal constructions | 11A (-ip), 11B (-ArAk), 11C (-mAdAn without doing), 11D (-mAdAn önce / -DIktAn sonra, including different subjects): 12 models / 36 exercises each; remaining sublessons planned |
+| 11 | Converbs in small sublessons: -ip, -erek, -meden, -ince, -ken, before/after and related temporal constructions | 11A (-ip), 11B (-ArAk), 11C (-mAdAn without doing), 11D (-mAdAn önce / -DIktAn sonra, including different subjects), 11E (-(y)IncA when/once): 12 models / 36 exercises each; remaining sublessons planned |
 | 12 | Mixed interpretation, clause boundaries, sentence building and supported free production | Planned |
 
 Weave -(y)Iş action nouns into the early noun group after the central pattern is comfortable. Later advanced extensions can draw on Yeni Hitit 3 once the foundations are solid.
 
 Every lesson should move through understanding, unpacking, guided building, production and meaningful contrasts. Show explicit bracketed chunks and explain each suffix's job. Begin with comprehension and who-does-what, rather than isolated suffix drilling. Distinguish noun clauses from adverbial converbs instead of calling all nonfinite forms gerunds. Explicit subjects/time context should disambiguate forms when needed. Multiple acceptable answers need careful handling when production becomes open-ended.
 
-The current 504 exercises are 3 task views of 168 models, not 504 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.
+The current 540 exercises are 3 task views of 180 models, not 540 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.
