@@ -10,6 +10,7 @@ import {shuffle} from './shuffle';
 export function VerbNounLessons({attempts,updateAttempts}:PracticeProps){
  const [lesson,setLesson]=useState<VerbNounLesson>('activity'),[task,setTask]=useState<LessonTaskSelection>('mixed');
  const [questions,setQuestions]=useState<VerbNounQuestion[]>([]),[index,setIndex]=useState(0),[answer,setAnswer]=useState('');
+ const pointerType=useRef('');
  const session=useRef(''),locked=useRef(false),input=useRef<HTMLInputElement>(null),next=useRef<HTMLButtonElement>(null),firstOption=useRef<HTMLInputElement>(null);
  const q=questions[index],example=q&&verbNounExamples.find(e=>e.id===q.exampleId)!;
  const results=attempts.filter(a=>a.sessionId===session.current),feedback=q&&results.find(a=>a.questionId===q.id),mistakes=lessonMistakes(attempts,lesson,task);
@@ -17,7 +18,7 @@ export function VerbNounLessons({attempts,updateAttempts}:PracticeProps){
  function start(review=false){const pool=review?shuffle(mistakes).slice(0,12):selectLessonQuestions(lesson,task);if(!pool.length)return;session.current=crypto.randomUUID();locked.current=false;setIndex(0);setAnswer('');setQuestions(pool.map(q=>({...q,options:q.options&&shuffle(q.options)})));}
  function check(){if(!q||feedback||locked.current||!answer.trim())return;locked.current=true;updateAttempts(a=>recordLesson(a,q,answer,session.current));}
  function insert(c:string){const el=input.current,start=el?.selectionStart??answer.length,end=el?.selectionEnd??start;setAnswer(answer.slice(0,start)+c+answer.slice(end));requestAnimationFrame(()=>{el?.focus();el?.setSelectionRange(start+1,start+1);});}
- return <section className="panel" aria-label="Verb nouns and clauses"><h3>Verb nouns and clauses</h3><p className="hint">First seven lessons · 84 model sentences · 252 exercises. Newly authored drafts; independent linguistic review pending.</p>
+ return <section className="panel" aria-label="Verb nouns and clauses" onPointerDownCapture={e=>{pointerType.current=e.pointerType;}}><h3>Verb nouns and clauses</h3><p className="hint">First seven lessons · 84 model sentences · 252 exercises. Newly authored drafts; independent linguistic review pending.</p>
  {!questions.length?<>
  <label className="field" htmlFor="verb-noun-lesson">Lesson</label><select id="verb-noun-lesson" value={lesson} onChange={e=>setLesson(e.target.value as VerbNounLesson)}>{Object.entries(verbNounLessons).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select>
  <section aria-label="Lesson guide"><h4>{verbNounLessons[lesson]}</h4>
@@ -76,11 +77,11 @@ export function VerbNounLessons({attempts,updateAttempts}:PracticeProps){
  </>:<fieldset disabled={!!feedback}><legend>{q.task==='meaning'?'Sentence meaning':q.contentTime?'Clause meaning and structure':q.negationScope?'Suffix role and scope':q.nominalCase?'Clause connection':q.nominalSubject?'Action subject':'Action chunk'}</legend>{q.options?.map((o,i)=><label className="word-row" key={o.id}><input ref={i===0?firstOption:undefined} type="radio" name="verb-noun-choice" value={o.id} checked={answer===o.id} onChange={()=>setAnswer(o.id)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();check();}}}/><span lang={q.task==='structure'&&!q.nominalSubject&&!q.negationScope?'tr':'en'}>{o.text}</span></label>)}</fieldset>}
  {feedback?<>
  <div role="status" className={'feedback '+(feedback.correct?'correct':'incorrect')}><strong>{feedback.correct?'Correct.':'Incorrect.'}</strong><p>Correct answer: <span lang={q.task==='meaning'||(q.task==='structure'&&(q.nominalSubject||q.negationScope))?'en':'tr'}>{q.expected}</span></p><p lang="tr">[{example.unit}] {example.main}.</p><p>{example.meaning}</p><p><strong>Build-up:</strong> <span lang="tr">{example.breakdown}</span></p><p>{example.explanation}</p><p>The brackets group the action and its details as one noun-like unit. {example.lessonId==='content_future'?'The bracketed future content clause is what someone knows, thinks or said. Its agreement identifies who acts; interpret future time from the main-clause viewpoint.':example.lessonId==='content_dik'?'The bracketed content clause is what someone knows, heard or said. Its agreement identifies the embedded subject; its time is interpreted in context.':example.lessonId==='clause_cases'?'The outer case connects this complete clause to the main predicate. The subject inside the bracket can differ from the main-clause subject.':example.lessonId==='subjects'?'The genitive subject and possessive ending identify the person or people performing the action; the whole unit is the subject of the description.':example.lessonId==='cases'?'The case ending on that unit links it to the main verb.':'The remaining words describe that unit or express wanting it.'}</p>{feedback.manual&&<p>Marked correct by you.</p>}</div>
- {!feedback.correct&&<button className="secondary" onClick={e=>{if(e.detail>1)return;updateAttempts(a=>correctPilot(a,feedback.id));}}>My answer was correct</button>}
- <button ref={next} className="primary" onClick={e=>{if(e.detail>1)return;setIndex(i=>i+1);setAnswer('');locked.current=false;}}>{index+1===questions.length?'See lesson results':'Next lesson question'}</button>
+ {!feedback.correct&&<button className="secondary" onClick={e=>{if(e.detail>1&&pointerType.current==='mouse')return;updateAttempts(a=>correctPilot(a,feedback.id));}}>My answer was correct</button>}
+ <button ref={next} className="primary" onClick={e=>{if(e.detail>1&&pointerType.current==='mouse')return;setIndex(i=>i+1);setAnswer('');locked.current=false;}}>{index+1===questions.length?'See lesson results':'Next lesson question'}</button>
  </>:<button type="button" className="primary" disabled={!answer.trim()} onClick={check}>Check lesson answer</button>}
  </div>:<h4>Verb noun lesson complete</h4>}
- <button className="text-button" onClick={e=>{if(e.detail>1)return;setQuestions([]);}}>{q?'End lesson session':'Restart verb noun lesson'}</button>
+ <button className="text-button" onClick={e=>{if(e.detail>1&&pointerType.current==='mouse')return;setQuestions([]);}}>{q?'End lesson session':'Restart verb noun lesson'}</button>
  </>}
  </section>;
 }
