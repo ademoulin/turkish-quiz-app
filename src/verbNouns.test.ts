@@ -4,15 +4,15 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('96 authored model sentences produce 288 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,96);assert.equal(bank.length,288);assert.equal(new Set(bank.map(q=>q.id)).size,288);
- for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
+test('108 authored model sentences produce 324 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,108);assert.equal(bank.length,324);assert.equal(new Set(bank.map(q=>q.id)).size,324);
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal(e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'){assert.equal(q.options?.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(examples.filter(e=>e.form==='ma_accusative').length,4);assert.equal(examples.filter(e=>e.form==='ma_dative').length,4);assert.equal(examples.filter(e=>e.form==='mak_ablative').length,4);
 });
 test('mixed sessions balance tasks without reusing model sentences; focused sessions cover their whole task',()=>{
- for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
  for(const task of ['meaning','structure','type'] as const){const pool=selectLessonQuestions(lesson,task);assert.equal(pool.length,12);assert.equal(pool.every(q=>q.task===task&&q.lessonId===lesson),true);}}
 });
 test('option identity grades meanings and structures; blank, unknown and duplicate submissions do not score',()=>{
@@ -143,4 +143,21 @@ test('construction choice and production keep separate review and family snapsho
  const q=lessonPool('contrasts','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'contrasts','structure').length,1);assert.equal(lessonMistakes(wrong,'contrasts','type').length,0);assert.equal(lessonMistakes(wrong,'content_dik').length,0);
  const fixed=correctPilot(wrong,wrong[0].id);for(const field of ['id','time','answer','nominalConstruction','nominalSubject','nominalCase'] as const)assert.equal(fixed[0][field],wrong[0][field]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(lessonMistakes(fixed,'contrasts').length,0);assert.equal(lessonMistakes(recordLesson(wrong,q,'target','retry'),'contrasts').length,0);
  const older=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...older,nominalConstruction:'ma'}]}));assert.deepEqual(validatePilotImport({version:1}),[]);
+});
+
+test('subject-relative models place the acting head after its modifier, with explicit time and no noun-clause agreement',()=>{
+ const models=examples.filter(e=>e.lessonId==='subject_relatives'),pool=lessonPool('subject_relatives','type');
+ assert.deepEqual(pool.map(q=>q.expected),['okuyan','bekleyen','yürüyen','uyuyan','gelen','kazanan','koşan','çalışan','dinleyen','bakan','oturan','giden']);
+ for(const [time,count] of [['current',6],['past',3],['habitual',3]] as const)assert.equal(models.filter(e=>e.relativeTime===time).length,count);
+ for(const e of models){assert.equal(e.unit,e.relativeClause+' '+e.relativeHead);assert.ok(e.relativeHead);assert.equal(e.nominalSubject,undefined);assert.equal(e.nominalCase,undefined);assert.equal(e.form,'subject_relative_an');assert.equal(e.supportingRuleIds.includes('buffer_y'),['oku','bekle','yürü','uyu','dinle'].includes(e.stem));assert.equal(e.supportingRuleIds.includes('consonant_softening'),e.stem==='git');assert.match(e.relativeClause!,e.relativeTime==='past'?/^Dün/:e.relativeTime==='current'?/^Şu anda/:/^Her /);}
+ for(const [expected,bad] of [['okuyan','okuan'],['bekleyen','bekleyenler'],['yürüyen','yuruyen'],['uyuyan','uyuan'],['koşan','kosan'],['çalışan','çalışanlar'],['dinleyen','dinleyeceğini'],['giden','giten'],['gelen','gelmesi'],['bakan','bakıyor']]){const q=pool.find(q=>q.expected===expected)!;assert.equal(recordLesson([],q,bad,'s')[0].correct,false);}
+ for(const q of pool){assert.equal(q.exerciseType,'typed_participle');assert.equal(recordLesson([],q,' '+q.expected.normalize('NFD')+' ','s')[0].correct,true);}
+ const past=lessonPool('subject_relatives','structure').find(q=>q.exampleId==='vn9-05')!;assert.match(past.expected,/Yesterday/);assert.equal(past.exerciseType,'subject_relative_structure');
+});
+test('subject-relative history preserves actor and time through grading, corrections, review and legacy backups',()=>{
+ for(const q of lessonPool('subject_relatives')){const a=recordLesson([],q,q.task==='type'?q.expected:'target','s');assert.equal(a[0].relativeHead,q.relativeHead);assert.equal(a[0].relativeTime,q.relativeTime);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);assert.strictEqual(recordLesson(a,q,'wrong','s'),a);
+  for(const patch of [{relativeHead:undefined},{relativeHead:''},{relativeHead:42},{relativeTime:undefined},{relativeTime:'future'},{nominalSubject:'o'},{nominalCase:'accusative'},{exerciseType:'typed_verb_noun'},{contentTime:'past_event'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a[0],...patch}]}));
+ }
+ const q=lessonPool('subject_relatives','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'subject_relatives','structure').length,1);assert.equal(lessonMistakes(wrong,'subject_relatives','type').length,0);assert.equal(lessonMistakes(wrong,'subjects').length,0);const fixed=correctPilot(wrong,wrong[0].id);for(const field of ['id','time','answer','relativeHead','relativeTime'] as const)assert.equal(fixed[0][field],wrong[0][field]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(lessonMistakes(fixed,'subject_relatives').length,0);assert.equal(lessonMistakes(recordLesson(wrong,q,'target','retry'),'subject_relatives').length,0);
+ const old=recordLesson([],lessonPool('activity')[0],'target','old')[0];for(const patch of [{relativeHead:'adam'},{relativeTime:'current'},{exerciseType:'subject_relative_meaning'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,...patch}]}));assert.deepEqual(validatePilotImport({version:1}),[]);
 });
