@@ -4,15 +4,15 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('120 authored model sentences produce 360 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,120);assert.equal(bank.length,360);assert.equal(new Set(bank.map(q=>q.id)).size,360);
- for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
+test('132 authored model sentences produce 396 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,132);assert.equal(bank.length,396);assert.equal(new Set(bank.map(q=>q.id)).size,396);
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives','converb_ip'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal(e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'){assert.equal(q.options?.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(examples.filter(e=>e.form==='ma_accusative').length,4);assert.equal(examples.filter(e=>e.form==='ma_dative').length,4);assert.equal(examples.filter(e=>e.form==='mak_ablative').length,4);
 });
 test('mixed sessions balance tasks without reusing model sentences; focused sessions cover their whole task',()=>{
- for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
+ for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives','converb_ip'] as const){for(let i=0;i<10;i++){const pool=selectLessonQuestions(lesson);assert.equal(pool.length,12);assert.equal(new Set(pool.map(q=>q.exampleId)).size,12);for(const task of ['meaning','structure','type'])assert.equal(pool.filter(q=>q.task===task).length,4);}
  for(const task of ['meaning','structure','type'] as const){const pool=selectLessonQuestions(lesson,task);assert.equal(pool.length,12);assert.equal(pool.every(q=>q.task===task&&q.lessonId===lesson),true);}}
 });
 test('option identity grades meanings and structures; blank, unknown and duplicate submissions do not score',()=>{
@@ -179,4 +179,22 @@ test('object-relative actor, head, form and time survive corrections/review/impo
  const q=lessonPool('object_relatives','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'object_relatives','structure').length,1);assert.equal(lessonMistakes(wrong,'object_relatives','type').length,0);assert.equal(lessonMistakes(wrong,'subject_relatives').length,0);const fixed=correctPilot(wrong,wrong[0].id);for(const field of ['id','time','answer','nominalSubject','relativeHead','relativeTime','relativeForm'] as const)assert.equal(fixed[0][field],wrong[0][field]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(lessonMistakes(fixed,'object_relatives').length,0);assert.equal(lessonMistakes(recordLesson(wrong,q,'target','retry'),'object_relatives').length,0);
  const subject=recordLesson([],lessonPool('subject_relatives')[0],'target','old')[0];for(const patch of [{relativeForm:'dik'},{relativeTime:'future'},{nominalSubject:'sen'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...subject,...patch}]}));
  const legacy=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...legacy,relativeForm:'dik'}]}));assert.deepEqual(validatePilotImport({version:1}),[]);
+});
+
+test('ip converbs balance shared actors, time contexts and harmony without nominal agreement or case',()=>{
+ const models=examples.filter(e=>e.lessonId==='converb_ip'),pool=lessonPool('converb_ip','type');
+ assert.deepEqual(pool.map(q=>q.expected),['gidip','okuyup','kalkıp','görüp','dinleyip','yürüyüp','oturup','açıp','içip','yıkayıp','bulup','düşünüp']);
+ for(const person of ['ben','sen','o','biz','siz','onlar'])assert.equal(models.filter(e=>e.converbSubject===person).length,2);
+ for(const time of ['past','future','habitual'])assert.equal(models.filter(e=>e.converbTime===time).length,4);
+ for(const ending of ['ıp','ip','up','üp'])assert.equal(models.filter(e=>e.answer.endsWith(ending)).length,3);
+ for(const e of models){assert.equal(e.nominalSubject,undefined);assert.equal(e.nominalCase,undefined);assert.equal(e.relativeHead,undefined);assert.ok(e.main.startsWith('sonra '));assert.equal(e.supportingRuleIds.includes('buffer_y'),['oku','dinle','yürü','yıka'].includes(e.stem));assert.equal(e.supportingRuleIds.includes('consonant_softening'),e.stem==='git');}
+ for(const q of pool){assert.equal(recordLesson([],q,' '+q.expected.normalize('NFD')+' ','s')[0].correct,true);for(const bad of [q.expected+'im',q.expected+'i',q.expected+'ler'])assert.equal(recordLesson([],q,bad,'s')[0].correct,false);}
+ for(const [expected,bad] of [['gidip','gitip'],['okuyup','okuup'],['kalkıp','kalkip'],['görüp','gorup'],['yürüyüp','yuruyup'],['yıkayıp','yikayip']])assert.equal(recordLesson([],pool.find(q=>q.expected===expected)!,bad,'s')[0].correct,false);
+});
+test('converb evidence round-trips with distinct metadata, original corrections and isolated task review',()=>{
+ for(const q of lessonPool('converb_ip')){const a=recordLesson([],q,q.task==='type'?q.expected:'target','s');assert.equal(a[0].converbSubject,q.converbSubject);assert.equal(a[0].converbTime,q.converbTime);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);assert.strictEqual(recordLesson(a,q,'wrong','s'),a);
+ for(const patch of [{converbSubject:undefined},{converbSubject:'unknown'},{converbTime:undefined},{converbTime:'past_event'},{nominalSubject:'ben'},{nominalCase:'dative'},{relativeHead:'kitap'},{exerciseType:'typed_verb_noun'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a[0],...patch}]}));}
+ const q=lessonPool('converb_ip','structure')[0],wrong=recordLesson([],q,'other-1','s');assert.equal(lessonMistakes(wrong,'converb_ip','structure').length,1);assert.equal(lessonMistakes(wrong,'converb_ip','type').length,0);assert.equal(lessonMistakes(wrong,'object_relatives').length,0);
+ const fixed=correctPilot(wrong,wrong[0].id);for(const key of ['id','time','answer','converbSubject','converbTime'] as const)assert.equal(fixed[0][key],wrong[0][key]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(lessonMistakes(fixed,'converb_ip').length,0);
+ const old=recordLesson([],lessonPool('activity')[0],'target','old')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...old,converbSubject:'ben',converbTime:'past'}]}));assert.deepEqual(validatePilotImport({version:1}),[]);
 });
