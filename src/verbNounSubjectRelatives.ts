@@ -2,7 +2,7 @@ import type {VerbNounExample} from './verbNouns';
 /** Newly authored drafts, informed by Yeni Hitit 2 §8.1 p.91 and
  * Grammar Support: subject participles. Not textbook quotations.
  * Independent linguistic review and exact Ödkem mapping pending. */
-export type RelativeTime='past'|'current'|'habitual';
+export type RelativeTime='past'|'current'|'habitual'|'future';
 export const subjectRelativeExamples:VerbNounExample[]=[
  {
   "id": "vn9-01",
