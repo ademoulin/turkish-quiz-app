@@ -1,3 +1,4 @@
+import {converbIpExamples,type ConverbSubject,type ConverbTime} from './verbNounConverbIp';
 import {objectRelativeExamples,type RelativeForm} from './verbNounObjectRelatives';
 import {subjectRelativeExamples,type RelativeTime} from './verbNounSubjectRelatives';
 import {contrastExamples,type NominalConstruction} from './verbNounContrasts';
@@ -8,7 +9,7 @@ import {clauseCaseExamples,type NominalCase} from './verbNounClauseCases';
 import {subjectExamples,nominalSubjects,type NominalSubject} from './verbNounSubjects';
 /** Newly authored lesson content, not quotations. Yeni Hitit 1 §12.1 p.145
  * and §12.2 p.149 guide scope. Independent review and exact Ödkem mapping pending.
- * Finite predicates are supplied; production targets nominalized forms. */
+ * Finite predicates are supplied; production targets nonfinite constructions. */
 export const verbNounLessons = {
  activity: '1 · Actions as nouns',
  cases: '2 · Action nouns with case endings',
@@ -20,11 +21,13 @@ export const verbNounLessons = {
  contrasts: '8 · Choose -mA, -DIK or -(y)AcAK',
  subject_relatives: '9 · -(y)An: describe who does it',
  object_relatives: '10 · Object relatives: who acts on what',
+ converb_ip: '11A · -(y)Ip: link actions',
 } as const;
 export type VerbNounLesson = keyof typeof verbNounLessons;
 export const verbNounTasks = {meaning:'Understand the meaning',structure:'Unpack the structure',type:'Build the action noun'} as const;
 export type VerbNounTask = keyof typeof verbNounTasks;
 export const verbNounConcepts = {
+ vn_converb_ip_meaning:'-Ip converb · meaning',vn_converb_ip_structure:'-Ip converb · shared actor, sequence and tense source',vn_converb_ip_type:'-Ip converb · production',
  vn_object_relatives_meaning:'Object relatives · meaning',vn_object_relatives_structure:'Object relatives · actor, head and suffix role',vn_object_relatives_type:'Object relatives · participle production',
  vn_subject_relatives_meaning:'Subject relatives · meaning',vn_subject_relatives_structure:'Subject relatives · actor, modifier and time',vn_subject_relatives_type:'Subject relatives · participle production',
  vn_contrasts_meaning:'Nominalizer contrasts · meaning',vn_contrasts_structure:'Nominalizer contrasts · construction choice',vn_contrasts_type:'Nominalizer contrasts · production',
@@ -37,8 +40,9 @@ export const verbNounConcepts = {
  vn_subjects_meaning:'Action subject · meaning',vn_subjects_structure:'Action subject · who acts',vn_subjects_type:'Action subject · production',
 } as const;
 export type VerbNounConcept = keyof typeof verbNounConcepts;
-export type NominalForm = 'object_relative_dik'|'object_relative_acak'|'subject_relative_an'|'choose_nominalizer'|'future_possessive_case'|'dik_possessive_case'|'contrast_infinitive'|'contrast_possessive'|'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative'|'ma_possessive'|'ma_possessive_case';
+export type NominalForm = 'converb_ip'|'object_relative_dik'|'object_relative_acak'|'subject_relative_an'|'choose_nominalizer'|'future_possessive_case'|'dik_possessive_case'|'contrast_infinitive'|'contrast_possessive'|'mak_mek'|'ma_accusative'|'ma_dative'|'mak_ablative'|'ma_possessive'|'ma_possessive_case';
 export interface VerbNounExample {
+ converbLead?:string;converbClause?:string;converbSubject?:ConverbSubject;converbTime?:ConverbTime;
  relativeClause?:string;relativeHead?:string;relativeTime?:RelativeTime;relativeForm?:RelativeForm;
  nominalConstruction?:NominalConstruction;
  contentTime?:ContentTime;
@@ -86,10 +90,11 @@ const cases:VerbNounExample[]=caseRows.map(([stem,verbMeaning,form,sentence,mean
  id:`vn2-${String(i+1).padStart(2,'0')}`,lessonId:'cases',stem,verbMeaning,form,sentence,meaning,distractors:[d1,d2],unit,main,template,answer,breakdown,explanation,
  supportingRuleIds:form==='mak_ablative'?['two_way_vowel_harmony','voiceless_assimilation']:['two_way_vowel_harmony','buffer_y',...(form==='ma_accusative'?['four_way_vowel_harmony']:[])],
 }));
-export const verbNounExamples:VerbNounExample[]=[...activity,...cases,...subjectExamples,...clauseCaseExamples,...negationExamples,...contentDikExamples,...contentFutureExamples,...contrastExamples,...subjectRelativeExamples,...objectRelativeExamples];
-export const nominalFormLabels:Record<NominalForm,string>={object_relative_dik:"Use -DIK + agreement matching the supplied genitive subject. Do not add a clause-object accusative after the agreement. The head noun is supplied separately.",object_relative_acak:"Use -(y)acak/-(y)ecek + agreement matching the supplied genitive subject. Add y after a vowel-final stem. Do not add a clause-object accusative after the agreement.",subject_relative_an:"Use -(y)an/-(y)en to describe the supplied noun as the one doing the action. Add buffer y after a vowel-final stem. Do not add person or plural agreement to the participle in these phrases.",choose_nominalizer:"Choose -mA, -DIK or -(y)AcAK to match the intended message and supplied main verb, then add subject agreement and accusative.",future_possessive_case:"Use -(y)acak/-(y)ecek + agreement for the supplied subject + accusative. Add y after a vowel-final stem. Suffix k becomes ğ before vowel-initial agreement; it stays k before overt plural -ları/-leri.",dik_possessive_case:"Use -DIK + agreement for the supplied subject + accusative. Choose d/t and the harmony vowel; soften suffix k to ğ before vowel-initial agreement. With overt plural -ları/-leri, k stays before l.",contrast_infinitive:"Use -mak/-mek after any required action negation. The main verb is supplied.",contrast_possessive:"Use -ma/-me with the supplied subject’s possessive agreement and stated outer case, if any. Add action negation only when requested.",ma_possessive_case:'Use -ma / -me + possessive agreement + the stated outer case ending.',ma_possessive:'Use -ma / -me + the possessive ending matching the supplied subject. Do not add an outer case ending.',mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
+export const verbNounExamples:VerbNounExample[]=[...activity,...cases,...subjectExamples,...clauseCaseExamples,...negationExamples,...contentDikExamples,...contentFutureExamples,...contrastExamples,...subjectRelativeExamples,...objectRelativeExamples,...converbIpExamples];
+export const nominalFormLabels:Record<NominalForm,string>={converb_ip:"Use -(y)ıp/-(y)ip/-(y)up/-(y)üp to link the actions. Use four-way harmony and buffer y after a vowel-final stem. Do not add tense, person or case endings; the finite verb is supplied.",object_relative_dik:"Use -DIK + agreement matching the supplied genitive subject. Do not add a clause-object accusative after the agreement. The head noun is supplied separately.",object_relative_acak:"Use -(y)acak/-(y)ecek + agreement matching the supplied genitive subject. Add y after a vowel-final stem. Do not add a clause-object accusative after the agreement.",subject_relative_an:"Use -(y)an/-(y)en to describe the supplied noun as the one doing the action. Add buffer y after a vowel-final stem. Do not add person or plural agreement to the participle in these phrases.",choose_nominalizer:"Choose -mA, -DIK or -(y)AcAK to match the intended message and supplied main verb, then add subject agreement and accusative.",future_possessive_case:"Use -(y)acak/-(y)ecek + agreement for the supplied subject + accusative. Add y after a vowel-final stem. Suffix k becomes ğ before vowel-initial agreement; it stays k before overt plural -ları/-leri.",dik_possessive_case:"Use -DIK + agreement for the supplied subject + accusative. Choose d/t and the harmony vowel; soften suffix k to ğ before vowel-initial agreement. With overt plural -ları/-leri, k stays before l.",contrast_infinitive:"Use -mak/-mek after any required action negation. The main verb is supplied.",contrast_possessive:"Use -ma/-me with the supplied subject’s possessive agreement and stated outer case, if any. Add action negation only when requested.",ma_possessive_case:'Use -ma / -me + possessive agreement + the stated outer case ending.',ma_possessive:'Use -ma / -me + the possessive ending matching the supplied subject. Do not add an outer case ending.',mak_mek:'Use -mak / -mek, without a case ending.',ma_accusative:'Use -ma / -me + buffer y + accusative -ı / -i.',ma_dative:'Use -ma / -me + buffer y + dative -a / -e.',mak_ablative:'Use -mak / -mek + ablative -tan / -ten.'};
 export interface LessonOption {id:string;text:string}
 export interface VerbNounQuestion {
+ converbSubject?:ConverbSubject;converbTime?:ConverbTime;
  relativeHead?:string;relativeTime?:RelativeTime;relativeForm?:RelativeForm;
  nominalConstruction?:NominalConstruction;
  contentTime?:ContentTime;
@@ -97,11 +102,12 @@ export interface VerbNounQuestion {
  nominalCase?:NominalCase;
  nominalSubject?:NominalSubject;
  id:string;lessonId:VerbNounLesson;conceptId:VerbNounConcept;task:VerbNounTask;exampleId:string;
- exerciseType:'object_relative_meaning'|'object_relative_structure'|'subject_relative_meaning'|'subject_relative_structure'|'typed_participle'|'verb_noun_meaning'|'verb_noun_structure'|'typed_verb_noun';
+ exerciseType:'converb_meaning'|'converb_structure'|'typed_converb'|'object_relative_meaning'|'object_relative_structure'|'subject_relative_meaning'|'subject_relative_structure'|'typed_participle'|'verb_noun_meaning'|'verb_noun_structure'|'typed_verb_noun';
  prompt:string;sentence:string;expected:string;options?:LessonOption[];expectedOptionId?:string;
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
 export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>(['meaning','structure','type'] as const).map(task=>({
+ ...(e.converbSubject?{converbSubject:e.converbSubject,converbTime:e.converbTime}:{}),
  ...(e.relativeForm?{relativeForm:e.relativeForm}:{}),
  ...(e.relativeHead?{relativeHead:e.relativeHead,relativeTime:e.relativeTime}:{}),
  ...(e.nominalConstruction?{nominalConstruction:e.nominalConstruction}:{}),
@@ -110,8 +116,8 @@ export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>([
  ...(e.nominalCase?{nominalCase:e.nominalCase}:{}),
  ...(e.nominalSubject?{nominalSubject:e.nominalSubject}:{}),
  id:`${e.id}-${task}`,lessonId:e.lessonId,exampleId:e.id,task,conceptId:`vn_${e.lessonId}_${task}` as VerbNounConcept,
- exerciseType:e.lessonId==='object_relatives'?(task==='type'?'typed_participle':`object_relative_${task}`):e.lessonId==='subject_relatives'?(task==='type'?'typed_participle':`subject_relative_${task}`):task==='type'?'typed_verb_noun':task==='meaning'?'verb_noun_meaning':'verb_noun_structure',
- prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?(e.structurePrompt?e.structurePrompt:e.nominalCase?'What does the outer case ending connect the whole action clause to?':e.nominalSubject?'Who performs the action inside the noun-like clause?':'Which complete chunk names the action and its details?'):e.lessonId==='object_relatives'?'Complete the object-relative participle with agreement for the supplied actor. The described object noun and main description are supplied.':e.relativeHead?'Complete the subject-relative participle. The noun being described and the main description are supplied.':e.nominalConstruction?`Intended message: ${e.meaning} Build the complete missing word from the supplied stem.`:'Complete the action noun. The main verb or description is already supplied.',
+ exerciseType:e.lessonId==='converb_ip'?(task==='type'?'typed_converb':`converb_${task}`):e.lessonId==='object_relatives'?(task==='type'?'typed_participle':`object_relative_${task}`):e.lessonId==='subject_relatives'?(task==='type'?'typed_participle':`subject_relative_${task}`):task==='type'?'typed_verb_noun':task==='meaning'?'verb_noun_meaning':'verb_noun_structure',
+ prompt:task==='meaning'?'Which meaning matches the whole sentence?':task==='structure'?(e.structurePrompt?e.structurePrompt:e.nominalCase?'What does the outer case ending connect the whole action clause to?':e.nominalSubject?'Who performs the action inside the noun-like clause?':'Which complete chunk names the action and its details?'):e.lessonId==='converb_ip'?'Complete only the missing -ip converb. The final verb is already supplied.':e.lessonId==='object_relatives'?'Complete the object-relative participle with agreement for the supplied actor. The described object noun and main description are supplied.':e.relativeHead?'Complete the subject-relative participle. The noun being described and the main description are supplied.':e.nominalConstruction?`Intended message: ${e.meaning} Build the complete missing word from the supplied stem.`:'Complete the action noun. The main verb or description is already supplied.',
  sentence:task==='type'||(task==='structure'&&e.nominalConstruction)?e.template:e.sentence,
  expected:task==='type'?e.answer:task==='meaning'?e.meaning:e.structureAnswer?e.structureAnswer:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit,
  ...(task==='type'?{}:{expectedOptionId:'target',options:[{id:'target',text:task==='meaning'?e.meaning:e.structureAnswer?e.structureAnswer:e.connection?e.connection:e.nominalSubject?nominalSubjects[e.nominalSubject]:e.unit},{id:'other-1',text:task==='meaning'?e.distractors[0]:e.structureDistractors?e.structureDistractors[0]:e.connection?'The outer case ending connects only the genitive subject to the action noun.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[0]]:e.main},{id:'other-2',text:task==='meaning'?e.distractors[1]:e.structureDistractors?e.structureDistractors[1]:e.connection?'The ending marks finite tense or person on the main verb.':e.subjectAlternatives?nominalSubjects[e.subjectAlternatives[1]]:e.sentence}]}),

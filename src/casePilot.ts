@@ -473,6 +473,8 @@ export interface PilotAttempt {
   questionId: string;
   conceptId: VerbNounConcept | `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
+  converbSubject?: NominalSubject;
+  converbTime?: "past"|"future"|"habitual";
   relativeForm?: "dik"|"acak";
   relativeHead?: string;
   relativeTime?: "past"|"current"|"habitual"|"future";
@@ -501,7 +503,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "object_relative_meaning" | "object_relative_structure" | "subject_relative_meaning" | "subject_relative_structure" | "typed_participle" | "verb_noun_meaning" | "verb_noun_structure" | "typed_verb_noun" | "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
+  exerciseType: "converb_meaning" | "converb_structure" | "typed_converb" | "object_relative_meaning" | "object_relative_structure" | "subject_relative_meaning" | "subject_relative_structure" | "typed_participle" | "verb_noun_meaning" | "verb_noun_structure" | "typed_verb_noun" | "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -627,13 +629,13 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         (a.exerciseType !== "case_choice_completion" ||
           typeof a.verbPatternId !== "string" || !/^verb_case_[a-z_]+$/.test(a.verbPatternId) ||
           typeof a.verbLemma !== "string" || !a.verbLemma.trim())) ||
-      ((a.relativeForm !== undefined || a.relativeHead !== undefined || a.relativeTime !== undefined || a.nominalConstruction !== undefined || a.contentTime !== undefined || a.negationScope !== undefined || a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
+      ((a.converbSubject !== undefined || a.converbTime !== undefined || a.relativeForm !== undefined || a.relativeHead !== undefined || a.relativeTime !== undefined || a.nominalConstruction !== undefined || a.contentTime !== undefined || a.negationScope !== undefined || a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
         !Object.hasOwn(verbNounConcepts,a.conceptId)) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
       (Object.hasOwn(verbNounConcepts,a.conceptId)
-        ? !["activity","cases","subjects","clause_cases","negation","content_dik","content_future","contrasts","subject_relatives","object_relatives"].includes(a.lessonId || "") ||
+        ? !["activity","cases","subjects","clause_cases","negation","content_dik","content_future","contrasts","subject_relatives","object_relatives","converb_ip"].includes(a.lessonId || "") ||
           !["meaning","structure","type"].includes(a.lessonTask || "") ||
           a.conceptId !== `vn_${a.lessonId}_${a.lessonTask}` ||
           (a.lessonId === "negation" ? (a.nominalSubject !== undefined && (typeof a.nominalSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalSubject))) : ["subjects","clause_cases","content_dik","content_future","contrasts","object_relatives"].includes(a.lessonId || "") ? typeof a.nominalSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalSubject) : a.nominalSubject !== undefined) ||
@@ -643,8 +645,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           (a.lessonId === "contrasts" ? !["ma","dik","acak"].includes(a.nominalConstruction || "") : a.nominalConstruction !== undefined) ||
           (a.lessonId === "subject_relatives" ? typeof a.relativeHead !== "string" || !a.relativeHead.trim() || !["past","current","habitual"].includes(a.relativeTime || "") : a.lessonId === "object_relatives" ? typeof a.relativeHead !== "string" || !a.relativeHead.trim() || !["dik","acak"].includes(a.relativeForm || "") || (a.relativeForm === "acak" ? a.relativeTime !== "future" : !["past","current","habitual"].includes(a.relativeTime || "")) : a.relativeHead !== undefined || a.relativeTime !== undefined) ||
           (a.lessonId !== "object_relatives" && a.relativeForm !== undefined) ||
+          (a.lessonId === "converb_ip" ? typeof a.converbSubject !== "string" || !Object.hasOwn(nominalSubjects,a.converbSubject) || !["past","future","habitual"].includes(a.converbTime || "") : a.converbSubject !== undefined || a.converbTime !== undefined) ||
           typeof a.exampleId !== "string" || !a.exampleId.trim() ||
-          a.exerciseType !== (a.lessonId === "object_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `object_relative_${a.lessonTask}`) : a.lessonId === "subject_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `subject_relative_${a.lessonTask}`) : a.lessonTask === "type" ? "typed_verb_noun" : `verb_noun_${a.lessonTask}`) ||
+          a.exerciseType !== (a.lessonId === "converb_ip" ? (a.lessonTask === "type" ? "typed_converb" : `converb_${a.lessonTask}`) : a.lessonId === "object_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `object_relative_${a.lessonTask}`) : a.lessonId === "subject_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `subject_relative_${a.lessonTask}`) : a.lessonTask === "type" ? "typed_verb_noun" : `verb_noun_${a.lessonTask}`) ||
           (a.lessonTask === "type"
             ? a.selectedOptionId !== undefined || a.expectedOptionId !== undefined || (!a.manual && a.correct !== matchesCase(a.answer,a.expected))
             : typeof a.selectedOptionId !== "string" || !a.selectedOptionId.trim() ||
