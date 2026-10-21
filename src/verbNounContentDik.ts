@@ -2,7 +2,7 @@ import type {VerbNounExample} from './verbNouns';
 /** Newly authored drafts, informed by Yeni Hitit 2 §11.3 p.136 and
  * Grammar Support p.188 (nominalization), and indirect-report guidance.
  * Not textbook quotations. Independent review and exact Ödkem mapping pending. */
-export type ContentTime='past_event'|'habitual_fact';
+export type ContentTime='past_event'|'habitual_fact'|'future_now'|'future_report';
 export const contentDikExamples:VerbNounExample[]=[
  {
   "id": "vn6-01",
