@@ -23,7 +23,7 @@ test('2B opens into form choice, hides completed forms until check, and supports
   const option=area.locator(`input[value="${n===0?'other-1':'target'}"]`);await option.check();
   if(n===0)await area.getByRole('button',{name:'Check lesson answer',exact:true}).dblclick();else await option.press('Enter');
   const next=area.getByRole('button',{name:n===11?'See lesson results':'Next lesson question',exact:true});if(n!==0)await expect(next).toBeFocused();
-  await expect(area.getByText(e.explanation,{exact:true})).toBeVisible();
+  await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(1);
   if(n===0){
    const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
    await area.getByRole('button',{name:'My answer was correct',exact:true}).tap();
@@ -39,7 +39,7 @@ test('2B opens into form choice, hides completed forms until check, and supports
 test('2B typed production gives no form hint; strict mistakes survive reload and remain separate from choices',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).tap();
  const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=bank.find(q=>q.id===id)!;
- await expect(area.getByText(/Choose the form from the supplied phrase/)).toBeVisible();
+ await expect(area.getByText(/Choose the form from the supplied phrase/)).toHaveCount(0);await expect(area.getByText(/Verb stem:/)).toBeVisible();
  await expect(area.getByText(q.expected,{exact:true})).toHaveCount(0);
  const field=area.getByLabel('Complete action noun',{exact:true});await field.fill(q.expected+'k');await field.press('Enter');
  await expect(area.getByText('Incorrect.',{exact:true})).toBeVisible();await page.reload();
