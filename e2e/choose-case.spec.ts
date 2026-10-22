@@ -6,7 +6,7 @@ test('balanced session, delayed feedback, separate scores, touch and Enter; corr
  const area=await open(page);await area.getByRole('button',{name:'Start case choice practice'}).click();const seen=new Set<string>();
  for(let i=0;i<12;i++){
  const id=await area.locator('[data-question-id]').getAttribute('data-question-id');const q=bank.find(q=>q.id===id)!;seen.add(q.id);
- await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);await expect(area.getByText('Intended meaning: '+q.meaning,{exact:true})).toBeVisible();
+ await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);await expect(area.getByText(q.meaning,{exact:true})).toBeVisible();
  const button=area.getByRole('button',{name:'Check case and word',exact:true}),field=area.getByLabel('2. Complete inflected word',{exact:true});await expect(button).toBeDisabled();
  await area.locator(`input[value="${q.requiredCase}"]`).check();
  if(i===0){await area.getByRole('button',{name:'ş',exact:true}).tap();await field.fill('wrong');await button.tap();const original=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);await expect(area.getByText('Case choice: Correct. Word form: Incorrect.',{exact:true})).toBeVisible();await area.getByRole('button',{name:'My word form was correct'}).click();const corrected=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);expect(corrected.id).toBe(original.id);expect(corrected.time).toBe(original.time);expect(corrected.caseCorrect).toBe(true);expect(corrected.formCorrect).toBe(true);

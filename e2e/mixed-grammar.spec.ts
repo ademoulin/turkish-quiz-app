@@ -22,7 +22,7 @@ test('12 balanced typed tasks keep their own instructions, grading, keyboard/tou
  const families=new Map<string,number>(),seen=new Set<string>();
  for(let i=0;i<12;i++){
   const q=await current(area),family=mixedGrammarFamily(q);expect(q).toBeTruthy();expect(seen.has(q.id)).toBe(false);seen.add(q.id);families.set(family,(families.get(family)||0)+1);
-  await expect(area.getByRole('heading',{name:'Task: '+titles[family],exact:true})).toBeVisible();
+  await expect(area.getByRole('heading',{name:titles[family],exact:true})).toBeVisible();
   await expect(area.getByRole('region',{name:'How to practice'})).toHaveCount(0);
   await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);
   if(family==='phrases')await expect(area.getByText('Meaning: '+q.sentence,{exact:true})).toBeVisible();
@@ -40,7 +40,7 @@ test('12 balanced typed tasks keep their own instructions, grading, keyboard/tou
    await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');
   }
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
-  await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
+  await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===11?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Mixed grammar session complete')).toBeVisible();

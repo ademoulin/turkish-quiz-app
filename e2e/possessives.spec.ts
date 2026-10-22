@@ -53,7 +53,7 @@ test("all six owners: 24 unique questions, explicit number, touch, keyboard and 
       ).toBeVisible();
       await expect(
         area.getByText(
-          `${i + 1} / ${i + 1} typed answers correct / attempted`,
+          `${i + 1} / ${i + 1} correct`,
           { exact: true },
         ),
       ).toBeVisible();

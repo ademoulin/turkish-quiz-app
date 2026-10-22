@@ -24,7 +24,7 @@ test('all 24 plural answers, explicit owners/number, touch, correction and saved
   if(i===0){await area.getByRole('button',{name:'ş',exact:true}).tap();await expect(field).toHaveValue('ş');await field.fill('wrong');await area.getByRole('button',{name:'Check typed answer'}).click();await area.getByRole('button',{name:'My answer was correct'}).click();}
   else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
-  await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
+  await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===23?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Possessed case session complete')).toBeVisible();

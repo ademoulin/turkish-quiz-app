@@ -18,7 +18,7 @@ test('48 full chains from bare nouns: explicit constraints, no answer leakage, t
   if(i===0){await area.getByRole('button',{name:'ş',exact:true}).tap();await expect(field).toHaveValue('ş');await field.fill('wrong');await field.press('Enter');await area.getByRole('button',{name:'My answer was correct'}).click();}
   else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
-  await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
+  await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===47?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Build-from-base session complete')).toBeVisible();

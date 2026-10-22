@@ -1,3 +1,4 @@
+import {PracticeHeader,ExercisePrompt} from './PracticeLayout';
 import React, { useEffect, useRef, useState } from "react";
 import {
   recordPilot,
@@ -100,8 +101,7 @@ export function TypedPractice({
   }
   return (
     <section className="panel" aria-label={config.region}>
-      <h3>{config.title}</h3>
-      <p className="hint">{config.description}</p>
+      {!questions.length && <><h3>{config.title}</h3><details className="content-note"><summary>About this content</summary><p>{config.description}</p></details></>}
       {!questions.length ? (
         <>
           <section aria-label="How to practice">{config.guide}</section>
@@ -160,27 +160,11 @@ export function TypedPractice({
         </>
       ) : (
         <>
-          <p>{config.sessionLabel(mode)}</p>
-          <p role="status">
-            {results.filter((a) => a.correct).length} / {results.length} typed
-            answers correct / attempted
-          </p>
+          <PracticeHeader eyebrow={config.sessionLabel(mode)} title={questionConfig.title} index={q?index:undefined} total={questions.length} score={`${results.filter(a=>a.correct).length} / ${results.length} correct`}/>
           {q ? (
             <div data-question-id={q.id}>
-              {config.questionConfig && <h4>Task: {questionConfig.title}</h4>}
-              <p>
-                Question {index + 1} of {questions.length} · {questionConfig.cue(q)}
-              </p>
-              {questionConfig.instruction && <p>{questionConfig.instruction(q)}</p>}
-              {questionConfig.detail?.(q)}
-              <p lang={questionConfig.sentenceLanguage || "tr"}>
-                {questionConfig.sentenceLabel}
-                {q.sentence}
-              </p>
-              <p>
-                {questionConfig.baseLabel || "Base word"}:{" "}
-                <strong lang="tr">{q.base}</strong>
-              </p>
+              <ExercisePrompt instruction={questionConfig.instruction?.(q)} sentence={<>{questionConfig.sentenceLabel}{q.sentence}</>} language={questionConfig.sentenceLanguage || "tr"}/>
+              <div className="exercise-cues"><p>{questionConfig.cue(q)}</p>{questionConfig.detail?.(q)}<p>{questionConfig.baseLabel || "Base word"}: <strong lang="tr">{q.base}</strong></p></div>
               <label className="field" htmlFor={config.id + "-answer"}>
                 {questionConfig.answerLabel}
               </label>

@@ -22,13 +22,13 @@ test('grammar preview filters, keyboard check, score, completion and reset on mo
   await page.keyboard.press('Enter');
   await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
   await expect(area.getByRole('radio').first()).toBeDisabled();
-  await expect(area.getByText(`${i+1} / ${i+1} correct / attempted`,{exact:true})).toBeVisible();
+  await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===2?'See grammar results':'Next grammar question'}).click();
  }
  await expect(page.getByText('Grammar session complete')).toBeVisible();
  await page.getByRole('button',{name:'Restart grammar practice'}).click();
  await page.getByRole('button',{name:'Start grammar practice'}).click();
- await expect(page.getByText('0 / 0 correct / attempted',{exact:true})).toBeVisible();
+ await expect(page.getByText('0 / 0 correct',{exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
 test('production build includes enabled grammar bank',async({page})=>{

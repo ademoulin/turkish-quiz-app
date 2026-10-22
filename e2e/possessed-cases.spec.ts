@@ -27,7 +27,7 @@ test('all 48 possessed-case answers, touch, keyboard, reveal, scoring and correc
    expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);expect(after.manual).toBe(true);
   }else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
   await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
-  await expect(area.getByText(`${i+1} / ${i+1} typed answers correct / attempted`,{exact:true})).toBeVisible();
+  await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===47?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Possessed case session complete')).toBeVisible();

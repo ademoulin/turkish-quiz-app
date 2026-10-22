@@ -55,3 +55,11 @@ jobs:
           path: dist/quiz-my-turkish.html
           if-no-files-found: error
           retention-days: 7
+
+      - name: Package layout screenshots (no deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: grammar-layout-review
+          path: test-results/layout-*.png
+          if-no-files-found: error
+          retention-days: 7

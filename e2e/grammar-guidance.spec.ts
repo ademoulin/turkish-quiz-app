@@ -17,7 +17,7 @@ test('all activities explain the task and keep unscored examples out of active s
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}').pilotAttempts?.length||0)).toBe(0);
   await area.getByRole('button',{name:start,exact:true}).click();
   await expect(area.getByRole('region',{name:'How to practice',exact:true})).toHaveCount(0);
-  await expect(area.getByText('0 / 0 typed answers correct / attempted',{exact:true})).toBeVisible();
+  await expect(area.getByText('0 / 0 correct',{exact:true})).toBeVisible();
   if(activity==='possessed-cases'){
    await expect(area.getByText(/Given meaning:/)).toBeVisible();
    await expect(area.getByText(/Owner:/)).toBeVisible();

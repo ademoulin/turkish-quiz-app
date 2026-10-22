@@ -46,7 +46,7 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
       pilot.getByText(current.explanation, { exact: true }),
     ).toBeVisible();
     await expect(
-      pilot.getByText(`${i + 1} / ${i + 1} typed answers correct / attempted`, {
+      pilot.getByText(`${i + 1} / ${i + 1} correct`, {
         exact: true,
       }),
     ).toBeVisible();
@@ -147,7 +147,7 @@ test("all case pools use strict spelling and touch letters; production project p
       pilot.getByText(`Correct answer: ${q.answer}`, { exact: true }),
     ).toBeVisible();
     await expect(
-      pilot.getByText("0 / 1 typed answers correct / attempted", {
+      pilot.getByText("0 / 1 correct", {
         exact: true,
       }),
     ).toBeVisible();
@@ -183,7 +183,7 @@ test("typed checking works inside a preview sandbox without form permission", as
   await pilot.getByLabel("Complete inflected word").fill("wrong");
   await pilot.getByLabel("Complete inflected word").press("Enter");
   await expect(
-    pilot.getByText("0 / 2 typed answers correct / attempted", { exact: true }),
+    pilot.getByText("0 / 2 correct", { exact: true }),
   ).toBeVisible();
 });
 
@@ -274,7 +274,7 @@ test("mixed sessions balance cases and mistake review resolves only corrected qu
   ]);
   for (const count of Object.values(counts)) expect([2, 3]).toContain(count);
   await expect(
-    pilot.getByText("12 / 12 typed answers correct / attempted", {
+    pilot.getByText("12 / 12 correct", {
       exact: true,
     }),
   ).toBeVisible();
@@ -332,7 +332,7 @@ test("accusative and genitive each complete ten unique typed questions", async (
         .click();
     }
     await expect(
-      pilot.getByText("10 / 10 typed answers correct / attempted", {
+      pilot.getByText("10 / 10 correct", {
         exact: true,
       }),
     ).toBeVisible();

@@ -30,7 +30,7 @@ test('2B opens into form choice, hides completed forms until check, and supports
    const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
    for(const key of ['id','time','answer','selectedOptionId','questionId','conceptId'])expect(after[key]).toEqual(before[key]);expect(after.manual).toBe(true);
   }
-  await expect(area.getByText(`${n+1} / ${n+1} lesson answers correct / attempted`,{exact:true})).toBeVisible();await next.tap();
+  await expect(area.getByText(`${n+1} / ${n+1} correct`,{exact:true})).toBeVisible();await next.tap();
  }
  expect(seen.size).toBe(12);const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);
  expect(saved.every((a:any)=>a.lessonId==='action_forms'&&a.exerciseType==='verb_noun_structure'&&!a.nominalSubject)).toBe(true);

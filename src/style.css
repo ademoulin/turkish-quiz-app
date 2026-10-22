@@ -821,3 +821,28 @@ legend,
 .grammar-concept summary { cursor: pointer; line-height: 1.6; }
 .grammar-evidence { padding: .5rem .75rem; margin: .5rem 0; border-left: 3px solid var(--border); }
 .grammar-evidence h4 { margin: .3rem 0; }
+
+/* Grammar exercises: context, progress, task and sentence have distinct visual roles. */
+.grammar-preview .exercise-header { margin: 0 0 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.grammar-preview .exercise-eyebrow { margin: 0 0 .25rem; color: var(--teal); font-size: .75rem; font-weight: 650; letter-spacing: .04em; }
+.grammar-preview .exercise-header h3 { margin: 0 0 .75rem; font-size: clamp(1.2rem,2.5vw,1.5rem); line-height: 1.35; }
+.grammar-preview .exercise-meta { display: flex; flex-wrap: wrap; gap: .35rem 1.25rem; color: #53635d; font-size: .8rem; font-variant-numeric: tabular-nums; }
+.grammar-preview .exercise-meta p { margin: 0; }
+.grammar-preview .exercise-prompt { max-width: 50rem; margin-bottom: 1.25rem; }
+.grammar-preview .exercise-instruction { margin: 0 0 .75rem; font-size: .9rem; line-height: 1.6; }
+.grammar-preview .exercise-sentence { margin: 0; font-size: clamp(1.25rem,2.5vw,1.65rem); font-weight: 550; line-height: 1.55; overflow-wrap: anywhere; }
+.grammar-preview .exercise-meaning { display: flex; flex-direction: column; gap: .2rem; margin: .75rem 0 0; font-size: .9rem; color: #53635d; line-height: 1.6; }
+.grammar-preview .exercise-cue-label { font-size: .72rem; font-weight: 650; color: var(--teal); }
+.grammar-preview .exercise-cues { max-width: 50rem; padding: .5rem 1rem; margin: 1rem 0; border-left: 3px solid #cbd9cc; background: #f3f5ed; font-size: .85rem; line-height: 1.65; }
+.grammar-preview .exercise-cues p { margin: .4rem 0; }
+.grammar-preview .exercise-options legend { font-size: .85rem; }
+.grammar-preview .exercise-options .exercise-sentence { font-size: clamp(1.25rem,2.5vw,1.65rem); }
+.grammar-preview .content-note { margin: 1rem 0; font-size: .8rem; color: #53635d; }
+.grammar-preview .content-note summary { cursor: pointer; font-weight: 600; }
+.grammar-preview .content-note p { margin: .5rem 0; max-width: 55rem; }
+.grammar-preview .assembly-instruction { color: #53635d; font-size: .85rem; max-width: 50rem; }
+@media (max-width: 480px) {
+ .grammar-preview .panel { padding: 18px; }
+ .grammar-preview .exercise-meta { gap: .25rem .8rem; }
+}
+.grammar-preview .exercise-cues:empty { display: none; }
