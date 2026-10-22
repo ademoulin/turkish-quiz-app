@@ -30,7 +30,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
     <h2>Yeni Hitit 1 · Grammar practice</h2>
     <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Grammar results are saved in this browser, including new Grammar Multiple Choice checks. Progress shows evidence by exercise type, without mastery ratings.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
-      <div className="button-row">{activity!=='random'&&<button className="primary" onClick={startMix}>Start a mix of everything</button>}{activity!=='progress'&&<button className="secondary" onClick={()=>setActivity('progress')}>Your grammar progress</button>}</div>
+      <div className="button-row">{activity!=='random'&&activity!=='progress'&&<button className="primary" onClick={startMix}>Start a mix of everything</button>}{activity!=='progress'&&<button className="secondary" onClick={()=>setActivity('progress')}>Your grammar progress</button>}</div>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
       <select id="grammar-activity" value={activity} onChange={e => setActivity(e.target.value)}>
         <option value="random">Mix of everything</option>

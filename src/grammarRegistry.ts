@@ -1,3 +1,4 @@
+import {skillLabel} from './grammarLabels';
 import {mixedGrammarQuestions,mixedGrammarFamily} from './mixedGrammar';
 import {choiceQuestions,recordChoice,type ChoiceCase} from './caseChoice';
 import {verbNounQuestions,verbNounLessons} from './verbNouns';
@@ -16,7 +17,7 @@ export const grammarItems:GrammarItem[]=[...mixedGrammarQuestions.map(q=>({kind:
 export const itemConcept=(item:GrammarItem)=>item.kind==='multiple_choice'?mcConcept(item.q.skill_id):item.q.conceptId;
 export const itemGroup=(item:GrammarItem)=>item.kind==='lesson'?`lesson_${item.q.lessonId}`:itemConcept(item);
 export const itemMode=(item:GrammarItem)=>item.kind==='lesson'?(item.q.task==='type'?'typed':item.q.task==='build'?'assembly':item.q.task):item.kind==='typed'?'typed':'recognition';
-export const itemLabel=(item:GrammarItem)=>item.kind==='lesson'?verbNounLessons[item.q.lessonId]:item.kind==='multiple_choice'?'Grammar Multiple Choice':item.kind==='case_choice'?'Choose the Case':item.family.replaceAll('_',' ');
+export const itemLabel=(item:GrammarItem)=>item.kind==='lesson'?verbNounLessons[item.q.lessonId]:item.kind==='multiple_choice'?`Grammar Multiple Choice · ${skillLabel(item.q.skill_id)}`:item.kind==='case_choice'?'Choose the Case':item.family.replaceAll('_',' ');
 const identity=(item:GrammarItem)=>item.kind==='lesson'?`lesson:${item.q.exampleId}`:item.kind==='multiple_choice'?`mc:${item.q.skill_id}`:item.q.id;
 /** Rotate over activity families so large banks do not crowd out small ones.
  * Never show two task views of one model, or two variants of one MC skill. */
