@@ -4,8 +4,8 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('276 authored model sentences produce 828 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,276);assert.equal(bank.length,828);assert.equal(new Set(bank.map(q=>q.id)).size,828);
+test('288 authored model sentences produce 864 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,288);assert.equal(bank.length,864);assert.equal(new Set(bank.map(q=>q.id)).size,864);
  for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives','converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal((e.mainLead?e.mainLead+' ':'')+e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
  for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'&&q.task!=='build'){const count=q.lessonId==='action_forms'&&q.task==='structure'?5:q.lessonId==='temporal_contrasts'&&q.task==='structure'?4:3;assert.equal(q.options?.length,count);assert.equal(new Set(q.options!.map(o=>o.text)).size,count);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
