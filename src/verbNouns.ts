@@ -1,3 +1,4 @@
+import {redesignLessons} from './lessonRedesign';
 import {relativeNegationExamples,type RelativeNegationEvidence} from './verbNounRelativeNegation';
 import {relativeRoleExamples,type RelativeRoleEvidence} from './verbNounRelativeRoles';
 import {relativeBuildingExamples,type RelativeBuildingEvidence} from './verbNounRelativeBuilding';
@@ -159,7 +160,7 @@ export interface VerbNounQuestion extends Partial<RelativeBuildingEvidence&Relat
  prompt:string;sentence:string;expected:string;options?:LessonOption[];expectedOptionId?:string;
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
-export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>(['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(e.lessonId)?['meaning','structure','build'] as const:['meaning','structure','type'] as const).map(task=>({
+const originalLessonQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>(['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(e.lessonId)?['meaning','structure','build'] as const:['meaning','structure','type'] as const).map(task=>({
  ...(task==='build'?{chunks:e.chunks,expectedChunkIds:e.expectedChunkIds}:{}),
  ...(e.nominalMainSubject?{nominalMainSubject:e.nominalMainSubject}:{}),
  ...(e.temporalPredicate?{temporalPredicate:e.temporalPredicate}:{}),
@@ -184,3 +185,5 @@ export const verbNounQuestions:VerbNounQuestion[]=verbNounExamples.flatMap(e=>([
  // Supporting spelling is deliberately assessed only in production questions.
  supportingRuleIds:task==='type'?e.supportingRuleIds:[],source:'newly_authored',reviewStatus:'draft_needs_independent_review',
 })));
+
+export const {active:verbNounQuestions,retired:retiredLessonQuestions}=redesignLessons(originalLessonQuestions);

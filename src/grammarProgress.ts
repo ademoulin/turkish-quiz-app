@@ -7,12 +7,12 @@ import {possessedCaseConcepts} from './possessedCases';
 import {suffixChainConcepts} from './suffixChains';
 import {pronounCaseConcepts} from './pronounCases';
 import {choiceCases} from './caseChoice';
-import {verbNounLessons} from './verbNouns';
+import {retiredLessonQuestions,verbNounLessons} from './verbNouns';
 import {skillLabel} from './grammarLabels';
 export const evidenceModes={meaning:'Meaning',structure:'Structure',typed:'Typed production',assembly:'Sentence assembly',recognition:'Recognition / case choice'} as const;
 export type EvidenceMode=keyof typeof evidenceModes;
 export interface EvidenceStats {available:number;attempts:number;distinct:number;sessions:number;days:number;successfulDays:number;manual:number;recentCorrect:number;recentCount:number;missed:number;last?:string}
-export interface GrammarConceptProgress {id:string;label:string;family:'lessons'|'forms'|'case_choice'|'multiple_choice';modes:Partial<Record<EvidenceMode,EvidenceStats>>;attempts:number;missed:number;last?:string}
+export interface GrammarConceptProgress {id:string;label:string;family:'lessons'|'forms'|'case_choice'|'multiple_choice';modes:Partial<Record<EvidenceMode,EvidenceStats>>;attempts:number;missed:number;legacyChecks:number;last?:string}
 const labels:Record<string,string>={...concepts,...possessiveConcepts,...phraseConcepts,...possessedCaseConcepts,...suffixChainConcepts,...pronounCaseConcepts};
 function describe(item:GrammarItem){
  if(item.kind==='lesson')return {label:verbNounLessons[item.q.lessonId],family:'lessons' as const};
@@ -36,8 +36,11 @@ export function grammarProgress(history:PilotAttempt[]):{concepts:GrammarConcept
  const byQuestion=new Map<string,PilotAttempt[]>();for(const a of attempts){const list=byQuestion.get(a.questionId)||[];list.push(a);byQuestion.set(a.questionId,list);}
  const groups=new Map<string,{item:GrammarItem;questions:Map<EvidenceMode,GrammarItem[]>}>(),linked=new Set<string>();
  for(const item of grammarItems){const id=itemGroup(item);if(!groups.has(id))groups.set(id,{item,questions:new Map()});const group=groups.get(id)!;const modes:EvidenceMode[]=item.kind==='case_choice'?['recognition','typed']:[itemMode(item)];for(const mode of modes){const list=group.questions.get(mode)||[];list.push(item);group.questions.set(mode,list);}}
+ const legacyByLesson=new Map<string,number>();
+ const retiredById=new Map(retiredLessonQuestions.map(q=>[q.id,q]));
+ for(const a of attempts){const old=retiredById.get(a.questionId);if(old&&a.conceptId===old.conceptId&&a.exerciseType===old.exerciseType){linked.add(a.id);const id=`lesson_${old.lessonId}`;legacyByLesson.set(id,(legacyByLesson.get(id)||0)+1);}}
  const result:GrammarConceptProgress[]=[];
- for(const [id,group] of groups){const modes:GrammarConceptProgress['modes']={},all=new Map<string,PilotAttempt>();for(const [mode,items] of group.questions){const evidence=items.flatMap(item=>(byQuestion.get(item.q.id)||[]).filter(a=>a.conceptId===itemConcept(item)&&a.exerciseType===(item.kind==='multiple_choice'?'grammar_multiple_choice':item.q.exerciseType)));for(const a of evidence){linked.add(a.id);all.set(a.id,a);}modes[mode]=summarizeEvidence(evidence,items.length,mode);}const values=[...all.values()],stats=summarizeEvidence(values,0,'recognition');result.push({id,...describe(group.item),modes,attempts:all.size,missed:latest(values).filter(a=>!a.correct).length,last:stats.last});}
+ for(const [id,group] of groups){const modes:GrammarConceptProgress['modes']={},all=new Map<string,PilotAttempt>();for(const [mode,items] of group.questions){const evidence=items.flatMap(item=>(byQuestion.get(item.q.id)||[]).filter(a=>a.conceptId===itemConcept(item)&&a.exerciseType===(item.kind==='multiple_choice'?'grammar_multiple_choice':item.q.exerciseType)));for(const a of evidence){linked.add(a.id);all.set(a.id,a);}modes[mode]=summarizeEvidence(evidence,items.length,mode);}const values=[...all.values()],stats=summarizeEvidence(values,0,'recognition');result.push({id,...describe(group.item),modes,legacyChecks:legacyByLesson.get(id)||0,attempts:all.size,missed:latest(values).filter(a=>!a.correct).length,last:stats.last});}
  result.sort((a,b)=>['lessons','forms','case_choice','multiple_choice'].indexOf(a.family)-['lessons','forms','case_choice','multiple_choice'].indexOf(b.family));
  return {concepts:result,unlinked:attempts.filter(a=>!linked.has(a.id)).length};
 }

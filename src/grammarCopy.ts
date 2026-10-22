@@ -23,7 +23,7 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  const meaning=q.task==='type'&&q.lessonId==='negation'?e.meaning:old.meaning;
  // These families deliberately request a construction to avoid grading valid alternatives as wrong.
  const construction=q.task!=='meaning'&&['noun_clause_building','noun_clause_cases'].includes(q.lessonId)?constructionNames[e.nominalConstruction!]:undefined;
- const timing=q.task!=='meaning'&&e.temporalIntent?({before:'Explicit before',after:'Explicit after',when:'When/once',while:'While (overlap)'}[e.temporalRelation!]):undefined;
+ const timing=(q.task==='type'||q.task==='build')&&e.temporalIntent?({before:'Explicit before',after:'Explicit after',when:'When/once',while:'While (overlap)'}[e.temporalRelation!]):undefined;
  const outerCase=q.task==='type'&&q.lessonId!=='contrasts'?e.nominalCase:undefined;
  const pluralAgreement=q.task==='type'&&e.nominalSubject==='onlar';
  return {instruction,meaning,construction,timing,outerCase,pluralAgreement};
@@ -40,7 +40,7 @@ export function lessonReason(e:VerbNounExample):string{
   return e.main.includes('istiyor')?'This question requests the common infinitive + istemek pattern.':'The requested infinitive names the activity as the subject.';
  case 'activity':return e.explanation;
  case 'cases':return e.explanation;
- case 'subjects':return 'Agreement on the -mA verbal noun matches the genitive subject.';
+ case 'subjects':return 'The agreement ending identifies the embedded actor; an explicit genitive pronoun can be omitted when its reference is clear.';
  case 'clause_cases':return 'Agreement identifies the embedded subject; the final case ending connects the whole clause to the main predicate.';
  case 'negation':return e.negationScope==='action'?'The embedded action is negative; distinguish the negative suffix from the action-noun ending.':e.negationScope==='main'?'The main predicate is negative; the embedded action form is affirmative.':'The action is affirmative. Agreement, where present, identifies the embedded subject.';
  case 'content_dik':return '-DIK expresses the nonfuture content here; context supplies its time. Agreement identifies the embedded subject.';
@@ -55,7 +55,7 @@ export function lessonReason(e:VerbNounExample):string{
  case 'temporal_when':return '-(y)IncA supplies the when/once reference event; each clause keeps its own actor.';
  case 'temporal_while':return 'The supplied linking base + -ken gives the interval during which the main action happens.';
  case 'state_ken':return 'The state or location + -(y)ken supplies the setting during the main action.';
- case 'temporal_contrasts':case 'sentence_building':return 'The requested timing determines the connection; each clause keeps its own subject.';
+ case 'temporal_contrasts':case 'sentence_building':return 'The time connection links the two clauses; each clause keeps its own subject.';
  case 'noun_clause_building':return `The whole noun clause is the object of ${e.main}; its agreement matches the embedded subject.`;
  case 'noun_clause_cases':return `The whole noun clause takes ${e.nominalCase}, independently of the case roles inside it.`;
  case 'relative_building':return 'The modifier describes the head; the case on that head connects the whole phrase to the main sentence.';

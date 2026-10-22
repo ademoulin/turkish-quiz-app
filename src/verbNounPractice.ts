@@ -8,14 +8,20 @@ export type LessonTaskSelection=VerbNounTask|'mixed';
 export function lessonPool(lesson:VerbNounLesson,task:LessonTaskSelection='mixed'){
  return verbNounQuestions.filter(q=>q.lessonId===lesson&&(task==='mixed'||q.task===task));
 }
+export function lessonTasks(lesson:VerbNounLesson):VerbNounTask[]{
+ return (['meaning','structure','type','build'] as const).filter(task=>lessonPool(lesson,task).length>0);
+}
 export function selectLessonQuestions(lesson:VerbNounLesson,task:LessonTaskSelection='mixed'){
  const pool=lessonPool(lesson,task);
  if(task!=='mixed')return shuffle(pool).slice(0,12);
- // One task per model sentence in a session, four per task; no earlier question
- // supplies the answer to another task on the same model sentence.
- const examples=shuffle([...new Set(pool.map(q=>q.exampleId))]);
- const tasks=shuffle((['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(lesson)?['meaning','structure','build']:['meaning','structure','type']) as VerbNounTask[]);
- return shuffle(examples.slice(0,12).map((id,i)=>pool.find(q=>q.exampleId===id&&q.task===tasks[Math.floor(i/4)])!));
+ // Balance available tasks, choosing the most restricted pool first. A model
+ // appears once so an interpretation cannot reveal its later production answer.
+ const tasks=shuffle(lessonTasks(lesson)),limit=Math.min(12,new Set(pool.map(q=>q.exampleId)).size);
+ const used=new Set<string>(),chosen:VerbNounQuestion[]=[];
+ const quotas=tasks.map((t,i)=>({task:t,count:Math.floor(limit/tasks.length)+(i<limit%tasks.length?1:0),size:lessonPool(lesson,t).length})).sort((a,b)=>a.size-b.size);
+ for(const {task,count} of quotas){const candidates=shuffle(pool.filter(q=>q.task===task&&!used.has(q.exampleId)));for(const q of candidates.slice(0,count)){chosen.push(q);used.add(q.exampleId);}}
+ for(const q of shuffle(pool)){if(chosen.length===limit)break;if(!used.has(q.exampleId)){chosen.push(q);used.add(q.exampleId);}}
+ return shuffle(chosen);
 }
 export const lessonMistakes=(attempts:PilotAttempt[],lesson:VerbNounLesson,task:LessonTaskSelection='mixed')=>latestMistakes(lessonPool(lesson,task),attempts);
 export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:string,sessionId:string):PilotAttempt[]{
