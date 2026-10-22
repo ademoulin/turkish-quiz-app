@@ -1,3 +1,4 @@
+import {PracticeHeader} from './PracticeLayout';
 import {GrammarProgress} from './GrammarProgress';
 import {GrammarRandom} from './GrammarRandom';
 import {recordGrammarChoice} from './grammarMultipleChoice';
@@ -29,7 +30,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
   return <section className="panel grammar-preview" aria-label="Grammar practice">
     <h2>Grammar practice</h2>
     <p className="hint">Practice Turkish grammar with exercises guided by Yeni Hitit 1, 2 and 3. We use Ödkem’s grammar table to track coverage as we work toward including every concept.</p>
-    <p className="hint">Includes 588 draft multiple-choice questions across 196 skills, plus focused grammar activities. New exercises are authored for this app; linguistic review and coverage mapping are ongoing. Grammar results are saved in this browser. Progress shows evidence by exercise type, without mastery ratings.</p>
+    <details className="content-note"><summary>About this content</summary><p>Includes 588 draft multiple-choice questions across 196 skills, plus focused grammar activities. New exercises are authored for this app; linguistic review and coverage mapping are ongoing. Grammar results are saved in this browser. Progress shows evidence by exercise type, without mastery ratings.</p></details>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <div className="button-row">{activity!=='random'&&activity!=='progress'&&<button className="primary" onClick={startMix}>Start a mix of everything</button>}{activity!=='progress'&&<button className="secondary" onClick={()=>setActivity('progress')}>Your grammar progress</button>}</div>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
@@ -62,11 +63,11 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         <label className="field" htmlFor="grammar-skill">Skill</label><select id="grammar-skill" value={skill} onChange={e => setSkill(e.target.value)}><option value="">All skills</option>{skills.map(s => <option key={s} value={s}>{skillLabel(s)}</option>)}</select>
         <button className="primary" onClick={() => {mcSession.current=crypto.randomUUID();mcLocked.current=false;setSession(startSession(section, skill)); setSelected('');}}>Start grammar practice</button>
       </> : <>
-        <p role="status">{result!.correct} / {result!.attempted} correct / attempted</p>
+        <PracticeHeader eyebrow="Grammar Multiple Choice" title={q?skillLabel(q.skill_id):"Session results"} index={q?session.index:undefined} total={session.questions.length} score={`${result!.correct} / ${result!.attempted} correct`}/>
         {q ? <>
-          <p>Question {session.index + 1} of {session.questions.length} · Section {q.section} · {skillLabel(q.skill_id)}</p>
+          <p className="exercise-instruction">Choose the best answer.</p>
           <form onSubmit={e => {e.preventDefault();checkMC(true);}}>
-            <fieldset disabled={checked}><legend>{q.prompt}</legend>{q.options.map(o => <label className="word-row" key={o.id}><input type="radio" name="grammar-answer" value={o.id} checked={selected === o.id} onChange={() => setSelected(o.id)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();checkMC(true);}}} /><span lang="tr">{o.text}</span></label>)}</fieldset>
+            <fieldset className="exercise-options" disabled={checked}><legend className="exercise-sentence">{q.prompt}</legend>{q.options.map(o => <label className="word-row" key={o.id}><input type="radio" name="grammar-answer" value={o.id} checked={selected === o.id} onChange={() => setSelected(o.id)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();checkMC(true);}}} /><span lang="tr">{o.text}</span></label>)}</fieldset>
             <button type="button" className="primary" disabled={checked||!selected} onClick={e=>checkMC(e.detail===0)}>{checked?'Answer checked':'Check grammar answer'}</button>
             {checked && <div className={'feedback ' + (session.answers[q.id] === q.correct_option_id ? 'correct' : 'incorrect')} role="status"><strong>{session.answers[q.id] === q.correct_option_id ? 'Correct.' : 'Incorrect.'}</strong><p lang="tr">Correct answer: {q.options.find(o => o.id === q.correct_option_id)!.text}</p><p>{q.explanation}</p>{attempts.some(a=>a.sessionId===mcSession.current&&a.questionId===q.id&&a.manual)&&<p>Marked correct by you.</p>}</div>}
             {checked&&<>{session.answers[q.id]!==q.correct_option_id&&<button type="button" className="secondary" onClick={()=>{const attempt=attempts.find(a=>a.sessionId===mcSession.current&&a.questionId===q.id);if(attempt)updateAttempts(a=>correctPilot(a,attempt.id));setSession(s=>s&&({...s,answers:{...s.answers,[q.id]:q.correct_option_id}}));}}>My answer was correct</button>}<button type="button" className="primary" ref={mcNext} onClick={()=>{setSession(s=>s&&nextQuestion(s));setSelected('');mcLocked.current=false;}}>{session.index+1===session.questions.length?'See grammar results':'Next grammar question'}</button></>}
