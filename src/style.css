@@ -846,3 +846,6 @@ legend,
  .grammar-preview .exercise-meta { gap: .25rem .8rem; }
 }
 .grammar-preview .exercise-cues:empty { display: none; }
+.grammar-preview .feedback-reason { font-weight: 550; }
+.grammar-preview .answer-detail { margin-top: .8rem; font-size: .9rem; }
+.grammar-preview .answer-detail summary { cursor: pointer; color: var(--teal); font-weight: 600; }
