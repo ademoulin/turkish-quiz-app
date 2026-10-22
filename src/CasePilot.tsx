@@ -251,9 +251,12 @@ const mixedGrammar:PracticeConfig={
  setupHint:()=> 'All questions · 12 questions, balanced across six exercise families. Previous mistakes uses up to 12 latest missed questions without adding cleared items.',
  reviewLabel:'Review previous grammar mistakes',
  sessionLabel:m=>m==='mixed_grammar_review'?'Reviewing previous grammar mistakes':'Mixed grammar practice',
- questionConfig:q=>({cases,pronoun_cases:pronouns,possessives,phrases,add_case:possessedCases,build_from_base:suffixChains})[mixedGrammarFamily(q)],
+ questionConfig:typedQuestionConfig,
  cue:()=>'',answerLabel:'Your typed answer',completionLabel:'Mixed grammar session complete',
 };
 export function MixedGrammarReview(props:PracticeProps){
  return <TypedPractice {...props} config={mixedGrammar} />;
 }
+
+/** Shared task instructions for broad random practice; grading stays in recordPilot. */
+export function typedQuestionConfig(q:import("./casePilot").TypedQuestion):PracticeConfig{return ({cases,pronoun_cases:pronouns,possessives,phrases,add_case:possessedCases,build_from_base:suffixChains})[mixedGrammarFamily(q)];}

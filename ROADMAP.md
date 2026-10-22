@@ -30,3 +30,8 @@ Weave -(y)Iş action nouns into the early noun group after the central pattern i
 Every lesson should move through understanding, unpacking, guided building, production and meaningful contrasts. Show explicit bracketed chunks and explain each suffix's job. Begin with comprehension and who-does-what, rather than isolated suffix drilling. Distinguish noun clauses from adverbial converbs instead of calling all nonfinite forms gerunds. Explicit subjects/time context should disambiguate forms when needed. Multiple acceptable answers need careful handling when production becomes open-ended.
 
 The current 720 exercises are 3 task views of 240 models, not 720 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.
+
+
+## Evidence and mixed practice
+
+Implemented in this branch: a grammar progress inventory with separate recognition, meaning, structure, typed-production and assembly evidence; transparent recent checks and practice-day counts; no mastery labels or thresholds. Broad Mix of everything and cross-activity mistake review reuse existing banks. New Grammar Multiple Choice attempts are saved going forward. Retention assessment, adaptive recommendations and any future mastery criteria need their own design milestone after observing usage.
