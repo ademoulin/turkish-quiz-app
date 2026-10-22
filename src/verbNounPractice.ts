@@ -1,3 +1,4 @@
+import {matchesPhrase} from './nounPhrases';
 import {matchesCase,type PilotAttempt} from './casePilot';
 import {verbNounQuestions,type VerbNounQuestion,type VerbNounLesson,type VerbNounTask} from './verbNouns';
 import {shuffle} from './shuffle';
@@ -35,7 +36,7 @@ export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:s
   lessonId:q.lessonId,lessonTask:q.task,exampleId:q.exampleId,exerciseType:q.exerciseType,
   ...(q.task==='type'?{}:{selectedOptionId:answer,expectedOptionId:q.expectedOptionId}),
   answer:q.task==='type'?answer.trim():option!.text,expected:q.expected,
-  supportingRuleIds:q.supportingRuleIds,correct:q.task==='type'?matchesCase(answer,q.expected):answer===q.expectedOptionId,
+  supportingRuleIds:q.supportingRuleIds,correct:q.task==='type'?(q.lessonId==='temporal_contrasts'?matchesPhrase(answer,q.expected):matchesCase(answer,q.expected)):answer===q.expectedOptionId,
   manual:false,time:new Date().toISOString(),
  }];
 }
