@@ -652,7 +652,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
       (isMcConcept(a.conceptId) ? !Array.isArray(a.supportingRuleIds) || !validMcAttempt(a) : Object.hasOwn(verbNounConcepts,a.conceptId)
-        ? !["activity","cases","subjects","clause_cases","negation","content_dik","content_future","contrasts","subject_relatives","object_relatives","converb_ip","converb_arak","converb_madan","temporal_order","temporal_when","temporal_while","state_ken","temporal_contrasts","sentence_building","noun_clause_building","noun_clause_cases"].includes(a.lessonId || "") ||
+        ? !["action_forms","activity","cases","subjects","clause_cases","negation","content_dik","content_future","contrasts","subject_relatives","object_relatives","converb_ip","converb_arak","converb_madan","temporal_order","temporal_when","temporal_while","state_ken","temporal_contrasts","sentence_building","noun_clause_building","noun_clause_cases"].includes(a.lessonId || "") ||
           !(["sentence_building","noun_clause_building","noun_clause_cases"].includes(a.lessonId || "")?["meaning","structure","build"]:["meaning","structure","type"]).includes(a.lessonTask || "") ||
           a.conceptId !== `vn_${a.lessonId}_${a.lessonTask}` ||
           (["noun_clause_building","noun_clause_cases"].includes(a.lessonId || "") ? typeof a.nominalMainSubject !== "string" || !Object.hasOwn(nominalSubjects,a.nominalMainSubject) : a.nominalMainSubject !== undefined) ||

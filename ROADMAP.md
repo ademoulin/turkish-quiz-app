@@ -8,12 +8,13 @@ All tasks whose goal is conjugating a supplied verb stay in Conjugation, across 
 
 The learner explicitly wants to get very comfortable understanding how Turkish packages actions and whole clauses into noun-like units, with many questions per lesson and space to experiment. This is a major multi-increment section, not a small optional addition.
 
-Lessons 1–10, 11A–H and 12A–C are implemented in the current branch. All remaining lessons are planned and need separate content/design review before implementation.
+Lessons 1–10 (including 2B), 11A–H and 12A–C are implemented in the current branch. All remaining lessons are planned and need separate content/design review before implementation.
 
 | Lesson | Scope | Status |
 | --- | --- | --- |
 | 1 | Actions as nouns: -mak/-mek; subject and activity complement | 12 models, 36 meaning/structure/production exercises |
 | 2 | The whole activity takes case: -mAyI, -mAyA, -mAktAn | 12 models, 36 meaning/structure/production exercises |
+| 2B | Choose the activity form from the phrase: infinitive, accusative, dative, ablative, purpose and locative; no embedded subject agreement | 24 models, 72 meaning/form-choice/typed exercises; opens into form choice |
 | 3 | The action has its own subject: genitive subject + -mA + possessive agreement | 12 models, 36 meaning/who-acts/production exercises |
 | 4 | Put that nominalized clause into a larger sentence; add required case | 12 models, 36 meaning/connection/production exercises |
 | 5 | Negation and contrasts, including -mA nominalization versus verbal negation and same/different subjects | 12 models, 36 meaning/suffix-role/production exercises |
@@ -29,7 +30,7 @@ Weave -(y)Iş action nouns into the early noun group after the central pattern i
 
 Every lesson should move through understanding, unpacking, guided building, production and meaningful contrasts. Show explicit bracketed chunks and explain each suffix's job. Begin with comprehension and who-does-what, rather than isolated suffix drilling. Distinguish noun clauses from adverbial converbs instead of calling all nonfinite forms gerunds. Explicit subjects/time context should disambiguate forms when needed. Multiple acceptable answers need careful handling when production becomes open-ended.
 
-The current 756 exercises are 3 task views of 252 models, not 756 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.
+The current 828 exercises are 3 task views of 276 models, not 828 different sentences. New content must be authored with honest review status, checked against the supplied textbooks and tutor catalog where possible, and appended with stable IDs. Preserve existing vocabulary, conjugation and all earlier grammar banks. Record meaningful evidence without inventing mastery labels or thresholds.
 
 
 ## Evidence and mixed practice
