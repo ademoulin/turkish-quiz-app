@@ -4,11 +4,11 @@ import {verbNounExamples as examples,verbNounQuestions as bank} from './verbNoun
 import {lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
-test('216 authored model sentences produce 648 distinct meaning, structure and production tasks',()=>{
- assert.equal(examples.length,216);assert.equal(bank.length,648);assert.equal(new Set(bank.map(q=>q.id)).size,648);
+test('228 authored model sentences produce 684 distinct meaning, structure and production tasks',()=>{
+ assert.equal(examples.length,228);assert.equal(bank.length,684);assert.equal(new Set(bank.map(q=>q.id)).size,684);
  for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives','converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'] as const){assert.equal(lessonPool(lesson).length,36);for(const task of ['meaning','structure','type'] as const)assert.equal(lessonPool(lesson,task).length,12);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal(e.unit+' '+e.main+'.',e.sentence);assert.ok(e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
- for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'){const count=q.lessonId==='temporal_contrasts'&&q.task==='structure'?4:3;assert.equal(q.options?.length,count);assert.equal(new Set(q.options!.map(o=>o.text)).size,count);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
+ for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'&&q.task!=='build'){const count=q.lessonId==='temporal_contrasts'&&q.task==='structure'?4:3;assert.equal(q.options?.length,count);assert.equal(new Set(q.options!.map(o=>o.text)).size,count);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(examples.filter(e=>e.form==='ma_accusative').length,4);assert.equal(examples.filter(e=>e.form==='ma_dative').length,4);assert.equal(examples.filter(e=>e.form==='mak_ablative').length,4);
 });
 test('mixed sessions balance tasks without reusing model sentences; focused sessions cover their whole task',()=>{
@@ -34,7 +34,7 @@ test('lesson review isolates both lesson and task; correcting a choice retains t
  assert.equal(lessonMistakes(recordLesson(a,q,'target','retry'),'activity').length,0);
 });
 test('old and new version-1 histories round-trip with strict lesson/task/exercise and choice validation',()=>{
- let a=recordPilot([],caseQuestions[0],'evde','old');for(const q of bank)a=recordLesson(a,q,q.task==='type'?q.expected:'target','session-'+q.id);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);assert.deepEqual(validatePilotImport({version:1}),[]);
+ let a=recordPilot([],caseQuestions[0],'evde','old');for(const q of bank)a=recordLesson(a,q,q.task==='build'?JSON.stringify(q.expectedChunkIds):q.task==='type'?q.expected:'target','session-'+q.id);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);assert.deepEqual(validatePilotImport({version:1}),[]);
  const q=bank[0],wrong=recordLesson([],q,'other-1','bad'),fixed=correctPilot(wrong,wrong[0].id);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
  for(const patch of [{lessonId:'unknown'},{lessonTask:'unknown'},{lessonId:'cases'},{exampleId:''},{exerciseType:'typed_form_completion'},{selectedOptionId:''},{expectedOptionId:''},{correct:false},{conceptId:'vn_activity_unknown'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...a[1],...patch}]}));
  const typed=a.find(a=>a.exerciseType==='typed_verb_noun')!;for(const patch of [{selectedOptionId:'target'},{expectedOptionId:'target'},{correct:false}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...typed,...patch}]}));
