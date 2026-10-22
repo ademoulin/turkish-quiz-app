@@ -1,4 +1,5 @@
 export const nounCaseSlots=['Main-clause subject','Embedded subject (genitive)','Embedded action + agreement + outer case','Main predicate (supplied)'] as const;
+export const relativeSlots=['Relative modifier (actor included where needed)','Head noun + main-clause case, if needed','Main-clause detail or subject','Main predicate (supplied)'] as const;
 import type {SentenceChunk} from './verbNouns';
 export const nounClauseSlots=['Main-clause subject','Embedded subject (genitive)','Embedded action + agreement + accusative','Main predicate (finite verb supplied)'] as const;
 export const chunkSlots=['Time context + time-clause subject','Time-clause action','Main-clause subject','Main-clause action (finite verb supplied)'] as const;
