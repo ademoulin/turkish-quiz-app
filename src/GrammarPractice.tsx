@@ -75,7 +75,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
         <button className="secondary" onClick={() => {setSession(null); setSelected('');}}>Restart grammar practice</button>
       </>}
       </div>
-      <button className="text-button" onClick={() => {setOpen(false); setSession(null); setSelected('');}}>Close grammar practice</button>
+      <button className="text-button" onClick={() => {setOpen(false); setRandomTrigger(0); setSession(null); setSelected('');}}>Close grammar practice</button>
     </>}
   </section>;
 }
