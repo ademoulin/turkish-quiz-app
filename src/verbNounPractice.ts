@@ -14,7 +14,7 @@ export function selectLessonQuestions(lesson:VerbNounLesson,task:LessonTaskSelec
  // One task per model sentence in a session, four per task; no earlier question
  // supplies the answer to another task on the same model sentence.
  const examples=shuffle([...new Set(pool.map(q=>q.exampleId))]);
- const tasks=shuffle((['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles'].includes(lesson)?['meaning','structure','build']:['meaning','structure','type']) as VerbNounTask[]);
+ const tasks=shuffle((['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(lesson)?['meaning','structure','build']:['meaning','structure','type']) as VerbNounTask[]);
  return shuffle(examples.slice(0,12).map((id,i)=>pool.find(q=>q.exampleId===id&&q.task===tasks[Math.floor(i/4)])!));
 }
 export const lessonMistakes=(attempts:PilotAttempt[],lesson:VerbNounLesson,task:LessonTaskSelection='mixed')=>latestMistakes(lessonPool(lesson,task),attempts);
@@ -30,6 +30,7 @@ export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:s
   ...(q.temporalPredicate?{temporalPredicate:q.temporalPredicate}:{}),
   ...(q.temporalRelation?{temporalRelation:q.temporalRelation,temporalSubject:q.temporalSubject,mainSubject:q.mainSubject,temporalTime:q.temporalTime}:{}),
   ...(q.converbSubject?{converbSubject:q.converbSubject,converbTime:q.converbTime}:{}),
+  ...(q.relativePolarity?{relativePolarity:q.relativePolarity,relativeMainPolarity:q.relativeMainPolarity}:{}),
   ...(q.relativeInnerRole?{relativeInnerRole:q.relativeInnerRole,relativeInnerForm:q.relativeInnerForm}:{}),
   ...(q.relativeConstruction?{relativeConstruction:q.relativeConstruction,relativeHeadCase:q.relativeHeadCase,relativeHeadBase:q.relativeHeadBase,relativeActor:q.relativeActor}:{}),
   ...(q.relativeForm?{relativeForm:q.relativeForm}:{}),
