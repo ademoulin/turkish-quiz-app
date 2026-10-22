@@ -27,8 +27,9 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
   function checkMC(fromKeyboard=false){if(!q||!session||checked||mcLocked.current||!q.options.some(o=>o.id===selected))return;mcLocked.current=true;mcKeyboard.current=fromKeyboard;updateAttempts(a=>recordGrammarChoice(a,q,selected,mcSession.current));setSession(s=>s&&submitAnswer(s,selected));}
   useEffect(()=>{if(activity==='multiple-choice'&&checked)mcNext.current?.focus({preventScroll:!mcKeyboard.current});},[q,checked,activity]);
   return <section className="panel grammar-preview" aria-label="Grammar practice">
-    <h2>Yeni Hitit 1 · Grammar practice</h2>
-    <p className="hint">588 draft questions across 196 skills. Linguistic review is ongoing. Grammar results are saved in this browser, including new Grammar Multiple Choice checks. Progress shows evidence by exercise type, without mastery ratings.</p>
+    <h2>Grammar practice</h2>
+    <p className="hint">Practice Turkish grammar with exercises guided by Yeni Hitit 1, 2 and 3. We use Ödkem’s grammar table to track coverage as we work toward including every concept.</p>
+    <p className="hint">Includes 588 draft multiple-choice questions across 196 skills, plus focused grammar activities. New exercises are authored for this app; linguistic review and coverage mapping are ongoing. Grammar results are saved in this browser. Progress shows evidence by exercise type, without mastery ratings.</p>
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <div className="button-row">{activity!=='random'&&activity!=='progress'&&<button className="primary" onClick={startMix}>Start a mix of everything</button>}{activity!=='progress'&&<button className="secondary" onClick={()=>setActivity('progress')}>Your grammar progress</button>}</div>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
