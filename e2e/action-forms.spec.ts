@@ -11,6 +11,8 @@ async function open(page:Page){
 }
 test('2B opens into form choice, hides completed forms until check, and supports keyboard/touch corrections',async({page})=>{
  const area=await open(page);await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('structure');
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');
+ await area.getByLabel('Lesson',{exact:true}).selectOption('action_forms');await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('structure');
  await expect(area.getByText(/Call -mak\/-mek the infinitive/)).toBeVisible();
  await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).tap();const seen=new Set<string>();
  for(let n=0;n<12;n++){
