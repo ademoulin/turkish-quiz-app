@@ -194,3 +194,12 @@ Add relative_roles with stable vn12e IDs: 12 scenarios / 36 meaning, structure a
 Reuse 12D’s supplied four-slot relative-phrase-first frame, native scoring, post-check brackets and explanation, correction-in-place, random practice and task-specific review. Add relativeInnerRole and relativeInnerForm to snapshots only for this lesson; preserve separate relativeHeadCase and relativeActor evidence. Require both new fields for 12E, reject their leakage onto older lessons and nonlesson attempts, and keep version-1 backups compatible. No typed spelling or finite-conjugation credit, mastery labels or thresholds. All earlier 288 models / 864 tasks and the original 588 multiple-choice questions remain unchanged.
 
 These are newly authored draft exercises, not textbook quotations. Consulted supplied Yeni Hitit 2 §8.2 p.95 and grammar support p.186 §7–8. Independent linguistic review and exact Ödkem catalog mapping remain pending.
+
+
+## Lesson 12F: negation scope in relative clauses
+
+Add relative_negation with stable vn12f IDs: 12 scenarios / 36 meaning, structure and guided assembly exercises. Cross three relative constructions (-(y)An, -DIK, -(y)AcAK) with the four independent positive/negative description/main-statement combinations. Distinguish verbal -ma/-me before a participle from -mA action nominalization. Include a supplied negative location predicate with değil. Both-negative statements keep two separate meanings; no negative-cancellation rule is taught. Context disambiguates past, current, habitual and future reference.
+
+Reuse the four-slot relative-phrase-first frame; unused tiles flip the modifier or main predicate. All forms are supplied. Save relativePolarity and relativeMainPolarity only for 12F, alongside construction, actor, head, main-clause case and time. Keep legacy negationScope exclusive to the earlier nominalization lesson. Validate the new fields without loosening older restrictions; manual corrections preserve original evidence. Include new tasks in review, random practice, progress and version-1 backups without giving typed-production credit or mastery labels. All earlier 300 model sentences / 900 tasks and the original 588 multiple-choice bank remain unchanged.
+
+Newly authored draft exercises, not textbook quotations. Consulted supplied Yeni Hitit 2 §§8.1/8.2 pp.91/95. Independent linguistic review and exact Ödkem catalog mapping remain pending.
