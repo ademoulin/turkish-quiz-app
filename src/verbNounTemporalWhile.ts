@@ -1,0 +1,402 @@
+import type {VerbNounExample} from './verbNouns';
+/** Authored drafts informed by supplied Yeni Hitit 2 §3.3 p.38
+ * and grammar support p.182. Linking bases are supplied, not conjugated
+ * by the learner. Independent review and exact Ödkem mapping pending. */
+export const temporalWhileExamples:VerbNounExample[]=[
+ {
+  "id": "vn11f-01",
+  "lessonId": "temporal_while",
+  "stem": "oku",
+  "verbMeaning": "read",
+  "form": "temporal_while",
+  "kenBase": "okur",
+  "temporalRelation": "while",
+  "temporalSubject": "ben",
+  "mainSubject": "ben",
+  "temporalTime": "past",
+  "converbLead": "Dün",
+  "converbClause": "ben kitap okurken",
+  "unit": "Dün ben kitap okurken",
+  "main": "not aldım",
+  "sentence": "Dün ben kitap okurken not aldım.",
+  "template": "Dün ben kitap ___ not aldım.",
+  "answer": "okurken",
+  "meaning": "I took notes yesterday while reading a book.",
+  "distractors": [
+   "I took notes yesterday after finishing the book.",
+   "You took notes yesterday while I was reading a book."
+  ],
+  "breakdown": "oku + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Who reads and who takes notes?",
+  "structureAnswer": "Ben names me as reading; aldım also identifies me as taking notes.",
+  "structureDistractors": [
+   "I read, but you take notes.",
+   "-ken identifies a third-person actor."
+  ],
+  "explanation": "“ben kitap okurken” gives the interval during which the supplied main action happens. Time-clause actor: ben; main-clause actor: ben. The actors are the same. The supplied okur- base takes unchanged -ken. The final verb and time phrase give the past context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-02",
+  "lessonId": "temporal_while",
+  "stem": "yap",
+  "verbMeaning": "cook (yemek yap)",
+  "form": "temporal_while",
+  "kenBase": "yapar",
+  "temporalRelation": "while",
+  "temporalSubject": "ben",
+  "mainSubject": "sen",
+  "temporalTime": "future",
+  "converbLead": "Yarın",
+  "converbClause": "ben yemek yaparken",
+  "unit": "Yarın ben yemek yaparken",
+  "main": "sen masayı hazırlayacaksın",
+  "sentence": "Yarın ben yemek yaparken sen masayı hazırlayacaksın.",
+  "template": "Yarın ben yemek ___ sen masayı hazırlayacaksın.",
+  "answer": "yaparken",
+  "meaning": "Tomorrow, you will set the table while I am cooking.",
+  "distractors": [
+   "Tomorrow, you will set the table after I finish cooking.",
+   "Tomorrow, I will set the table while you are cooking."
+  ],
+  "breakdown": "yap + ar (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Where is the future context expressed?",
+  "structureAnswer": "Yarın and hazırlayacaksın give future context; yaparken itself does not mean past or carry person agreement.",
+  "structureDistractors": [
+   "-arken is a first-person future ending.",
+   "Yaparken must be past because it contains an aorist base."
+  ],
+  "explanation": "“ben yemek yaparken” gives the interval during which the supplied main action happens. Time-clause actor: ben; main-clause actor: sen. The grammatical subjects are different. The supplied yapar- base takes unchanged -ken. The final verb and time phrase give the future context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-03",
+  "lessonId": "temporal_while",
+  "stem": "konuş",
+  "verbMeaning": "speak",
+  "form": "temporal_while",
+  "kenBase": "konuşur",
+  "temporalRelation": "while",
+  "temporalSubject": "sen",
+  "mainSubject": "o",
+  "temporalTime": "habitual",
+  "converbLead": "Her derste",
+  "converbClause": "sen konuşurken",
+  "unit": "Her derste sen konuşurken",
+  "main": "o not alıyor",
+  "sentence": "Her derste sen konuşurken o not alıyor.",
+  "template": "Her derste sen ___ o not alıyor.",
+  "answer": "konuşurken",
+  "meaning": "In every lesson, they take notes while you are speaking.",
+  "distractors": [
+   "In every lesson, they take notes after you finish speaking.",
+   "In every lesson, you take notes while they are speaking."
+  ],
+  "breakdown": "konuş + ur (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Who speaks and who takes notes?",
+  "structureAnswer": "Sen speaks; O takes notes during that speaking.",
+  "structureDistractors": [
+   "O speaks; Sen takes notes.",
+   "Sen performs both actions because -ken always requires a shared subject."
+  ],
+  "explanation": "“sen konuşurken” gives the interval during which the supplied main action happens. Time-clause actor: sen; main-clause actor: o. The grammatical subjects are different. The supplied konuşur- base takes unchanged -ken. The final verb and time phrase give the habitual context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-04",
+  "lessonId": "temporal_while",
+  "stem": "yürü",
+  "verbMeaning": "walk",
+  "form": "temporal_while",
+  "kenBase": "yürür",
+  "temporalRelation": "while",
+  "temporalSubject": "sen",
+  "mainSubject": "sen",
+  "temporalTime": "past",
+  "converbLead": "Dün",
+  "converbClause": "sen sahilde yürürken",
+  "unit": "Dün sen sahilde yürürken",
+  "main": "müzik dinledin",
+  "sentence": "Dün sen sahilde yürürken müzik dinledin.",
+  "template": "Dün sen sahilde ___ müzik dinledin.",
+  "answer": "yürürken",
+  "meaning": "You listened to music yesterday while walking along the shore.",
+  "distractors": [
+   "You listened to music yesterday after finishing your walk along the shore.",
+   "I listened to music yesterday while you were walking along the shore."
+  ],
+  "breakdown": "yürü + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Does -ken itself change for a front or back vowel?",
+  "structureAnswer": "No. The supplied base is yürür-; add unchanged -ken.",
+  "structureDistractors": [
+   "Yes. After a back-vowel base it must become -kan.",
+   "Yes. It takes possessive agreement with Sen."
+  ],
+  "explanation": "“sen sahilde yürürken” gives the interval during which the supplied main action happens. Time-clause actor: sen; main-clause actor: sen. The actors are the same. The supplied yürür- base takes unchanged -ken. The final verb and time phrase give the past context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-05",
+  "lessonId": "temporal_while",
+  "stem": "bekle",
+  "verbMeaning": "wait",
+  "form": "temporal_while",
+  "kenBase": "bekler",
+  "temporalRelation": "while",
+  "temporalSubject": "o",
+  "mainSubject": "o",
+  "temporalTime": "future",
+  "converbLead": "Yarın",
+  "converbClause": "o otobüsü beklerken",
+  "unit": "Yarın o otobüsü beklerken",
+  "main": "mesajlarını okuyacak",
+  "sentence": "Yarın o otobüsü beklerken mesajlarını okuyacak.",
+  "template": "Yarın o otobüsü ___ mesajlarını okuyacak.",
+  "answer": "beklerken",
+  "meaning": "Tomorrow, they will read their messages while waiting for the bus.",
+  "distractors": [
+   "Tomorrow, they will read their messages after the wait for the bus ends.",
+   "Tomorrow, I will read my messages while they wait for the bus."
+  ],
+  "breakdown": "bekle + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Does beklerken need a person ending?",
+  "structureAnswer": "No. O gives the time-clause actor, and okuyacak is the supplied finite main verb.",
+  "structureDistractors": [
+   "Yes. Add -i to beklerken to agree with O.",
+   "Yes. Add -sin to beklerken to express a waiting actor."
+  ],
+  "explanation": "“o otobüsü beklerken” gives the interval during which the supplied main action happens. Time-clause actor: o; main-clause actor: o. The actors are the same. The supplied bekler- base takes unchanged -ken. The final verb and time phrase give the future context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-06",
+  "lessonId": "temporal_while",
+  "stem": "çalış",
+  "verbMeaning": "study",
+  "form": "temporal_while",
+  "kenBase": "çalışır",
+  "temporalRelation": "while",
+  "temporalSubject": "o",
+  "mainSubject": "biz",
+  "temporalTime": "habitual",
+  "converbLead": "Her akşam",
+  "converbClause": "o ders çalışırken",
+  "unit": "Her akşam o ders çalışırken",
+  "main": "biz sessiz konuşuyoruz",
+  "sentence": "Her akşam o ders çalışırken biz sessiz konuşuyoruz.",
+  "template": "Her akşam o ders ___ biz sessiz konuşuyoruz.",
+  "answer": "çalışırken",
+  "meaning": "Every evening, we speak quietly while they are studying.",
+  "distractors": [
+   "Every evening, we speak quietly after they finish studying.",
+   "Every evening, they speak quietly while we are studying."
+  ],
+  "breakdown": "çalış + ır (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "What does the time clause tell us?",
+  "structureAnswer": "O is studying during the interval when Biz speak quietly.",
+  "structureDistractors": [
+   "Biz is studying while O speaks quietly.",
+   "The studying must be finished before the quiet speaking begins."
+  ],
+  "explanation": "“o ders çalışırken” gives the interval during which the supplied main action happens. Time-clause actor: o; main-clause actor: biz. The grammatical subjects are different. The supplied çalışır- base takes unchanged -ken. The final verb and time phrase give the habitual context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-07",
+  "lessonId": "temporal_while",
+  "stem": "git",
+  "verbMeaning": "go",
+  "form": "temporal_while",
+  "kenBase": "gider",
+  "temporalRelation": "while",
+  "temporalSubject": "biz",
+  "mainSubject": "siz",
+  "temporalTime": "past",
+  "converbLead": "Dün",
+  "converbClause": "biz istasyona giderken",
+  "unit": "Dün biz istasyona giderken",
+  "main": "siz bizi aradınız",
+  "sentence": "Dün biz istasyona giderken siz bizi aradınız.",
+  "template": "Dün biz istasyona ___ siz bizi aradınız.",
+  "answer": "giderken",
+  "meaning": "Yesterday, you called us while we were going to the station.",
+  "distractors": [
+   "Yesterday, you called us after we arrived at the station.",
+   "Yesterday, we called you while you were going to the station."
+  ],
+  "breakdown": "git → gid + er (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Does the call have to last for the whole journey?",
+  "structureAnswer": "No. The call occurs during our journey; -ken does not require both actions to last equally long.",
+  "structureDistractors": [
+   "Yes. Both actions must start and end together.",
+   "No. The call must occur only after our journey ends."
+  ],
+  "explanation": "“biz istasyona giderken” gives the interval during which the supplied main action happens. Time-clause actor: biz; main-clause actor: siz. The grammatical subjects are different. The supplied gider- base takes unchanged -ken. The final verb and time phrase give the past context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-08",
+  "lessonId": "temporal_while",
+  "stem": "hazırla",
+  "verbMeaning": "prepare",
+  "form": "temporal_while",
+  "kenBase": "hazırlar",
+  "temporalRelation": "while",
+  "temporalSubject": "biz",
+  "mainSubject": "biz",
+  "temporalTime": "future",
+  "converbLead": "Yarın",
+  "converbClause": "biz sunumu hazırlarken",
+  "unit": "Yarın biz sunumu hazırlarken",
+  "main": "kaynakları kontrol edeceğiz",
+  "sentence": "Yarın biz sunumu hazırlarken kaynakları kontrol edeceğiz.",
+  "template": "Yarın biz sunumu ___ kaynakları kontrol edeceğiz.",
+  "answer": "hazırlarken",
+  "meaning": "Tomorrow, we will check the sources while preparing the presentation.",
+  "distractors": [
+   "Tomorrow, we will check the sources after finishing the presentation.",
+   "Tomorrow, you will check the sources while we prepare the presentation."
+  ],
+  "breakdown": "hazırla + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Why is the target ending still -ken after hazırlar-?",
+  "structureAnswer": "-ken stays fixed even after a back-vowel base; the supplied hazırlar- already includes the linking form.",
+  "structureDistractors": [
+   "Back-vowel harmony requires -kan, giving hazırlarkan.",
+   "Hazırlar- needs an added plural ending before -ken to match Biz."
+  ],
+  "explanation": "“biz sunumu hazırlarken” gives the interval during which the supplied main action happens. Time-clause actor: biz; main-clause actor: biz. The actors are the same. The supplied hazırlar- base takes unchanged -ken. The final verb and time phrase give the future context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-09",
+  "lessonId": "temporal_while",
+  "stem": "dinle",
+  "verbMeaning": "listen",
+  "form": "temporal_while",
+  "kenBase": "dinler",
+  "temporalRelation": "while",
+  "temporalSubject": "siz",
+  "mainSubject": "siz",
+  "temporalTime": "habitual",
+  "converbLead": "Her derste",
+  "converbClause": "siz öğretmeni dinlerken",
+  "unit": "Her derste siz öğretmeni dinlerken",
+  "main": "not alıyorsunuz",
+  "sentence": "Her derste siz öğretmeni dinlerken not alıyorsunuz.",
+  "template": "Her derste siz öğretmeni ___ not alıyorsunuz.",
+  "answer": "dinlerken",
+  "meaning": "In every lesson, you take notes while listening to the teacher.",
+  "distractors": [
+   "In every lesson, you take notes after the teacher finishes speaking.",
+   "In every lesson, we take notes while you listen to the teacher."
+  ],
+  "breakdown": "dinle + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Who listens and who takes notes?",
+  "structureAnswer": "Siz is the actor of both actions; alıyorsunuz supplies finite you agreement.",
+  "structureDistractors": [
+   "The teacher listens while Siz take notes.",
+   "The -ken ending itself means we."
+  ],
+  "explanation": "“siz öğretmeni dinlerken” gives the interval during which the supplied main action happens. Time-clause actor: siz; main-clause actor: siz. The actors are the same. The supplied dinler- base takes unchanged -ken. The final verb and time phrase give the habitual context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-10",
+  "lessonId": "temporal_while",
+  "stem": "izle",
+  "verbMeaning": "watch",
+  "form": "temporal_while",
+  "kenBase": "izler",
+  "temporalRelation": "while",
+  "temporalSubject": "siz",
+  "mainSubject": "onlar",
+  "temporalTime": "past",
+  "converbLead": "Dün",
+  "converbClause": "siz filmi izlerken",
+  "unit": "Dün siz filmi izlerken",
+  "main": "onlar mutfakta yemek yaptılar",
+  "sentence": "Dün siz filmi izlerken onlar mutfakta yemek yaptılar.",
+  "template": "Dün siz filmi ___ onlar mutfakta yemek yaptılar.",
+  "answer": "izlerken",
+  "meaning": "Yesterday, they cooked in the kitchen while you were watching the film.",
+  "distractors": [
+   "Yesterday, they cooked in the kitchen after you finished watching the film.",
+   "Yesterday, you cooked in the kitchen while they were watching the film."
+  ],
+  "breakdown": "izle + r (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Which subject belongs to which action?",
+  "structureAnswer": "Siz watched the film; Onlar cooked during that time.",
+  "structureDistractors": [
+   "Onlar watched the film; Siz cooked.",
+   "Onlar did both actions because izlerken has no overt subject."
+  ],
+  "explanation": "“siz filmi izlerken” gives the interval during which the supplied main action happens. Time-clause actor: siz; main-clause actor: onlar. The grammatical subjects are different. The supplied izler- base takes unchanged -ken. The final verb and time phrase give the past context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-11",
+  "lessonId": "temporal_while",
+  "stem": "yüz",
+  "verbMeaning": "swim",
+  "form": "temporal_while",
+  "kenBase": "yüzer",
+  "temporalRelation": "while",
+  "temporalSubject": "onlar",
+  "mainSubject": "ben",
+  "temporalTime": "future",
+  "converbLead": "Yarın",
+  "converbClause": "onlar havuzda yüzerken",
+  "unit": "Yarın onlar havuzda yüzerken",
+  "main": "ben kenarda bekleyeceğim",
+  "sentence": "Yarın onlar havuzda yüzerken ben kenarda bekleyeceğim.",
+  "template": "Yarın onlar havuzda ___ ben kenarda bekleyeceğim.",
+  "answer": "yüzerken",
+  "meaning": "Tomorrow, I will wait at the side while they swim in the pool.",
+  "distractors": [
+   "Tomorrow, I will wait at the side after they finish swimming in the pool.",
+   "Tomorrow, they will wait at the side while I swim in the pool."
+  ],
+  "breakdown": "yüz + er (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "Does Onlar require plural agreement on yüzerken?",
+  "structureAnswer": "No. Onlar names the swimmers; Ben and bekleyeceğim identify me as waiting.",
+  "structureDistractors": [
+   "Yes. Insert -ler before -ken to match Onlar.",
+   "No. Ben names the swimmers and Onlar is the subject of bekleyeceğim."
+  ],
+  "explanation": "“onlar havuzda yüzerken” gives the interval during which the supplied main action happens. Time-clause actor: onlar; main-clause actor: ben. The grammatical subjects are different. The supplied yüzer- base takes unchanged -ken. The final verb and time phrase give the future context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ },
+ {
+  "id": "vn11f-12",
+  "lessonId": "temporal_while",
+  "stem": "koş",
+  "verbMeaning": "run",
+  "form": "temporal_while",
+  "kenBase": "koşar",
+  "temporalRelation": "while",
+  "temporalSubject": "onlar",
+  "mainSubject": "onlar",
+  "temporalTime": "habitual",
+  "converbLead": "Her sabah",
+  "converbClause": "onlar parkta koşarken",
+  "unit": "Her sabah onlar parkta koşarken",
+  "main": "sohbet ediyorlar",
+  "sentence": "Her sabah onlar parkta koşarken sohbet ediyorlar.",
+  "template": "Her sabah onlar parkta ___ sohbet ediyorlar.",
+  "answer": "koşarken",
+  "meaning": "Every morning, they chat while running in the park.",
+  "distractors": [
+   "Every morning, they chat after finishing their run in the park.",
+   "Every morning, we chat while they run in the park."
+  ],
+  "breakdown": "koş + ar (supplied linking base) + ken (unchanged)",
+  "structurePrompt": "What connection is practised here?",
+  "structureAnswer": "The chatting overlaps the running; this lesson uses the temporal while reading of -ken.",
+  "structureDistractors": [
+   "The chatting happens only after the running finishes.",
+   "-ken always expresses a contrast and can never describe overlapping actions."
+  ],
+  "explanation": "“onlar parkta koşarken” gives the interval during which the supplied main action happens. Time-clause actor: onlar; main-clause actor: onlar. The actors are the same. The supplied koşar- base takes unchanged -ken. The final verb and time phrase give the habitual context. This temporal reading describes overlap, without requiring identical start and end times or adding person agreement to -ken.",
+  "supportingRuleIds": []
+ }
+];
