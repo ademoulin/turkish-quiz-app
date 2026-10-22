@@ -1,5 +1,5 @@
 import { shuffle } from './shuffle';
-import dataset from './data/yeni_hitit_1_codex_staging_v82.json';
+import dataset from './data/yeni_hitit_1_codex_staging_v82.json' with {type:'json'};
 export type GrammarQuestion = (typeof dataset.questions)[number];
 export const bank = dataset;
 export function validateBank(value: unknown): asserts value is typeof dataset {

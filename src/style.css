@@ -815,3 +815,9 @@ legend,
 .chunk-slot { display: flex; align-items: center; gap: .4rem; margin-bottom: .5rem; }
 .chunk-slot > .secondary { flex: 1; text-align: left; white-space: normal; }
 .chunk-slot [aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
+
+.grammar-progress-filters { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit,minmax(min(100%,200px),1fr)); margin: 1rem 0; }
+.grammar-concept { padding: .8rem 0; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.grammar-concept summary { cursor: pointer; line-height: 1.6; }
+.grammar-evidence { padding: .5rem .75rem; margin: .5rem 0; border-left: 3px solid var(--border); }
+.grammar-evidence h4 { margin: .3rem 0; }

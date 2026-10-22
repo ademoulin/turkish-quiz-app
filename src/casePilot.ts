@@ -1,3 +1,4 @@
+import {isMcConcept,validMcAttempt} from './grammarMultipleChoice';
 import {validChunkSnapshot} from './sentenceChunks';
 import type {SentenceChunk} from './verbNouns';
 import type {NominalCase} from "./verbNounClauseCases";
@@ -455,6 +456,8 @@ export const matchesCase = (answer: string, expected: string) =>
   expected.normalize("NFC").trim().toLocaleLowerCase("tr");
 export type TypedQuestion = CaseQuestion | PossessiveQuestion | PhraseQuestion | PossessedCaseQuestion | SuffixChainQuestion | PronounCaseQuestion;
 export interface PilotAttempt {
+  multipleChoiceSkill?:string;
+  sessionKind?:"random_grammar"|"random_grammar_review";
   nominalMainSubject?:NominalSubject;
   chunks?:SentenceChunk[];selectedChunkIds?:string[];expectedChunkIds?:string[];
   id: string;
@@ -473,9 +476,10 @@ export interface PilotAttempt {
     | "mixed_grammar_review"
     | "pronoun_cases"
     | "choose_case"
-    | "verb_noun_lesson";
+    | "verb_noun_lesson"
+    | "grammar_multiple_choice";
   questionId: string;
-  conceptId: VerbNounConcept | `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
+  conceptId: `mc_${string}` | VerbNounConcept | `case_choice_${"locative" | "dative" | "ablative" | "accusative" | "bare"}` | Concept | PossessiveConcept | PhraseConcept | PossessedCaseConcept | SuffixChainConcept | PronounCaseConcept;
   pronoun?: PersonalPronoun;
   temporalPredicate?: "state"|"location";
   temporalRelation?: "before"|"after"|"when"|"while";
@@ -512,7 +516,7 @@ export interface PilotAttempt {
   possessedNumber?: "singular";
   owner?: string;
   nounNumber?: "singular" | "plural";
-  exerciseType: "sentence_chunk_assembly" | "converb_meaning" | "converb_structure" | "typed_converb" | "object_relative_meaning" | "object_relative_structure" | "subject_relative_meaning" | "subject_relative_structure" | "typed_participle" | "verb_noun_meaning" | "verb_noun_structure" | "typed_verb_noun" | "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
+  exerciseType: "grammar_multiple_choice" | "sentence_chunk_assembly" | "converb_meaning" | "converb_structure" | "typed_converb" | "object_relative_meaning" | "object_relative_structure" | "subject_relative_meaning" | "subject_relative_structure" | "typed_participle" | "verb_noun_meaning" | "verb_noun_structure" | "typed_verb_noun" | "case_choice_completion" | "typed_form_completion" | "typed_noun_phrase" | "typed_possessed_case" | "typed_suffix_chain" | "typed_pronoun_case";
   supportingRuleIds: string[];
   answer: string;
   expected: string;
@@ -583,6 +587,8 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         (k) => typeof a[k as keyof PilotAttempt] === "string",
       ) ||
       ((a.chunks!==undefined||a.selectedChunkIds!==undefined||a.expectedChunkIds!==undefined)&&a.exerciseType!=="sentence_chunk_assembly") ||
+      (a.sessionKind!==undefined&&!["random_grammar","random_grammar_review"].includes(a.sessionKind)) ||
+      (a.multipleChoiceSkill!==undefined&&!isMcConcept(a.conceptId)) ||
       !a.id ||
       !a.sessionId ||
       !a.questionId ||
@@ -602,8 +608,9 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           "pronoun_cases",
           "choose_case",
           "verb_noun_lesson",
+          "grammar_multiple_choice",
         ].includes(a.practiceMode)) ||
-      (!Object.hasOwn(concepts, a.conceptId) &&
+      (!isMcConcept(a.conceptId) && !Object.hasOwn(concepts, a.conceptId) &&
         !Object.hasOwn(possessiveConcepts, a.conceptId) &&
         !Object.hasOwn(phraseConcepts, a.conceptId) &&
         !Object.hasOwn(possessedCaseConcepts, a.conceptId) &&
@@ -639,12 +646,12 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
         (a.exerciseType !== "case_choice_completion" ||
           typeof a.verbPatternId !== "string" || !/^verb_case_[a-z_]+$/.test(a.verbPatternId) ||
           typeof a.verbLemma !== "string" || !a.verbLemma.trim())) ||
-      ((a.nominalMainSubject !== undefined || a.temporalPredicate !== undefined || a.temporalRelation !== undefined || a.temporalSubject !== undefined || a.mainSubject !== undefined || a.temporalTime !== undefined || a.converbSubject !== undefined || a.converbTime !== undefined || a.relativeForm !== undefined || a.relativeHead !== undefined || a.relativeTime !== undefined || a.nominalConstruction !== undefined || a.contentTime !== undefined || a.negationScope !== undefined || a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || a.selectedOptionId !== undefined || a.expectedOptionId !== undefined) &&
+      ((a.nominalMainSubject !== undefined || a.temporalPredicate !== undefined || a.temporalRelation !== undefined || a.temporalSubject !== undefined || a.mainSubject !== undefined || a.temporalTime !== undefined || a.converbSubject !== undefined || a.converbTime !== undefined || a.relativeForm !== undefined || a.relativeHead !== undefined || a.relativeTime !== undefined || a.nominalConstruction !== undefined || a.contentTime !== undefined || a.negationScope !== undefined || a.nominalCase !== undefined || a.nominalSubject !== undefined || a.lessonId !== undefined || a.lessonTask !== undefined || a.exampleId !== undefined || (!isMcConcept(a.conceptId)&&(a.selectedOptionId !== undefined || a.expectedOptionId !== undefined))) &&
         !Object.hasOwn(verbNounConcepts,a.conceptId)) ||
       (a.owner !== undefined && typeof a.owner !== "string") ||
       (a.nounNumber !== undefined &&
         !["singular", "plural"].includes(a.nounNumber)) ||
-      (Object.hasOwn(verbNounConcepts,a.conceptId)
+      (isMcConcept(a.conceptId) ? !Array.isArray(a.supportingRuleIds) || !validMcAttempt(a) : Object.hasOwn(verbNounConcepts,a.conceptId)
         ? !["activity","cases","subjects","clause_cases","negation","content_dik","content_future","contrasts","subject_relatives","object_relatives","converb_ip","converb_arak","converb_madan","temporal_order","temporal_when","temporal_while","state_ken","temporal_contrasts","sentence_building","noun_clause_building"].includes(a.lessonId || "") ||
           !(["sentence_building","noun_clause_building"].includes(a.lessonId || "")?["meaning","structure","build"]:["meaning","structure","type"]).includes(a.lessonTask || "") ||
           a.conceptId !== `vn_${a.lessonId}_${a.lessonTask}` ||
