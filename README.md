@@ -425,3 +425,7 @@ Lesson 11H adds **Choose the time connection**, 12 authored models / 36 tasks ar
 ### Lesson 12A review
 
 Grammar practice → Verb nouns and clauses → **12A · Build a sentence from clauses**. Choose mixed practice, meaning, clause structure or **Assemble the sentence**. Tap/click a slot and then a supplied chunk (or use Tab and Enter/Space); four slots must be filled before checking. Two chunks remain unused. Clear, undo and reset are available before checking. This guided time-clause-first frame does not claim other Turkish word orders are wrong. Finite verbs are supplied. New authored drafts await independent linguistic review and exact Ödkem catalog mapping.
+
+### Lesson 12B review
+
+Grammar practice → Verb nouns and clauses → **12B · Build sentences with noun clauses**. Explore 12 scenarios / 36 meaning, clause-boundary and sentence-assembly exercises spanning -mA, -DIK and -(y)AcAK. Assembly uses the main subject outside a complete embedded noun clause: main subject → embedded genitive subject → embedded action with agreement and accusative → supplied main predicate. Choose four of six chunks using touch/click or Tab and Enter/Space. Clear, undo and reset work before checking. Feedback explains each ending and brackets the entire clause; all finite verbs are supplied. Attempts, original corrections and review remain part of progress backups. Total: 240 models / 720 exercises. New authored drafts await independent review and exact Ödkem mapping.

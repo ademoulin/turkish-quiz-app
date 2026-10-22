@@ -1,4 +1,5 @@
 import type {SentenceChunk} from './verbNouns';
+export const nounClauseSlots=['Main-clause subject','Embedded subject (genitive)','Embedded action + agreement + accusative','Main predicate (finite verb supplied)'] as const;
 export const chunkSlots=['Time context + time-clause subject','Time-clause action','Main-clause subject','Main-clause action (finite verb supplied)'] as const;
 export function parseChunkAnswer(value:string):Array<string|null>{
  try {const v:unknown=JSON.parse(value);if(Array.isArray(v)&&v.length===4&&v.every(x=>x===null||typeof x==='string'))return v;}catch{}
