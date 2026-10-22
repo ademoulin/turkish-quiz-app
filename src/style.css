@@ -808,3 +808,10 @@ legend,
 .grammar-preview legend { font-size: 1.2rem; overflow-wrap: anywhere; }
 .grammar-preview .word-row { cursor: pointer; overflow-wrap: anywhere; }
 .grammar-preview button { margin: 8px 8px 8px 0; }
+
+/* Sentence assembly keeps native buttons for keyboard and touch access. */
+.chunk-bank { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chunk-bank button { margin: 0; white-space: normal; overflow-wrap: anywhere; }
+.chunk-slot { display: flex; align-items: center; gap: .4rem; margin-bottom: .5rem; }
+.chunk-slot > .secondary { flex: 1; text-align: left; white-space: normal; }
+.chunk-slot [aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
