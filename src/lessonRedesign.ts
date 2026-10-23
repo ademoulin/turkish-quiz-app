@@ -1,3 +1,4 @@
+import {refineRelativeBuilding} from './relativeBuildingReview';
 import {refineContentActors} from './contentActorReview';
 import {refineNounClauseBuilding} from './nounClauseReview';
 import {refineClauseChoices} from './relativeChoiceReview';
@@ -54,5 +55,6 @@ export function redesignLessons(original:VerbNounQuestion[]){
  const reviewed=refineClauseChoices(active);
  const nounReviewed=refineNounClauseBuilding(reviewed.active);
  const contentReviewed=refineContentActors(nounReviewed.active);
- return {active:contentReviewed.active,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired]};
+ const relativeReviewed=refineRelativeBuilding(contentReviewed.active);
+ return {active:relativeReviewed.active,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired]};
 }
