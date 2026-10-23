@@ -51,7 +51,7 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
       <p className="hint">Choose a numbered lesson or an activity. Choosing another lesson opens its guide; completed answers are saved.</p>
       <div hidden={activity!=='random'}><GrammarRandom attempts={attempts} updateAttempts={updateAttempts} trigger={randomTrigger}/></div>
       <div hidden={activity!=='progress'}><GrammarProgress attempts={attempts} onMix={startMix}/></div>
-      <div hidden={activity !== 'verb-nouns'&&!activity.startsWith('lesson:')}><VerbNounLessons attempts={attempts} updateAttempts={updateAttempts} requestedLesson={lessonRequest} onLessonChange={id=>{if(activity.startsWith('lesson:'))setActivity(`lesson:${id}`);}} /></div>
+      <div hidden={activity !== 'verb-nouns'&&!activity.startsWith('lesson:')}><VerbNounLessons attempts={attempts} updateAttempts={updateAttempts} requestedLesson={lessonRequest} onLessonChange={id=>{if(activity.startsWith('lesson:')){setActivity(`lesson:${id}`);setLessonRequest({lessonId:id,token:crypto.randomUUID()});}}} /></div>
       <div hidden={activity !== 'choose-case'}><ChooseCase attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>
