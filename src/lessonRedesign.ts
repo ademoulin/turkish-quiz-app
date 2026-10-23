@@ -1,3 +1,4 @@
+import {clauseCaseChoices} from './clauseCaseChoices';
 import type {VerbNounQuestion} from './verbNouns';
 
 // Revised interpretation tasks get new IDs. Original objects remain available for
@@ -5,6 +6,18 @@ import type {VerbNounQuestion} from './verbNouns';
 export function redesignLessons(original:VerbNounQuestion[]){
  const retired:VerbNounQuestion[]=[];
  const active=original.flatMap(q=>{
+  if(q.task==='structure'&&['activity','cases'].includes(q.lessonId)){
+   // Boundary demonstrations belong in the guide; Lesson 2B already offers
+   // activity-form choice. Do not manufacture a third scored track here.
+   retired.push(q);return [];
+  }
+  if(q.task==='structure'&&q.lessonId==='clause_cases'){
+   retired.push(q);
+   const forms=clauseCaseChoices[q.exampleId],expected=forms[q.nominalCase!];
+   const typed=original.find(other=>other.exampleId===q.exampleId&&other.task==='type')!;
+   return [{...q,id:q.id+'-v2',sentence:typed.sentence,prompt:'Choose the form that completes the sentence.',expected,
+    options:[{id:'target',text:expected},...Object.entries(forms).filter(([c])=>c!==q.nominalCase).map(([,text],i)=>({id:`other-${i+1}`,text}))]}];
+  }
   if(q.lessonId==='subjects'&&q.task!=='type'){
    retired.push(q);
    // First/second-person agreement identifies the actor without discourse context.
