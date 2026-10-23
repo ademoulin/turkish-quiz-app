@@ -25,14 +25,14 @@ test('@bank-walkthrough 12F assembles all families/polarities with keyboard, tou
  expect(seen.size).toBe(12);expect(Object.fromEntries(families)).toEqual({an:4,dik:4,acak:4});expect(Object.fromEntries(cases)).toEqual({'negative/positive':3,'positive/negative':3,'negative/negative':3,'positive/positive':3});await expect(area.getByText('Relative clause building lesson complete',{exact:true})).toBeVisible();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.relativePolarity&&a.relativeMainPolarity&&a.relativeConstruction&&a.relativeHeadCase&&!a.nominalCase)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await area.getByRole('button',{name:'Restart relative clause building lesson',exact:true}).tap();await area.getByLabel('Lesson',{exact:true}).selectOption('activity');await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('mixed');
 });
-test('@bank-walkthrough 12F meaning and structure recognition cover all scenarios and reveal nested brackets after keyboard checks',async({page})=>{
+test('@bank-walkthrough 12F meaning choices cover all scope combinations and reveal nested brackets after keyboard checks',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('relative_negation');
- for(const task of ['meaning','structure']){
+ for(const task of ['meaning']){
   await area.getByLabel('Lesson practice',{exact:true}).selectOption(task);await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).tap();const seen=new Set<string>();
   for(let n=0;n<12;n++){const q=await current(area),e=models.find(e=>e.id===q.exampleId)!;seen.add(q.exampleId);await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);await area.locator('input[value="target"]').check();await area.locator('input[value="target"]').press('Enter');const next=area.getByRole('button',{name:n===11?'See lesson results':'Next lesson question',exact:true});await expect(next).toBeFocused();await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(1);await expect(area.getByText(`[[${e.relativeClause}] ${e.relativeHead}] ${e.main}.`,{exact:true})).toBeVisible();await next.tap();}
   expect(seen.size).toBe(12);await expect(area.getByText('12 / 12 correct',{exact:true})).toBeVisible();await area.getByRole('button',{name:'Restart relative clause building lesson',exact:true}).tap();
  }
- const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(24);expect(saved.every((a:any)=>a.lessonId==='relative_negation'&&a.relativeActor&&a.relativeTime)).toBe(true);
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.lessonId==='relative_negation'&&a.relativeActor&&a.relativeTime)).toBe(true);
 });
 const rng=(seed:number)=>()=>{seed=(1664525*seed+1013904223)>>>0;return seed/2**32;};
 test('12F review, progress, broad random assembly and backup share the original head-role evidence',async({page})=>{

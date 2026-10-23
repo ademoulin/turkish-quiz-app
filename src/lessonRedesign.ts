@@ -9,6 +9,10 @@ import type {VerbNounQuestion} from './verbNouns';
 export function redesignLessons(original:VerbNounQuestion[]){
  const retired:VerbNounQuestion[]=[];
  const active=original.flatMap(q=>{
+  if(q.lessonId==='relative_negation'&&q.task==='structure'){
+   // Meaning alternatives already contrast relative/main polarity; keep scope in feedback.
+   retired.push(q);return [];
+  }
   if(q.task==='structure'&&['activity','cases'].includes(q.lessonId)){
    // Boundary demonstrations belong in the guide; Lesson 2B already offers
    // activity-form choice. Do not manufacture a third scored track here.
