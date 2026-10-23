@@ -144,6 +144,7 @@ export const nominalFormLabels:Record<NominalForm,string>={choose_action_form:'C
 export interface SentenceChunk {id:string;text:string}
 export interface LessonOption {id:string;text:string}
 export interface VerbNounQuestion extends Partial<RelativeBuildingEvidence&RelativeRoleEvidence&RelativeNegationEvidence> {
+ optionLanguage?:'tr'|'en';
  nominalMainSubject?:NominalSubject;
  chunks?:SentenceChunk[];expectedChunkIds?:string[];
  temporalPredicate?:'state'|'location';
