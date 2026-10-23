@@ -8,7 +8,7 @@ import {grammarItems} from './grammarRegistry';
 import {correctPilot,validatePilotImport} from './casePilot';
 const current=lessonPool('noun_clause_cases','structure'),old=retired.filter(q=>q.lessonId==='noun_clause_cases');
 test('12C chooses outer forms or full complements without case/translation giveaways',()=>{
- assert.equal(current.length,12);assert.equal(old.length,12);assert.equal(bank.length,851);
+ assert.equal(current.length,12);assert.equal(old.length,12);assert.equal(bank.length,839);
  const forms=current.filter(q=>q.sentence.includes('___')),boundaries=current.filter(q=>!q.sentence.includes('___'));
  assert.equal(forms.length,8);assert.equal(boundaries.length,4);
  for(const q of current){const e=models.find(e=>e.id===q.exampleId)!;
