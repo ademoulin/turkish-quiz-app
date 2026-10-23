@@ -61,9 +61,21 @@ export function redesignLessons(original:VerbNounQuestion[]){
  const roleReviewed=refineRelativeRoles(relativeReviewed.active);
  // Batch 1: keep the exact earlier objects for imports and history, but stop
  // scoring translation alongside the productive drills in lessons 3.1–3.5.
- const productive=roleReviewed.active.filter(q=>{
-  if(q.task==='meaning'&&['activity','cases','action_forms','subjects','clause_cases'].includes(q.lessonId)){retired.push(q);return false;}
-  return true;
+ const productive=roleReviewed.active.flatMap(q=>{
+  if(q.task==='meaning'&&['activity','cases','action_forms','subjects','clause_cases'].includes(q.lessonId)){retired.push(q);return [];}
+  // Batch 2 retains production and replaces nominalizer labels with word choices.
+  if(['negation','content_dik','content_future','contrasts','noun_clause_building'].includes(q.lessonId)){
+   if(q.task==='meaning'||(q.task==='structure'&&q.lessonId!=='contrasts')){retired.push(q);return [];}
+   if(q.task==='structure'){
+    retired.push(q);
+    const expected=original.find(other=>other.exampleId===q.exampleId&&other.task==='type')!.expected;
+    const forms=[['gelmeni','geldiğini','geleceğini'],['okumasını','okuduğunu','okuyacağını'],['çalışmamızı','çalıştığımızı','çalışacağımızı'],['hazırlamanızı','hazırladığınızı','hazırlayacağınızı']].find(forms=>forms.includes(expected))!;
+    return [{...q,id:q.id+'-v2',expected,optionLanguage:'tr' as const,
+     prompt:q.prompt.replace('Which nominalizing construction fits the missing word?','Choose the form that completes the sentence.'),
+     options:[{id:'target',text:expected},...forms.filter(form=>form!==expected).map((text,i)=>({id:`other-${i+1}`,text}))]}];
+   }
+  }
+  return [q];
  });
  return {active:productive,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired,...roleReviewed.retired]};
 }

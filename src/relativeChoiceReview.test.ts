@@ -27,5 +27,5 @@ test('earlier clauses remain in backups without contaminating new evidence, rand
  const retired=retiredLessonQuestions.filter(q=>families.includes(q.lessonId));assert.equal(retired.length,120);const old=retired.map(q=>recordLesson([],q,'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);assert.equal(grammarProgress(old).unlinked,0);assert.equal(grammarMistakes(old).length,0);
  for(const family of families){const c=grammarProgress(old).concepts.find(c=>c.id===`lesson_${family}`)!;assert.equal(c.legacyChecks,24);assert.equal(c.attempts,0);assert.equal(lessonMistakes(old,family as 'converb_ip').length,0);}
  const q=bank.find(q=>q.id==='vn10-01-structure-v2')!,wrong=recordLesson(old,q,'other-1','new'),last=wrong.at(-1)!,fixed=correctPilot(wrong,last.id);assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);assert.equal(grammarMistakes(fixed).length,0);for(const k of ['id','questionId','time','sessionId','answer','expected']as const)assert.equal(fixed.at(-1)![k],last[k]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
- assert.ok(grammarItems.every(i=>!retired.some(q=>q.id===i.q.id)));assert.equal(bank.length,783);
+ assert.ok(grammarItems.every(i=>!retired.some(q=>q.id===i.q.id)));assert.equal(bank.length,684);
 });
