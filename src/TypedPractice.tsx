@@ -1,3 +1,4 @@
+import {FormFeedback} from './FormFeedback';
 import {PracticeHeader,ExercisePrompt} from './PracticeLayout';
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -207,7 +208,7 @@ export function TypedPractice({
                       {feedback.correct ? "Correct." : "Incorrect."}
                     </strong>
                     <p lang="tr">Correct answer: {q.answer}</p>
-                    <p>{q.explanation}</p>
+                    <FormFeedback question={q}/>
                     {feedback.manual && <p>Marked correct by you.</p>}
                   </div>
                   {!feedback.correct && (

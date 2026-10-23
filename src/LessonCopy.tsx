@@ -18,5 +18,5 @@ export function LessonExplanation({example:e}:{example:VerbNounExample}){
   const {reason,note}=clauseCaseFeedback(e);
   return <><p className="feedback-reason">{reason}</p>{note&&<details className="answer-detail"><summary>Agreement note</summary><p>{note}</p></details>}</>;
  }
- return <><p className="feedback-reason">{lessonReason(e)}</p><p><strong>Build-up:</strong> <span lang="tr">{e.breakdown}</span></p>{lessonReason(e)!==e.explanation&&<details className="answer-detail"><summary>Full explanation</summary><p>{e.explanation}</p></details>}</>;
+ return <><p className="feedback-reason">{lessonReason(e)}</p>{lessonReason(e)!==e.explanation&&<details className="answer-detail"><summary>Full explanation</summary><p>{e.explanation}</p></details>}</>;
 }

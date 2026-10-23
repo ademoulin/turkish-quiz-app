@@ -1,3 +1,4 @@
+import {formReason} from '../src/FormFeedback';
 import {test,expect} from '@playwright/test';
 import {choiceQuestions as bank,recordChoice} from '../src/caseChoice';
 test.use({hasTouch:true});
@@ -11,7 +12,7 @@ test('balanced session, delayed feedback, separate scores, touch and Enter; corr
  await area.locator(`input[value="${q.requiredCase}"]`).check();
  if(i===0){await area.getByRole('button',{name:'ş',exact:true}).tap();await field.fill('wrong');await button.tap();const original=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);await expect(area.getByText('Case choice: Correct. Word form: Incorrect.',{exact:true})).toBeVisible();await area.getByRole('button',{name:'My word form was correct'}).click();const corrected=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);expect(corrected.id).toBe(original.id);expect(corrected.time).toBe(original.time);expect(corrected.caseCorrect).toBe(true);expect(corrected.formCorrect).toBe(true);
  }else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
- await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
+ await expect(field).toBeDisabled();await expect(area.locator('.feedback-reason')).toHaveText(formReason(q)!);await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
  }
  expect(seen.size).toBe(12);for(const c of ['locative','dative','ablative','accusative','bare'])expect([2,3]).toContain([...seen].filter(id=>bank.find(q=>q.id===id)!.requiredCase===c).length);await expect(area.getByText('Case choice session complete')).toBeVisible();await expect(area.getByText('Case choices: 12 / 12 · Word forms: 12 / 12',{exact:true})).toBeVisible();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.exerciseType==='case_choice_completion'&&a.selectedCase&&a.requiredCase&&a.sessionId&&a.time)).toBe(true);
@@ -44,7 +45,7 @@ test('new accusative and bare choices share review, corrections and version-1 ba
    const field=area.getByLabel('2. Complete inflected word',{exact:true});const chosen=i===0?(q.requiredCase==='bare'?'accusative':'bare'):q.requiredCase;
    await area.locator(`input[value="${chosen}"]`).check();await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');
    if(i===0){const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));await expect(area.getByText('Case choice: Incorrect. Word form: Correct.',{exact:true})).toBeVisible();await area.getByRole('button',{name:'My case choice was correct',exact:true}).click();const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);expect(after.selectedCase).toBe(chosen);expect(after.correct).toBe(true);}
-   await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();await area.getByRole('button',{name:i===length-1?'See case choice results':'Next case choice question',exact:true}).click();
+   await expect(area.locator('.feedback-reason')).toHaveText(formReason(q)!);await area.getByRole('button',{name:i===length-1?'See case choice results':'Next case choice question',exact:true}).click();
   }
   await area.getByRole('button',{name:'Restart case choice practice'}).click();
  }

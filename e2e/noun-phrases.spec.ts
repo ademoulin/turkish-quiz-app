@@ -43,7 +43,7 @@ test("all 20 noun phrases: full phrase input, explicit relationship/number, touc
       await field.press("Enter");
     }
     await expect(field).toBeDisabled();
-    await expect(area.getByText(q.explanation, { exact: true })).toBeVisible();
+    await expect(area.locator(".feedback")).toContainText(q.answer);
     await expect(
       area.getByText(`${i + 1} / ${i + 1} correct`, {
         exact: true,

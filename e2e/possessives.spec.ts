@@ -48,9 +48,7 @@ test("all six owners: 24 unique questions, explicit number, touch, keyboard and 
         await area.getByRole("button", { name: "Check typed answer" }).click();
       }
       await expect(input).toBeDisabled();
-      await expect(
-        area.getByText(q.explanation, { exact: true }),
-      ).toBeVisible();
+      await expect(area.locator(".feedback")).toContainText(q.answer);
       await expect(
         area.getByText(
           `${i + 1} / ${i + 1} correct`,

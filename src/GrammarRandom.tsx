@@ -1,3 +1,4 @@
+import {FormFeedback} from './FormFeedback';
 import {LessonCues,LessonExplanation} from './LessonCopy';
 import {lessonExerciseCopy} from './grammarCopy';
 import {PracticeHeader,ExercisePrompt} from './PracticeLayout';
@@ -40,7 +41,7 @@ export function GrammarRandom({attempts,updateAttempts,trigger=0}:PracticeProps&
  <button className="primary" disabled={!!feedback||!ready} onClick={e=>check(e.detail===0)}>{feedback?'Answer checked':'Check random answer'}</button>
  {feedback&&<><div role="status" className={'feedback '+(feedback.correct?'correct':'incorrect')}><strong>{feedback.correct?'Correct.':'Incorrect.'}</strong><p>Correct answer: {feedback.expected}</p>{item.kind==='case_choice'&&<p>Case choice: {feedback.caseCorrect?'Correct':'Incorrect'}. Word form: {feedback.formCorrect?'Correct':'Incorrect'}. Correct case: {choiceCases[item.q.requiredCase]}</p>}
  {example&&<><p lang="tr">{example.relativeConstruction?<>[[{example.relativeClause}] {example.relativeHead}] {example.main}.</>:example.mainLead?<>{example.mainLead} [{example.unit}] {example.main}.</>:example.converbSubject||example.temporalRelation?<>{example.converbLead} [{example.converbClause}] {example.main}.</>:example.relativeHead?<>[{example.relativeClause}] {example.relativeHead} {example.main}.</>:<>[{example.unit}] {example.main}.</>}</p><p>{example.meaning}</p><LessonExplanation example={example}/></>}
- {!example&&<p>{'explanation' in q?q.explanation:''}</p>}{feedback.manual&&<p>Includes a correction by you.</p>}</div>
+ {item.kind==='typed'||item.kind==='case_choice'?<FormFeedback question={item.q}/>:item.kind==='multiple_choice'?<p>{item.q.explanation}</p>:null}{feedback.manual&&<p>Includes a correction by you.</p>}</div>
  {item.kind==='case_choice'?<>{!feedback.caseCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'case'))}>My case choice was correct</button>}{!feedback.formCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'form'))}>My word form was correct</button>}</>:!feedback.correct&&<button className="secondary" onClick={()=>updateAttempts(a=>correctPilot(a,feedback.id))}>My answer was correct</button>}
  <button className="primary" ref={next} onClick={()=>{setIndex(i=>i+1);setAnswer('');setSelectedCase('');locked.current=false;}}>{index+1===items.length?'See random results':'Next random question'}</button></>}
  </div>:<h4>Random grammar session complete</h4>}

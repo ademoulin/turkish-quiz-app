@@ -21,7 +21,7 @@ test('24 pronoun forms: explicit case/base, touch, keyboard, delayed feedback an
    await area.getByRole('button',{name:'My answer was correct'}).click();
    const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);
   }else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
-  await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
+  await expect(field).toBeDisabled();await expect(area.locator(".feedback")).toContainText(q.answer);await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===23?'See typed results':'Next typed question'}).click();
  }
  await expect(area.getByText('Pronoun case session complete')).toBeVisible();

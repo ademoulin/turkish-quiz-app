@@ -175,7 +175,7 @@ export function NounPhrasePractice(props: PracticeProps) {
 }
 
 const possessedCases: PracticeConfig = {
- guide:<><h4>How to practice</h4><p>The given word already means my/your/his/her/our/their something. Keep that ownership and add the requested case ending. Type the whole changed word. The prompt states whether the possessions are singular or plural. Keep that number. If two words are given, type both and change only the last word.</p><p><strong>Worked example (not scored):</strong> bavulu (his/her suitcase) + from (ablative) → <span lang="tr">bavulundan</span>. After the third-person possessive ending, use n before the case ending: bavulu + n + dan.</p><p><strong>Plural example (not scored):</strong> bavulları (his/her suitcases, plural possessions) + from → <span lang="tr">bavullarından</span>. Keep the plural ending and add n + dan.</p></>,
+ guide:<><h4>How to practice</h4><p>Add the required case to the supplied possessed form. Keep its owner and number. If two words are given, type both and change only the last word.</p><p><strong>Worked example (not scored):</strong> bavulu (his/her suitcase) + from (ablative) → <span lang="tr">bavulundan</span>.</p><p><strong>Plural example (not scored):</strong> bavulları (his/her suitcases, plural possessions) + from → <span lang="tr">bavullarından</span>.</p></>,
  instruction:()=> 'Add the required case to the final word.',
  id:'possessed-case', region:'Typed possessed case practice',
  title:'Combine endings · Possessive + case',
@@ -200,7 +200,7 @@ const possessedCases: PracticeConfig = {
 const suffixChains: PracticeConfig = {
  id:'suffix-chain',region:'Build endings from base',title:'Build from base · Number + possessive + case',
  description:'48 newly authored draft questions. Build all the endings from a bare noun using the stated owner, number and case. Independent linguistic review pending. Results are saved separately from Add case only; no mastery rating yet.',
- guide:<><h4>How to practice</h4><p>Start with the base noun. Add plural -lar/-ler only when plural possessions are requested, add the owner’s possessive ending, then add the required case. Type one complete word, without the owner pronoun or a sentence.</p><p><strong>Worked example (not scored):</strong> bavul (suitcase), our, plural, from (ablative) → <span lang="tr">bavullarımızdan</span>. Build it as bavul → bavullar → bavullarımız → bavullarımızdan.</p><p>For their, these questions explicitly request plural possessions. Do not double the plural ending. The correct build-up and explanation appear after you check.</p></>,
+ guide:<><h4>How to practice</h4><p>Use the stated owner, noun number and case to form one complete word. Omit the owner pronoun.</p><p><strong>Worked example (not scored):</strong> bavul (suitcase), our, plural, from (ablative) → <span lang="tr">bavullarımızdan</span>.</p><p>For their, use the requested plural possessions. Check to see the correct form.</p></>,
  bank:suffixChainQuestions,initialSelection:'mixed',selectionLabel:'Required case to build',
  selections:[{id:'mixed',label:'All four cases'},...Object.entries(suffixChainConcepts).map(([id,label])=>({id,label}))],
  secondarySelection:{label:'Possessed noun number',initial:'mixed',options:[{id:'singular',label:'Singular · 24 questions'},{id:'plural',label:'Plural · 24 questions'},{id:'mixed',label:'Mixed · 48 questions'}]},

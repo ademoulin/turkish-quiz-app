@@ -1,3 +1,4 @@
+import {formReason} from '../src/FormFeedback';
 import {test,expect} from '@playwright/test';
 import {choiceQuestions,choicePool,recordChoice} from '../src/caseChoice';
 test.use({hasTouch:true});
@@ -7,7 +8,7 @@ test('common verb focus uses supplied verbs, balanced case choices and original 
  for(let i=0;i<12;i++){
   const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=choicePool('verb_patterns').find(q=>q.id===id)!;expect(q).toBeTruthy();counts.set(q.requiredCase,(counts.get(q.requiredCase)||0)+1);
   await expect(area.getByLabel('Practice focus',{exact:true})).toHaveCount(0);await expect(area.getByText(q.sentence,{exact:true})).toBeVisible();await expect(area.getByText(q.explanation,{exact:true})).toHaveCount(0);
-  await area.locator(`input[value="${q.requiredCase}"]`).check();await area.getByLabel('2. Complete inflected word',{exact:true}).fill(' '+q.answer.normalize('NFD')+' ');await area.getByLabel('2. Complete inflected word',{exact:true}).press('Enter');await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
+  await area.locator(`input[value="${q.requiredCase}"]`).check();await area.getByLabel('2. Complete inflected word',{exact:true}).fill(' '+q.answer.normalize('NFD')+' ');await area.getByLabel('2. Complete inflected word',{exact:true}).press('Enter');await expect(area.locator('.feedback-reason')).toHaveText(formReason(q)!);await area.getByRole('button',{name:i===11?'See case choice results':'Next case choice question',exact:true}).click();
  }
  expect(Object.fromEntries(counts)).toEqual({dative:4,ablative:4,accusative:4});await expect(area.getByText('Case choices: 12 / 12 · Word forms: 12 / 12',{exact:true})).toBeVisible();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.verbPatternId&&a.verbLemma&&a.exerciseType==='case_choice_completion')).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

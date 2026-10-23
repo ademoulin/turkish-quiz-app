@@ -14,6 +14,6 @@ test('3.5 feedback names the predicate and the case required in every model',()=
   const html=renderToStaticMarkup(createElement(LessonExplanation,{example:e}));assert.ok(html.includes(reason));assert.ok(!/Build-up|Full explanation|buffer|harmony|connects the whole/.test(html));assert.equal(!!note,e.nominalSubject==='onlar');assert.equal(html.includes('Agreement note'),!!note);
  }
  assert.ok(clauseCaseFeedback(models[11]).reason.includes('the thing someone is pleased about goes in the ablative'));
- const other=verbNounExamples.find(e=>e.lessonId==='cases')!;assert.ok(renderToStaticMarkup(createElement(LessonExplanation,{example:other})).includes('Build-up:'));
+ const other=verbNounExamples.find(e=>e.lessonId==='cases')!;assert.ok(!renderToStaticMarkup(createElement(LessonExplanation,{example:other})).includes('Build-up:'));
  for(const q of verbNounQuestions.filter(q=>q.lessonId==='clause_cases'&&q.task==='structure'))assert.equal(lessonExerciseCopy(q,models.find(e=>e.id===q.exampleId)!).instruction,'Choose the form that completes the sentence.');
 });

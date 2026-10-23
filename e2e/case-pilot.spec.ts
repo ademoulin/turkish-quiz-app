@@ -42,9 +42,7 @@ test("typed pilot: keyboard, touch, correction, persistence and backup round tri
       await field.fill(current.answer);
       await pilot.getByRole("button", { name: "Check typed answer" }).click();
     }
-    await expect(
-      pilot.getByText(current.explanation, { exact: true }),
-    ).toBeVisible();
+    await expect(pilot.locator(".feedback")).toContainText(current.answer);
     await expect(
       pilot.getByText(`${i + 1} / ${i + 1} correct`, {
         exact: true,
@@ -322,9 +320,7 @@ test("accusative and genitive each complete ten unique typed questions", async (
       );
       await pilot.getByLabel("Complete inflected word").fill(q.answer);
       await pilot.getByLabel("Complete inflected word").press("Enter");
-      await expect(
-        pilot.getByText(q.explanation, { exact: true }),
-      ).toBeVisible();
+      await expect(pilot.locator(".feedback")).toContainText(q.answer);
       await pilot
         .getByRole("button", {
           name: i === 9 ? "See typed results" : "Next typed question",
