@@ -22,7 +22,7 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  else if(q.task==='type'&&q.lessonId!=='action_forms')instruction=targets[e.form]||'Complete the missing word.';
  const meaning=q.task==='type'&&q.lessonId==='negation'?e.meaning:old.meaning;
  // These families deliberately request a construction to avoid grading valid alternatives as wrong.
- const construction=q.task!=='meaning'&&q.lessonId==='noun_clause_cases'?constructionNames[e.nominalConstruction!]:undefined;
+ const construction=q.task==='build'&&q.lessonId==='noun_clause_cases'?constructionNames[e.nominalConstruction!]:undefined;
  const timing=(q.task==='type'||q.task==='build')&&e.temporalIntent?({before:'Explicit before',after:'Explicit after',when:'When/once',while:'While (overlap)'}[e.temporalRelation!]):undefined;
  const outerCase=q.task==='type'&&q.lessonId!=='contrasts'?e.nominalCase:undefined;
  const pluralAgreement=q.task==='type'&&e.nominalSubject==='onlar';
