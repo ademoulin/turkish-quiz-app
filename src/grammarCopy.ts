@@ -1,5 +1,6 @@
 import type {VerbNounExample,VerbNounQuestion} from './verbNouns';
 import {lessonPresentation} from './practicePresentation';
+import {clauseCaseFeedback} from './clauseCaseFeedback';
 /** Copy policy: identify named form targets; let choice tasks infer the form.
  * Keep ambiguity constraints and supplied bases. Put suffix recipes in feedback.
  * No question/answer/evidence objects are changed by these presentation helpers.
@@ -19,6 +20,7 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  const old=lessonPresentation(q.prompt,e.meaning);
  let instruction=old.instruction;
  if(q.task==='build')instruction='Combine the source clauses in the guided frame.';
+ else if(q.lessonId==='clause_cases'&&q.task==='structure')instruction='Choose the form that completes the sentence.';
  else if(q.task==='type'&&q.lessonId!=='action_forms')instruction=targets[e.form]||'Complete the missing word.';
  const meaning=q.task==='type'&&q.lessonId==='negation'?e.meaning:old.meaning;
  // These families deliberately request a construction to avoid grading valid alternatives as wrong.
@@ -41,7 +43,7 @@ export function lessonReason(e:VerbNounExample):string{
  case 'activity':return e.explanation;
  case 'cases':return e.explanation;
  case 'subjects':return 'The agreement ending identifies the embedded actor; an explicit genitive pronoun can be omitted when its reference is clear.';
- case 'clause_cases':return 'Agreement identifies the embedded subject; the final case ending connects the whole clause to the main predicate.';
+ case 'clause_cases':return clauseCaseFeedback(e).reason;
  case 'negation':return e.negationScope==='action'?'The embedded action is negative; distinguish the negative suffix from the action-noun ending.':e.negationScope==='main'?'The main predicate is negative; the embedded action form is affirmative.':'The action is affirmative. Agreement, where present, identifies the embedded subject.';
  case 'content_dik':return '-DIK expresses the nonfuture content here; context supplies its time. Agreement identifies the embedded subject.';
  case 'content_future':return '-(y)AcAK expresses future content from the supplied viewpoint; agreement identifies the embedded subject.';
