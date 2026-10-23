@@ -79,6 +79,10 @@ export function redesignLessons(original:VerbNounQuestion[]){
   if(['subject_relatives','object_relatives','relative_building','relative_roles','relative_negation'].includes(q.lessonId)){
    if(q.task==='meaning'||(q.task==='structure'&&!(q.optionLanguage==='tr'&&q.sentence.includes('___')))){retired.push(q);return [];}
   }
+  // Batch 4 keeps time/converb production; the base + ken drill is guide-only.
+  if(['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts','sentence_building'].includes(q.lessonId)){
+   if(q.task==='meaning'||q.task==='structure'||q.lessonId==='temporal_while'){retired.push(q);return [];}
+  }
   return [q];
  });
  return {active:productive,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired,...roleReviewed.retired]};
