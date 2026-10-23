@@ -3,6 +3,16 @@ import type {GrammarQuestion} from './yeniHitit';
 // App-authored drafts guided by Yeni Hitit 1 purpose/nominalization material.
 // Not textbook quotations; independent review and exact Ödkem mapping pending.
 const revisions:Record<string,Pick<GrammarQuestion,'prompt'|'options'|'correct_option_id'|'explanation'>>={
+ 'YH1-V11-Q038':{
+  prompt:'Choose the word that completes the sentence: Uzun süre ___ zorlanıyorum. (çalışmak)',
+  options:[{id:'A',text:'çalışmayı'},{id:'B',text:'çalışmak'},{id:'C',text:'çalışmakta'},{id:'D',text:'çalışmaktan'}],correct_option_id:'C',
+  explanation:'Çalışmakta zorlanıyorum means “I have difficulty working.” This pattern uses -makta/-mekte.',
+ },
+ 'YH1-V52-Q015':{
+  prompt:'Choose the word that completes the sentence: Geç saatlerde kahve ___ vazgeçtim. (içmek)',
+  options:[{id:'A',text:'içmekten'},{id:'B',text:'içmeyi'},{id:'C',text:'içmek'},{id:'D',text:'içmeye'}],correct_option_id:'A',
+  explanation:'Vazgeçmek takes an ablative complement: kahve içmekten vazgeçtim means “I gave up drinking coffee.”',
+ },
  'YH1-V13-Q034':{
   prompt:'Choose the word that completes the sentence: Türkçe ___ için her gün pratik yapıyorum. (öğrenmek)',
   options:[{id:'A',text:'öğrenmeyi'},{id:'B',text:'öğrenmek'},{id:'C',text:'öğrenmeye'},{id:'D',text:'öğrenmekten'}],correct_option_id:'B',
