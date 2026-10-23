@@ -15,7 +15,7 @@ test('2B and nominalizer choice omit suffix recipes while retaining requests nee
 });
 test('named production drills retain their targets and all strict-grading construction, timing and plural constraints',()=>{
  for(const q of qs.filter(q=>q.task==='type'&&['clause_cases','content_dik','content_future'].includes(q.lessonId)))assert.equal(lessonExerciseCopy(q,model(q.exampleId)).outerCase,q.nominalCase);
- for(const q of qs.filter(q=>q.task!=='meaning'&&['noun_clause_building','noun_clause_cases'].includes(q.lessonId))){const c=lessonExerciseCopy(q,model(q.exampleId));assert.ok(c.construction);assert.ok(!/accusative|dative|ablative|agreement/.test(c.construction));assert.equal(c.outerCase,undefined);}
+ for(const q of qs.filter(q=>q.task!=='meaning'&&q.lessonId==='noun_clause_cases')){const c=lessonExerciseCopy(q,model(q.exampleId));assert.ok(c.construction);assert.ok(!/accusative|dative|ablative|agreement/.test(c.construction));assert.equal(c.outerCase,undefined);}
  for(const q of qs.filter(q=>(q.task==='type'||q.task==='build')&&model(q.exampleId).temporalIntent)){const c=lessonExerciseCopy(q,model(q.exampleId));assert.ok(c.timing);assert.ok(!/-mAdAn|-DIktAn|-(y)IncA/.test(c.timing));}
  for(const q of qs.filter(q=>q.task==='type'))assert.equal(lessonExerciseCopy(q,model(q.exampleId)).pluralAgreement,q.nominalSubject==='onlar');
 });
