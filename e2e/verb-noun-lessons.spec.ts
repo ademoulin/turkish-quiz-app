@@ -1,3 +1,4 @@
+import {lessonReason} from '../src/grammarCopy';
 import {lessonExerciseCopy} from '../src/grammarCopy';
 import {test,expect} from '@playwright/test';
 import {retiredLessonQuestions,verbNounQuestions as bank,verbNounExamples as examples} from '../src/verbNouns';
@@ -47,11 +48,11 @@ test('subject production covers all six people, explicit plural agreement and or
 });
 
 test('clause case production covers all twelve models, case cues, buffer contrasts and saved snapshots',async({page})=>{
- const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('clause_cases');await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');await expect(area.getByText(/n is your possessive ending instead/)).toBeVisible();await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).click();const cases=new Map<string,number>(),people=new Map<string,number>();
+ const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('clause_cases');await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');await expect(area.getByText('Learn the case patterns used with common verbs and adjectives. Practise recalling the pattern from the main predicate.',{exact:true})).toBeVisible();await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).click();const cases=new Map<string,number>(),people=new Map<string,number>();
  for(let i=0;i<12;i++){
   const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;cases.set(q.nominalCase!,(cases.get(q.nominalCase!)||0)+1);people.set(q.nominalSubject!,(people.get(q.nominalSubject!)||0)+1);await expect(area.getByText(/Outer case:/)).toBeVisible();await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);const field=area.getByLabel('Complete action noun',{exact:true});await field.fill(i===0?'wrong':' '+q.expected.normalize('NFD')+' ');await field.press('Enter');
   if(i===0){const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));await area.getByRole('button',{name:'My answer was correct',exact:true}).click();const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);expect(after.nominalCase).toBe(q.nominalCase);expect(after.nominalSubject).toBe(q.nominalSubject);}
-  await expect(area.getByText(e.breakdown,{exact:true})).toBeVisible();await area.getByRole('button',{name:i===11?'See lesson results':'Next lesson question',exact:true}).click();
+  await expect(area.locator('.feedback .feedback-reason')).toHaveText(lessonReason(e));await expect(area.getByText(e.breakdown,{exact:true})).toHaveCount(0);await area.getByRole('button',{name:i===11?'See lesson results':'Next lesson question',exact:true}).click();
  }
  expect(Object.fromEntries(cases)).toEqual({accusative:4,dative:4,ablative:4});expect(Object.fromEntries(people)).toEqual({ben:2,sen:2,o:2,biz:2,siz:2,onlar:2});const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.lessonId==='clause_cases'&&a.nominalCase&&a.nominalSubject)).toBe(true);await page.reload();await page.getByRole('button',{name:'Open grammar practice'}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('verb-nouns');await area.getByLabel('Lesson',{exact:true}).selectOption('clause_cases');await expect(area.getByRole('button',{name:'Review lesson mistakes (0)',exact:true})).toBeDisabled();
 });

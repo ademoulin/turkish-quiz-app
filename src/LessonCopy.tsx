@@ -1,6 +1,7 @@
 import React from 'react';
 import type {VerbNounExample,VerbNounQuestion} from './verbNouns';
 import {lessonExerciseCopy,lessonReason} from './grammarCopy';
+import {clauseCaseFeedback} from './clauseCaseFeedback';
 export function LessonCues({q,example:e}:{q:VerbNounQuestion;example:VerbNounExample}){
  const c=lessonExerciseCopy(q,e);
  return <>
@@ -13,5 +14,9 @@ export function LessonCues({q,example:e}:{q:VerbNounQuestion;example:VerbNounExa
  </>;
 }
 export function LessonExplanation({example:e}:{example:VerbNounExample}){
+ if(e.lessonId==='clause_cases'){
+  const {reason,note}=clauseCaseFeedback(e);
+  return <><p className="feedback-reason">{reason}</p>{note&&<details className="answer-detail"><summary>Agreement note</summary><p>{note}</p></details>}</>;
+ }
  return <><p className="feedback-reason">{lessonReason(e)}</p><p><strong>Build-up:</strong> <span lang="tr">{e.breakdown}</span></p>{lessonReason(e)!==e.explanation&&<details className="answer-detail"><summary>Full explanation</summary><p>{e.explanation}</p></details>}</>;
 }
