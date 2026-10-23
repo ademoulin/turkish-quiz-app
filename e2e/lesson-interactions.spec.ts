@@ -33,7 +33,7 @@ for(const lesson of lessons)test(`${lesson}: representative choice/production in
    // The meaning choice is deliberately wrong; correct that attempt in place.
    await area.locator(`input[value="${q.task==='meaning'?'other-1':'target'}"]`).check();await area.locator(`input[value="${q.task==='meaning'?'other-1':'target'}"]`).press('Enter');
   }
-  await expect(check).toBeDisabled();await expect(area.locator('.feedback')).toBeVisible();
+  await expect(area.getByRole('button',{name:'Answer checked',exact:true})).toBeDisabled();await expect(area.locator('.feedback')).toBeVisible();
   if(q.task==='meaning'){
    const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
    await area.getByRole('button',{name:'My answer was correct',exact:true}).tap();
