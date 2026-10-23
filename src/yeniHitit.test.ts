@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {bank, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
+import {bank, activeGrammarQuestions, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
 test('v82 schema, counts, exclusions and malformed content', () => {
  validateBank(bank);
  for (const mutate of [
@@ -24,7 +24,7 @@ test('filters, empty/unknown skill and unique session pool', () => {
 });
 test('every shuffled option retains answer mapping, only keyed option scores', () => {
  for(const q of selectQuestions('', '', ()=>0.1)) {
-  const original=bank.questions.find(x=>x.id===q.id)!;
+  const original=activeGrammarQuestions.find(x=>x.id===q.id)!;
   assert.equal(q.options.find(o=>o.id===q.correct_option_id)!.text,original.options.find(o=>o.id===original.correct_option_id)!.text);
   for(const o of q.options) assert.equal(score(submitAnswer({questions:[q],index:0,answers:{}},o.id)).correct,o.id===q.correct_option_id?1:0);
  }

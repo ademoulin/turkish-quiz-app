@@ -1,8 +1,9 @@
 # Three MC replacement proposals: section 12.1, S03
 
-**Proposals only.** Newly authored drafts, not textbook questions. Independent
-linguistic review and exact Ödkem mapping remain pending. Nothing below has been
-added to the playable bank. The original 588 question objects remain unchanged.
+Newly authored drafts, not textbook questions. Independent linguistic review
+and exact Ödkem mapping remain pending. These proposals are implemented on
+`codex/mc-activity-replacements` for review, pending publication approval. The
+original 588 question objects remain unchanged.
 
 These replace three near-identical infinitive-subject recognition tasks with
 three different connections. They concern general activities, with no possessed
@@ -103,6 +104,26 @@ different grammatical reading rather than a clean wrong form for this target.
   all other MC sections are outside this batch. No app implementation or deployment
   is included in this document.
 
-Next step: implement these three reviewed drafts with a minimal versioned MC
-mapping and compatibility tests; retain their draft linguistic status. Any wider
-bank review or additional question authoring is a separate batch.
+## Implementation
+
+`grammarMcRevisions.ts` overlays the three authored replacements with new `-v2`
+IDs and explicit draft/source metadata. `bank` remains the unchanged original
+source dataset; `activeGrammarQuestions` supplies focused selection, filters and
+the mixed registry. There are still 588 active MC questions and three variants
+per skill. The other 585 originals remain active without changes.
+
+The retired three remain importable under their original IDs. Progress lists
+them as earlier-version checks, outside current recognition statistics and
+playable mistake review. Current attempts keep existing browser-storage and
+version-1 backup formats; corrections update the original attempt snapshot.
+Unknown old question IDs remain preserved and unlinked as before.
+
+Unit tests cover source preservation, active counts, all answer options, filter
+selection, random identity, correction/single scoring and mixed-version backups.
+A short browser session covers all three revisions, keyboard/touch checking,
+old progress, random mistake review, export/import and reload persistence.
+
+Try: Grammar practice → Grammar Multiple Choice → section **12.1** → the third
+**Verb nouns (-mA/-mAk)** skill (`YH1-12-01-S03`) → Start grammar practice.
+MC section numbers are the existing textbook labels, independent of numbered
+app lessons. No changes to other modes or content are part of this batch.
