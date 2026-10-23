@@ -1,3 +1,4 @@
+import {grammarSections,grammarActivities,lessonNavigationGroups,sectionHeading,numberedTitle,type GrammarLessonId} from './grammarNavigation';
 import {PracticeHeader} from './PracticeLayout';
 import {GrammarProgress} from './GrammarProgress';
 import {GrammarRandom} from './GrammarRandom';
@@ -15,6 +16,8 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
   const mcSession=useRef(''),mcLocked=useRef(false),mcNext=useRef<HTMLButtonElement>(null),mcKeyboard=useRef(false);
   const [open, setOpen] = useState(false);
   const [activity, setActivity] = useState('cases');
+  const [lessonRequest,setLessonRequest]=useState<{lessonId:GrammarLessonId;token:string}>();
+  function chooseActivity(value:string){setActivity(value);if(value.startsWith('lesson:'))setLessonRequest({lessonId:value.slice(7) as GrammarLessonId,token:crypto.randomUUID()});}
   const [section, setSection] = useState('');
   const [skill, setSkill] = useState('');
   const [session, setSession] = useState<Session | null>(null);
@@ -34,22 +37,21 @@ export function GrammarPractice({attempts, updateAttempts}: {attempts: PilotAtte
     {!open ? <button className="secondary" onClick={() => setOpen(true)}>Open grammar practice</button> : <>
       <div className="button-row">{activity!=='random'&&activity!=='progress'&&<button className="primary" onClick={startMix}>Start a mix of everything</button>}{activity!=='progress'&&<button className="secondary" onClick={()=>setActivity('progress')}>Your grammar progress</button>}</div>
       <label className="field" htmlFor="grammar-activity">Practice activity</label>
-      <select id="grammar-activity" value={activity} onChange={e => setActivity(e.target.value)}>
+      <select id="grammar-activity" value={activity} onChange={e => chooseActivity(e.target.value)}>
         <option value="random">Mix of everything</option>
         <option value="progress">Your grammar progress</option>
-        <option value="cases">Case Forms</option>
-        <option value="choose-case">Choose the Case</option>
-        <option value="verb-nouns">Verb nouns and clauses</option>
-        <option value="possessives">Typed endings · Possessive forms</option>
-        <option value="phrases">Build a noun phrase · Genitive + possessive</option>
-        <option value="possessed-cases">Combine endings · Possessive + case</option>
+        {grammarSections.map(group=><optgroup key={group.number} label={sectionHeading(group)}>
+          {group.number==='1'||group.number==='2'?Object.entries(grammarActivities).filter(([,item])=>item.section===group.number).map(([id,item])=><option key={id} value={id}>{numberedTitle(item)}</option>):lessonNavigationGroups.find(g=>g.number===group.number)!.lessons.map(item=><option key={item.id} value={`lesson:${item.id}`}>{numberedTitle(item)}</option>)}
+        </optgroup>)}
+        <option value="verb-nouns">All grammar lessons (3–5)</option>
         <option value="mixed-review">Mixed Grammar Review</option>
         <option value="multiple-choice">Grammar Multiple Choice</option>
       </select>
-      <p className="hint">Choose one activity. You can switch activities and return to your current question while grammar practice stays open.</p>
+      {activity in grammarActivities&&<p className="exercise-eyebrow">Lesson {grammarActivities[activity as keyof typeof grammarActivities].number}</p>}
+      <p className="hint">Choose a numbered lesson or an activity. Choosing another lesson opens its guide; completed answers are saved.</p>
       <div hidden={activity!=='random'}><GrammarRandom attempts={attempts} updateAttempts={updateAttempts} trigger={randomTrigger}/></div>
       <div hidden={activity!=='progress'}><GrammarProgress attempts={attempts} onMix={startMix}/></div>
-      <div hidden={activity !== 'verb-nouns'}><VerbNounLessons attempts={attempts} updateAttempts={updateAttempts} /></div>
+      <div hidden={activity !== 'verb-nouns'&&!activity.startsWith('lesson:')}><VerbNounLessons attempts={attempts} updateAttempts={updateAttempts} requestedLesson={lessonRequest} onLessonChange={id=>{if(activity.startsWith('lesson:')){setActivity(`lesson:${id}`);setLessonRequest({lessonId:id,token:crypto.randomUUID()});}}} /></div>
       <div hidden={activity !== 'choose-case'}><ChooseCase attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'cases'}><CasePilot attempts={attempts} updateAttempts={updateAttempts} /></div>
       <div hidden={activity !== 'possessives'}><PossessivePractice attempts={attempts} updateAttempts={updateAttempts} /></div>

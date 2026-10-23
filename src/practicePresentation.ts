@@ -8,6 +8,8 @@ export function lessonPresentation(prompt:string,meaning:string){
  return {instruction,meaning:hasMeaning?meaning:undefined};
 }
 export function lessonHeading(label:string){
+ const numbered=label.match(/^(\d+(?:\.\d+)*): (.+)$/);
+ if(numbered)return {eyebrow:`Lesson ${numbered[1]}`,title:numbered[2]};
  const parts=label.split(' · ');
  return parts.length>1?{eyebrow:`Lesson ${parts[0]}`,title:parts.slice(1).join(' · ')}:{eyebrow:'Grammar practice',title:label};
 }
