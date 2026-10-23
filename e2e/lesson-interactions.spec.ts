@@ -4,7 +4,7 @@ import {lessonPool,lessonTasks,recordLesson} from '../src/verbNounPractice';
 test.use({hasTouch:true});
 // Exercise each available interaction once per lesson. Content matrices are checked
 // by fast tests; @bank-walkthrough retains optional exhaustive browser sessions.
-const lessons:VerbNounLesson[]=['activity','cases','subjects','clause_cases','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'];
+const lessons:VerbNounLesson[]=['activity','cases','subjects','clause_cases','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation','converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','state_ken','temporal_contrasts','sentence_building'];
 for(const lesson of lessons)test(`${lesson}: representative choice/production interactions, completion and corrections`,async({page})=>{
  await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');
  const sample=lessonTasks(lesson).map((task,i)=>lessonPool(lesson,task)[i]);

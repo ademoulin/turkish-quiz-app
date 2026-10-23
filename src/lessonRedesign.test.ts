@@ -20,9 +20,9 @@ test('time interpretation reads full Turkish without translation, requested timi
  for(const q of lessonPool('temporal_contrasts','type')){assert.ok(!q.id.endsWith('-v2'));assert.ok(lessonExerciseCopy(q,examples.find(e=>e.id===q.exampleId)!).timing);}
 });
 test('earlier exercises survive backups separately from revised evidence and never enter playable review',()=>{
- assert.equal(retired.length,595);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
+ assert.equal(retired.length,787);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
  const old=retired.map(q=>recordLesson([],q,q.task==='build'?JSON.stringify([q.chunks!.find(c=>!q.expectedChunkIds!.includes(c.id))!.id,...q.expectedChunkIds!.slice(1)]):'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
- let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),595);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
+ let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),787);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
  assert.equal(grammarMistakes(old).length,0);for(const lesson of ['subjects','temporal_contrasts','sentence_building'] as const)assert.equal(lessonMistakes(old,lesson).length,0);
  const q=lessonPool('subjects','type')[0],wrong=recordLesson(old,q,'wrong','new'),snapshot=wrong.at(-1)!;assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);
  const fixed=correctPilot(wrong,snapshot.id);assert.equal(fixed.at(-1)!.id,snapshot.id);assert.equal(fixed.at(-1)!.answer,snapshot.answer);assert.equal(fixed.at(-1)!.time,snapshot.time);assert.equal(fixed.length,old.length+1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(grammarMistakes(fixed).length,0);
@@ -45,4 +45,14 @@ test('batch 2 keeps application modes and versions nominalizer word choices sepa
  }
  const history=old.map(q=>recordLesson([],q,'other-1','earlier-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
  const row=grammarProgress(history).concepts.find(c=>c.id==='lesson_contrasts')!;assert.equal(row.legacyChecks,12);assert.equal(row.attempts,0);assert.equal(row.modes.structure!.attempts,0);assert.equal(grammarMistakes(history).length,0);
+});
+test('5.6 is guide-only while overlap practice and retired results remain available',()=>{
+ assert.deepEqual(lessonTasks('temporal_while'),[]);assert.deepEqual(selectLessonQuestions('temporal_while'),[]);
+ const old=retired.filter(q=>q.lessonId==='temporal_while');assert.equal(old.length,36);
+ const history=old.map(q=>recordLesson([],q,q.task==='type'?q.expected:'target','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
+ const report=grammarProgress(history),row=report.concepts.find(c=>c.id==='lesson_temporal_while')!;assert.equal(report.unlinked,0);assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.deepEqual(row.modes,{});assert.equal(grammarMistakes(history).length,0);
+ assert.ok(lessonPool('temporal_contrasts','type').some(q=>q.temporalRelation==='while'));
+ assert.ok(lessonPool('sentence_building','build').some(q=>q.temporalRelation==='while'));
+ for(const id of ['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','state_ken','temporal_contrasts'] as const){assert.deepEqual(lessonTasks(id),['type']);assert.equal(lessonPool(id).length,12);}
+ assert.deepEqual(lessonTasks('sentence_building'),['build']);
 });
