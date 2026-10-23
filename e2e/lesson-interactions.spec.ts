@@ -30,11 +30,11 @@ for(const lesson of lessons)test(`${lesson}: representative choice/production in
   }else if(q.task==='type'){
    const field=area.getByRole('textbox');await expect(field).toBeFocused();await field.fill(' '+q.expected.normalize('NFD')+' ');await field.press('Enter');
   }else{
-   // First choice is deliberately wrong; correct the existing attempt in place.
-   await area.locator(`input[value="${i===0?'other-1':'target'}"]`).check();await area.locator(`input[value="${i===0?'other-1':'target'}"]`).press('Enter');
+   // The meaning choice is deliberately wrong; correct that attempt in place.
+   await area.locator(`input[value="${q.task==='meaning'?'other-1':'target'}"]`).check();await area.locator(`input[value="${q.task==='meaning'?'other-1':'target'}"]`).press('Enter');
   }
   await expect(check).toBeDisabled();await expect(area.locator('.feedback')).toBeVisible();
-  if(i===0){
+  if(q.task==='meaning'){
    const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
    await area.getByRole('button',{name:'My answer was correct',exact:true}).tap();
    const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
