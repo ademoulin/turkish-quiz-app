@@ -34,7 +34,10 @@ export function refineClauseChoices(questions:VerbNounQuestion[]){
   if(q.task==='structure'&&introductoryConverbs.includes(q.lessonId)){retired.push(q);return [];}
   if(q.task==='meaning'&&meaningAlternatives[q.exampleId]){
    retired.push(q);const [one,two]=meaningAlternatives[q.exampleId];
-   return [{...q,id:q.id+'-v2',optionLanguage:'en' as const,options:[{id:'target',text:q.expected},{id:'other-1',text:one},{id:'other-2',text:two}]}];
+   // Keep natural, equivalent wording without making every manner answer the
+   // shortest choice. Through + -ing expresses the means in these app models.
+   const expected=q.lessonId==='converb_arak'&&q.exampleId!=='vn11b-06'?q.expected.replace(' by ',' through ').replace('while smiling','while I was smiling'):q.expected;
+   return [{...q,id:q.id+'-v2',expected,optionLanguage:'en' as const,options:[{id:'target',text:expected},{id:'other-1',text:one},{id:'other-2',text:two}]}];
   }
   if(q.task==='structure'&&structure[q.exampleId]){
    retired.push(q);const [prompt,expected,one,two,blank]=structure[q.exampleId];
