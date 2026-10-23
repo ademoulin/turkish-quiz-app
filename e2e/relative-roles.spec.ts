@@ -5,7 +5,7 @@ import {grammarItems,selectGrammarMix} from '../src/grammarRegistry';
 test.use({hasTouch:true});
 async function open(page:Page){await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');await page.getByRole('button',{name:'Open grammar practice',exact:true}).tap();await page.getByLabel('Practice activity',{exact:true}).selectOption('verb-nouns');return page.getByRole('region',{name:'Verb nouns and clauses',exact:true});}
 async function current(area:Locator){const id=await area.locator('[data-question-id]').getAttribute('data-question-id');return bank.find(q=>q.id===id)!;}
-test('12E assembles all families/head cases with keyboard, touch and original-attempt corrections',async({page})=>{
+test('@bank-walkthrough 12E assembles all families/head cases with keyboard, touch and original-attempt corrections',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');await area.getByLabel('Lesson',{exact:true}).selectOption('relative_roles');await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('mixed');await expect(area.getByLabel('Lesson practice',{exact:true}).locator('option[value="type"]')).toHaveCount(0);
  await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).tap();const seen=new Set<string>(),families=new Map<string,number>(),cases=new Map<string,number>();
  for(let n=0;n<12;n++){
@@ -25,7 +25,7 @@ test('12E assembles all families/head cases with keyboard, touch and original-at
  expect(seen.size).toBe(12);expect(Object.fromEntries(families)).toEqual({dative:4,locative:4,ablative:4});expect(Object.fromEntries(cases)).toEqual({bare:3,accusative:3,dative:3,ablative:3});await expect(area.getByText('Relative clause building lesson complete',{exact:true})).toBeVisible();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>a.relativeInnerRole&&a.relativeInnerForm&&a.relativeConstruction&&a.relativeHeadCase&&!a.nominalCase)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await area.getByRole('button',{name:'Restart relative clause building lesson',exact:true}).tap();await area.getByLabel('Lesson',{exact:true}).selectOption('activity');await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('mixed');
 });
-test('12E meaning and structure recognition cover all scenarios and reveal nested brackets after keyboard checks',async({page})=>{
+test('@bank-walkthrough 12E meaning and structure recognition cover all scenarios and reveal nested brackets after keyboard checks',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('relative_roles');
  for(const task of ['meaning','structure']){
   await area.getByLabel('Lesson practice',{exact:true}).selectOption(task);await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).tap();const seen=new Set<string>();
