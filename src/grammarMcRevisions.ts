@@ -1,0 +1,26 @@
+import type {GrammarQuestion} from './yeniHitit';
+
+// App-authored drafts guided by Yeni Hitit 1 purpose/nominalization material.
+// Not textbook quotations; independent review and exact Ödkem mapping pending.
+const revisions:Record<string,Pick<GrammarQuestion,'prompt'|'options'|'correct_option_id'|'explanation'>>={
+ 'YH1-V13-Q034':{
+  prompt:'Choose the word that completes the sentence: Türkçe ___ için her gün pratik yapıyorum. (öğrenmek)',
+  options:[{id:'A',text:'öğrenmeyi'},{id:'B',text:'öğrenmek'},{id:'C',text:'öğrenmeye'},{id:'D',text:'öğrenmekten'}],correct_option_id:'B',
+  explanation:'İçin expresses purpose here: Türkçe öğrenmek için means “in order to learn Turkish.” Use the infinitive before için.',
+ },
+ 'YH1-V64-Q019':{
+  prompt:'Choose the word that completes the sentence: Geçen hafta düzenli olarak ___ başladım. (yürümek)',
+  options:[{id:'A',text:'yürümekten'},{id:'B',text:'yürümeyi'},{id:'C',text:'yürümek'},{id:'D',text:'yürümeye'}],correct_option_id:'D',
+  explanation:'Başlamak takes a dative activity complement: yürümeye başladım means “I started walking.”',
+ },
+ 'YH1-V64-Q020':{
+  prompt:'Choose the word that completes the sentence: Denizde tek başıma ___ korkuyorum. (yüzmek)',
+  options:[{id:'A',text:'yüzmekten'},{id:'B',text:'yüzmeye'},{id:'C',text:'yüzmeyi'},{id:'D',text:'yüzmek'}],correct_option_id:'A',
+  explanation:'Korkmak takes an ablative activity complement here: yüzmekten korkuyorum means “I am afraid of swimming.” Keep k in -mekten.',
+ },
+};
+export function applyMcRevisions(original:GrammarQuestion[]){
+ const retired=original.filter(q=>Object.hasOwn(revisions,q.id));
+ const active=original.map(q=>Object.hasOwn(revisions,q.id)?{...q,...revisions[q.id],id:q.id+'-v2',replacesQuestionId:q.id,source:'newly_authored' as const,reviewStatus:'draft_needs_independent_review' as const}:q);
+ return {active,retired};
+}
