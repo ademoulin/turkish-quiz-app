@@ -1,3 +1,4 @@
+import {grammarItems,itemGroup} from './grammarRegistry';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {grammarSections,grammarActivities,grammarLessonCatalog,lessonNavigationGroups,numberedTitle} from './grammarNavigation';
@@ -18,6 +19,6 @@ test('five sections use contiguous two-level numbers with one label per stable l
 test('new labels sort numerically in progress and existing attempts round-trip without migration',()=>{
  const q=verbNounQuestions.find(q=>q.lessonId==='content_dik'&&q.task==='type')!,attempt=recordLesson([],q,q.expected,'existing')[0];
  assert.deepEqual(validatePilotImport({version:1,pilotAttempts:[attempt]}),[attempt]);assert.equal(attempt.questionId,q.id);assert.equal(attempt.conceptId,q.conceptId);
- const progress=grammarProgress([attempt]);assert.equal(progress.unlinked,0);const lessonRows=progress.concepts.filter(c=>c.family==='lessons');assert.deepEqual(lessonRows.map(r=>r.label),Object.values(verbNounLessons));
+ const progress=grammarProgress([attempt]);assert.equal(progress.unlinked,0);assert.deepEqual(progress.concepts.filter(c=>c.family==='forms').map(c=>c.id),[...new Set(grammarItems.filter(i=>i.kind==='typed').map(itemGroup))]);const lessonRows=progress.concepts.filter(c=>c.family==='lessons');assert.deepEqual(lessonRows.map(r=>r.label),Object.values(verbNounLessons));
  const row=lessonRows.find(r=>r.id==='lesson_content_dik')!;assert.equal(row.label,'3.7: -DIK: facts inside a sentence');assert.equal(row.attempts,1);assert.equal(row.modes.typed!.recentCorrect,1);
 });
