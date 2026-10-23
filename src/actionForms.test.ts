@@ -9,8 +9,8 @@ import {grammarProgress} from './grammarProgress';
 const pool=lessonPool('action_forms'),choices=lessonPool('action_forms','structure');
 
 test('2B asks for context-driven forms without person agreement or answer-bearing suffix cues',()=>{
- assert.equal(models.length,24);assert.equal(pool.length,72);
- assert.equal(verbNounExamples.length,336);assert.equal(verbNounQuestions.length,851);
+ assert.equal(models.length,24);assert.equal(pool.length,48);
+ assert.equal(verbNounExamples.length,336);assert.equal(verbNounQuestions.length,783);
  const expected=['yüzmek','yüzmek','yüzmeyi','yüzmeye','yüzmekten','yüzmek','yüzmekte','okumak','okumak','okumayı','okumaya','okumaktan','okumak','okumakta','dinlemeyi','öğrenmeyi','koşmaya','yürümeye','konuşmaktan','çalışmaktan','dinlenmek','konuşmak','öğrenmekte','anlamakta'];
  assert.deepEqual(models.map(e=>e.answer),expected);
  for(const [i,e] of models.entries()){
@@ -46,19 +46,19 @@ test('2B corrections update original attempts and new/older backups retain task-
  for(const patch of [{nominalSubject:'sen'},{nominalCase:'accusative'},{nominalConstruction:'ma'},{lessonTask:'build'},{exerciseType:'typed_verb_noun'},{conceptId:'vn_cases_structure'}])assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...wrong[0],...patch}]}));
 });
 test('2B is included in random sessions and separates form-choice evidence from typed production',()=>{
- const items=grammarItems.filter(i=>i.kind==='lesson'&&i.q.lessonId==='action_forms');assert.equal(items.length,72);
+ const items=grammarItems.filter(i=>i.kind==='lesson'&&i.q.lessonId==='action_forms');assert.equal(items.length,48);
  assert.equal(selectGrammarMix(items).length,12);
  const i=items.find(i=>i.q.id===choices[0].id)!;
  let history=recordGrammarItem([],i,'other-1','random','');assert.equal(history[0].sessionKind,'random_grammar');assert.equal(grammarMistakes(history)[0].q.id,i.q.id);
  const wrongCard=grammarProgress(history).concepts.find(c=>c.id===itemGroup(i))!;assert.equal(wrongCard.modes.structure!.attempts,1);assert.equal(wrongCard.modes.typed!.attempts,0);
  for(const q of pool)history=recordLesson(history,q,q.task==='type'?q.expected:'target','s-'+q.id);
  const card=grammarProgress(history).concepts.find(c=>c.id===itemGroup(i))!;
- assert.equal(card.modes.structure!.available,24);assert.equal(card.modes.typed!.available,24);assert.equal(card.modes.meaning!.available,24);assert.equal(card.missed,0);
+ assert.equal(card.modes.structure!.available,24);assert.equal(card.modes.typed!.available,24);assert.equal(card.modes.meaning,undefined);assert.equal(card.missed,0);
  assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
 });
 test('2B sessions use twelve distinct models and balance mixed tasks across the expanded bank',()=>{
  for(let i=0;i<20;i++){
   const mixed=selectLessonQuestions('action_forms');assert.equal(mixed.length,12);assert.equal(new Set(mixed.map(q=>q.exampleId)).size,12);
-  for(const task of ['meaning','structure','type'] as const){assert.equal(mixed.filter(q=>q.task===task).length,4);const focused=selectLessonQuestions('action_forms',task);assert.equal(focused.length,12);assert.equal(new Set(focused.map(q=>q.id)).size,12);assert.ok(focused.every(q=>q.task===task));}
+  for(const task of ['structure','type'] as const){assert.equal(mixed.filter(q=>q.task===task).length,6);const focused=selectLessonQuestions('action_forms',task);assert.equal(focused.length,12);assert.equal(new Set(focused.map(q=>q.id)).size,12);assert.ok(focused.every(q=>q.task===task));}
  }
 });

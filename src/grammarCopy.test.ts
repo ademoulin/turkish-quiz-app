@@ -11,6 +11,7 @@ test('2B and nominalizer choice omit suffix recipes while retaining requests nee
  for(const q of qs.filter(q=>q.lessonId==='action_forms'&&q.task!=='meaning')){const c=lessonExerciseCopy(q,model(q.exampleId));assert.equal(c.outerCase,undefined);assert.equal(c.construction,undefined);assert.equal(c.pluralAgreement,false);assert.equal(c.meaning,model(q.exampleId).meaning);assert.ok(!/No possessive|buffer|harmony|agreement is needed/.test(c.instruction));}
  for(const cue of ['Name the general activity with an infinitive.','Use the common bare-infinitive wanting pattern.']){const q=qs.find(q=>q.lessonId==='action_forms'&&q.task==='type'&&q.prompt.includes(cue))!;assert.ok(lessonExerciseCopy(q,model(q.exampleId)).instruction.includes(cue));}
  for(const q of qs.filter(q=>q.lessonId==='contrasts'&&q.task==='type')){const c=lessonExerciseCopy(q,model(q.exampleId));assert.equal(c.outerCase,undefined);assert.equal(c.construction,undefined);assert.ok(!/-mA|-DIK|AcAK|accusative/.test(c.instruction));assert.ok(c.meaning);}
+ const subjectChoice=qs.find(q=>q.exampleId==='vn2b-01'&&q.task==='structure')!;assert.ok(!lessonExerciseCopy(subjectChoice,model(subjectChoice.exampleId)).instruction.includes('infinitive'));
  const swim=model('vn2b-04');assert.equal(lessonReason(swim),'Başlamak takes a dative activity complement.');
 });
 test('named production drills retain their targets and all strict-grading construction, timing and plural constraints',()=>{

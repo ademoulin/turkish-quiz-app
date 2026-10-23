@@ -178,11 +178,11 @@ export const lessonGuides:Record<VerbNounLesson,React.ReactNode>={
 };
 
 export const lessonPracticeNotes:Record<VerbNounLesson,string>={
- activity:"Understand the meaning, then type the required form. Bracketed examples in the guide introduce the action chunk without a separate scored chunk-spotting task. Lesson 3.3 practises choosing activity forms from context. The guide is unscored.",
- cases:"Understand the meaning, then type the required form. Bracketed examples in the guide introduce the action chunk without a separate scored chunk-spotting task. Lesson 3.3 practises choosing activity forms from context. The guide is unscored.",
- action_forms:"Choose the complete form for a blank sentence and intended message, or type it from the supplied stem. Meaning questions are a separate optional task. The guide is unscored.",
- subjects:"Read the actor from first- and second-person endings without an explicit pronoun, then build agreement forms for all six persons. Third-person interpretation needs more context, so it remains in the guided form drill. The guide is unscored.",
- clause_cases:"Choose the case form required by the predicate, interpret the sentence, or practise a named-case typed answer. After checking, the explanation states the predicate’s case pattern. The guide is unscored.",
+ activity:"Type the required form from the supplied stem. Lesson 3.3 practises choosing activity forms from context. The guide is unscored.",
+ cases:"Type the required form from the supplied stem. Lesson 3.3 practises choosing activity forms from context. The guide is unscored.",
+ action_forms:"Choose the complete form for a blank sentence and intended message, or type it from the supplied stem. The guide is unscored.",
+ subjects:"Type the action noun with agreement for the supplied subject. Practise all six persons; use the requested overt plural agreement for onların. The guide is unscored.",
+ clause_cases:"Choose the case form required by the predicate, or practise a named-case typed answer. After checking, the explanation states the predicate’s case pattern. The guide is unscored.",
  negation:"Understand: choose the sentence meaning. Unpack: identify suffix jobs, negation scope and who acts. Build: type only the missing action noun from the supplied stem. After checking, see the translation, brackets and suffix breakdown. Study guides and examples are unscored.",
  content_dik:"Understand the sentence, including who acts. First-person and plural-you meaning questions omit the genitive pronoun when agreement is clear; singular-you and third-person cues remain where needed. Unpack covers selected suffix and time distinctions. Build keeps explicit subjects for all six persons. The guide is unscored.",
  content_future:"Understand the sentence, including who acts. First-person and plural-you meaning questions omit the genitive pronoun when agreement is clear; singular-you and third-person cues remain where needed. Unpack covers selected suffix and time distinctions. Build keeps explicit subjects for all six persons. The guide is unscored.",

@@ -59,5 +59,11 @@ export function redesignLessons(original:VerbNounQuestion[]){
  const contentReviewed=refineContentActors(nounReviewed.active);
  const relativeReviewed=refineRelativeBuilding(contentReviewed.active);
  const roleReviewed=refineRelativeRoles(relativeReviewed.active);
- return {active:roleReviewed.active,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired,...roleReviewed.retired]};
+ // Batch 1: keep the exact earlier objects for imports and history, but stop
+ // scoring translation alongside the productive drills in lessons 3.1–3.5.
+ const productive=roleReviewed.active.filter(q=>{
+  if(q.task==='meaning'&&['activity','cases','action_forms','subjects','clause_cases'].includes(q.lessonId)){retired.push(q);return false;}
+  return true;
+ });
+ return {active:productive,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired,...roleReviewed.retired]};
 }

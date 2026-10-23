@@ -7,10 +7,10 @@ import {grammarItems,grammarMistakes,selectGrammarMix} from './grammarRegistry';
 import {grammarProgress} from './grammarProgress';
 import {validatePilotImport,correctPilot} from './casePilot';
 
-test('early lessons retain meaning and production, retire repetitive boundary recognition everywhere',()=>{
- for(const lesson of ['activity','cases'] as const){assert.deepEqual(lessonTasks(lesson),['meaning','type']);assert.equal(lessonPool(lesson).length,24);assert.equal(lessonPool(lesson,'structure').length,0);
- for(let n=0;n<30;n++){const qs=selectLessonQuestions(lesson);assert.equal(qs.length,12);assert.equal(new Set(qs.map(q=>q.exampleId)).size,12);assert.equal(qs.filter(q=>q.task==='meaning').length,6);assert.equal(qs.filter(q=>q.task==='type').length,6);}
- const c=grammarProgress([]).concepts.find(c=>c.id===`lesson_${lesson}`)!;assert.equal(c.modes.meaning!.available,12);assert.equal(c.modes.typed!.available,12);assert.equal(c.modes.structure,undefined);
+test('early lessons retain production, retire repetitive boundary recognition everywhere',()=>{
+ for(const lesson of ['activity','cases'] as const){assert.deepEqual(lessonTasks(lesson),['type']);assert.equal(lessonPool(lesson).length,12);assert.equal(lessonPool(lesson,'structure').length,0);
+ for(let n=0;n<30;n++){const qs=selectLessonQuestions(lesson);assert.equal(qs.length,12);assert.equal(new Set(qs.map(q=>q.exampleId)).size,12);assert.equal(qs.filter(q=>q.task==='meaning').length,0);assert.equal(qs.filter(q=>q.task==='type').length,12);}
+ const c=grammarProgress([]).concepts.find(c=>c.id===`lesson_${lesson}`)!;assert.equal(c.modes.meaning,undefined);assert.equal(c.modes.typed!.available,12);assert.equal(c.modes.structure,undefined);
  assert.ok(!grammarItems.some(i=>i.kind==='lesson'&&i.q.lessonId===lesson&&i.q.task==='structure'));}
 });
 test('clause case decisions hide the completed word and require choosing among same-actor outer-case forms',()=>{
@@ -23,8 +23,8 @@ test('clause case decisions hide the completed word and require choosing among s
  assert.equal(pool.find(q=>q.exampleId==='vn4-06')!.expected,'etmemize');assert.deepEqual(new Set(pool.find(q=>q.exampleId==='vn4-06')!.options!.map(o=>o.text)),new Set(['etmemizi','etmemize','etmemizden']));
 });
 test('retired boundary and connection results survive backups without giving revised case questions prior credit',()=>{
- const retired=retiredLessonQuestions.filter(q=>['activity','cases','clause_cases'].includes(q.lessonId));assert.equal(retired.length,36);const old=retired.map(q=>recordLesson([],q,'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
- const report=grammarProgress(old);assert.equal(report.unlinked,0);for(const id of ['activity','cases','clause_cases']){const c=report.concepts.find(c=>c.id===`lesson_${id}`)!;assert.equal(c.legacyChecks,12);assert.equal(c.attempts,0);assert.equal(lessonMistakes(old,id as 'activity').length,0);}assert.equal(grammarMistakes(old).length,0);
+ const retired=retiredLessonQuestions.filter(q=>['activity','cases','clause_cases'].includes(q.lessonId));assert.equal(retired.length,72);const old=retired.map(q=>recordLesson([],q,'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
+ const report=grammarProgress(old);assert.equal(report.unlinked,0);for(const id of ['activity','cases','clause_cases']){const c=report.concepts.find(c=>c.id===`lesson_${id}`)!;assert.equal(c.legacyChecks,24);assert.equal(c.attempts,0);assert.equal(lessonMistakes(old,id as 'activity').length,0);}assert.equal(grammarMistakes(old).length,0);
  const q=lessonPool('clause_cases','structure')[0],wrong=recordLesson(old,q,'other-1','new'),last=wrong.at(-1)!,fixed=correctPilot(wrong,last.id);assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);assert.equal(grammarMistakes(fixed).length,0);for(const key of ['id','questionId','answer','expected','time','sessionId']as const)assert.equal(fixed.at(-1)![key],last[key]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
- assert.equal(verbNounQuestions.length,851);
+ assert.equal(verbNounQuestions.length,783);
 });
