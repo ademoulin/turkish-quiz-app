@@ -22,6 +22,9 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  if(q.task==='build')instruction='Combine the source clauses in the guided frame.';
  else if(q.lessonId==='clause_cases'&&q.task==='structure')instruction='Choose the form that completes the sentence.';
  else if(q.task==='type'&&q.lessonId!=='action_forms')instruction=targets[e.form]||'Complete the missing word.';
+ // The subject-choice options already exclude bare -ma; typing still needs
+ // the explicit infinitive request to avoid rejecting another valid noun form.
+ if(q.lessonId==='action_forms'&&q.task==='structure')instruction=instruction.replace(' Name the general activity with an infinitive.','');
  const meaning=q.task==='type'&&q.lessonId==='negation'?e.meaning:old.meaning;
  // These families deliberately request a construction to avoid grading valid alternatives as wrong.
  const construction=q.task==='build'&&q.lessonId==='noun_clause_cases'?constructionNames[e.nominalConstruction!]:undefined;
