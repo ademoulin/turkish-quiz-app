@@ -1,3 +1,4 @@
+import {refineClauseChoices} from './relativeChoiceReview';
 import {clauseCaseChoices} from './clauseCaseChoices';
 import type {VerbNounQuestion} from './verbNouns';
 
@@ -44,5 +45,6 @@ export function redesignLessons(original:VerbNounQuestion[]){
   return [{...q,id:q.id+'-v2',sentence,prompt:'Which analysis matches the expressed connection and both actors?',expected,
    options:[{id:'target',text:expected},{id:'other-1',text:reading(reversed[q.temporalRelation!],actors[q.temporalSubject!],actors[q.mainSubject!])},{id:'other-2',text:reading(q.temporalRelation!,actors[q.mainSubject!],actors[q.temporalSubject!])}]}];
  });
- return {active,retired};
+ const reviewed=refineClauseChoices(active);
+ return {active:reviewed.active,retired:[...retired,...reviewed.retired]};
 }
