@@ -75,6 +75,10 @@ export function redesignLessons(original:VerbNounQuestion[]){
      options:[{id:'target',text:expected},...forms.filter(form=>form!==expected).map((text,i)=>({id:`other-${i+1}`,text}))]}];
    }
   }
+  // Batch 3 keeps relative-clause form choices and production, not analysis.
+  if(['subject_relatives','object_relatives','relative_building','relative_roles','relative_negation'].includes(q.lessonId)){
+   if(q.task==='meaning'||(q.task==='structure'&&!(q.optionLanguage==='tr'&&q.sentence.includes('___')))){retired.push(q);return [];}
+  }
   return [q];
  });
  return {active:productive,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired,...relativeReviewed.retired,...roleReviewed.retired]};
