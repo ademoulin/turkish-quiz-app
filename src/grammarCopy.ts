@@ -59,7 +59,7 @@ export function lessonReason(e:VerbNounExample):string{
  case 'state_ken':return 'The state or location + -(y)ken supplies the setting during the main action.';
  case 'temporal_contrasts':case 'sentence_building':return 'The time connection links the two clauses; each clause keeps its own subject.';
  case 'noun_clause_building':return `The whole noun clause is the object of ${e.main}; its agreement matches the embedded subject.`;
- case 'noun_clause_cases':return `The whole noun clause takes ${e.nominalCase}, independently of the case roles inside it.`;
+ case 'noun_clause_cases':return clauseCaseFeedback(e).reason;
  case 'relative_building':return 'The modifier describes the head; the case on that head connects the whole phrase to the main sentence.';
  case 'relative_roles':return `Inside the description: ${e.relativeInnerForm} (${e.relativeInnerRole}). In the main sentence: ${e.relativeHead} (${e.relativeHeadCase}).`;
  case 'relative_negation':return `Description: ${e.relativePolarity}. Main statement: ${e.relativeMainPolarity}. Each keeps its own polarity.`;

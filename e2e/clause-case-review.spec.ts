@@ -12,3 +12,20 @@ for(const model of ['vn12c-01','vn12c-05'])test(`12C ${model} shares focused/ran
  await expect(focused.locator('.exercise-sentence')).toHaveText(q.sentence);await expect(focused.locator('.exercise-meaning')).toHaveCount(0);await expect(focused.getByText(/Requested construction:/)).toHaveCount(0);await expect(focused.locator('.feedback')).toHaveCount(0);for(const o of q.options!)await expect(focused.locator('.word-row').getByText(o.text,{exact:true})).toBeVisible();mkdirSync('test-results',{recursive:true});await focused.screenshot({path:`test-results/layout-review-${model}.png`});
  await page.getByLabel('Practice activity',{exact:true}).selectOption('random');const random=page.getByRole('region',{name:'Mix of everything',exact:true});await random.getByRole('button',{name:'Review all grammar mistakes (1)',exact:true}).tap();await expect(random.locator('.exercise-sentence')).toHaveText(q.sentence);await expect(random.getByText(/Requested construction:/)).toHaveCount(0);await random.locator('input[value="other-2"]').check();await random.locator('input[value="other-2"]').press('Enter');await expect(random.getByRole('button',{name:'Answer checked',exact:true})).toBeDisabled();const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));await random.getByRole('button',{name:'My answer was correct',exact:true}).tap();const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));for(const key of ['id','questionId','time','answer'])expect(after[key]).toBe(before[key]);expect(after.manual).toBe(true);await expect(random.getByRole('status',{name:'Session score'})).toHaveText('1 / 1 correct');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('3.11 applies six additional predicate patterns without meaning or boundary tracks',async({page})=>{
+ const ids=['vn12c-13','vn12c-17','vn12c-21','vn12c-25','vn12c-29','vn12c-33'];
+ const qs=ids.map(id=>bank.find(q=>q.exampleId===id&&q.task==='structure')!);
+ await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');
+ const seed=qs.map(q=>recordLesson([],q,'other-1','seed-'+q.id)[0]);await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!);s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},seed);
+ await page.reload();await page.getByRole('button',{name:'Open grammar practice',exact:true}).tap();await page.getByLabel('Practice activity',{exact:true}).selectOption('lesson:noun_clause_cases');const area=page.getByRole('region',{name:'Verb nouns and clauses',exact:true});
+ await expect(area.getByLabel('Lesson practice',{exact:true}).locator('option[value="meaning"]')).toHaveCount(0);await area.getByLabel('Lesson practice',{exact:true}).selectOption('structure');await area.getByRole('button',{name:'Review lesson mistakes (6)',exact:true}).tap();
+ const seen=new Set<string>();
+ for(let n=0;n<6;n++){
+  const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=qs.find(q=>q.id===id)!;seen.add(q.id);
+  await expect(area.locator('.exercise-meaning')).toHaveCount(0);await expect(area.locator('.feedback')).toHaveCount(0);await expect(area.locator('.exercise-cues')).toHaveCount(0);
+  await area.locator('input[value="target"]').check();await area.locator('input[value="target"]').press('Enter');await expect(area.locator('.feedback .feedback-reason')).toContainText(q.nominalCase!);await expect(area.locator('.feedback')).not.toContainText('Build-up:');
+  await area.getByRole('button',{name:n===5?'See lesson results':'Next lesson question',exact:true}).tap();
+ }
+ expect(seen.size).toBe(6);await expect(area.getByRole('status',{name:'Session score'})).toHaveText('6 / 6 correct');await page.reload();const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.slice(6).every((a:any)=>a.correct&&a.questionId.endsWith('-v3'))).toBe(true);
+});

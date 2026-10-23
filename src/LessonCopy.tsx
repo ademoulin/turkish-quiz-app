@@ -14,7 +14,7 @@ export function LessonCues({q,example:e}:{q:VerbNounQuestion;example:VerbNounExa
  </>;
 }
 export function LessonExplanation({example:e}:{example:VerbNounExample}){
- if(e.lessonId==='clause_cases'){
+ if(e.lessonId==='clause_cases'||e.lessonId==='noun_clause_cases'){
   const {reason,note}=clauseCaseFeedback(e);
   return <><p className="feedback-reason">{reason}</p>{note&&<details className="answer-detail"><summary>Agreement note</summary><p>{note}</p></details>}</>;
  }

@@ -1,4 +1,5 @@
-import {reviseCaseClause} from './clauseCaseReview';
+import {reviseCaseClause,earlierCaseClause} from './clauseCaseReview';
+import {additionalClauseForms} from './clauseCaseCompletionContent';
 import type {VerbNounQuestion} from './verbNouns';
 import {meaningAlternatives} from './clauseMeaningChoices';
 type Review=[prompt:string,answer:string,other1:string,other2:string,blank?:boolean];
@@ -32,7 +33,10 @@ export const introductoryConverbs=['converb_ip','converb_arak','converb_madan'];
 export function refineClauseChoices(questions:VerbNounQuestion[]){
  const retired:VerbNounQuestion[]=[];
  const active=questions.flatMap(q=>{
-  if(q.lessonId==='noun_clause_cases'&&q.task==='structure'){retired.push(q);return [reviseCaseClause(q)];}
+  if(q.lessonId==='noun_clause_cases'&&q.task==='structure'){
+   if(!Object.hasOwn(additionalClauseForms,q.exampleId))retired.push(q,earlierCaseClause(q));
+   return [reviseCaseClause(q)];
+  }
   if(q.task==='structure'&&introductoryConverbs.includes(q.lessonId)){retired.push(q);return [];}
   if(q.task==='meaning'&&meaningAlternatives[q.exampleId]){
    retired.push(q);const [one,two]=meaningAlternatives[q.exampleId];

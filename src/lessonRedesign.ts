@@ -11,6 +11,7 @@ import type {VerbNounQuestion} from './verbNouns';
 export function redesignLessons(original:VerbNounQuestion[]){
  const retired:VerbNounQuestion[]=[];
  const active=original.flatMap(q=>{
+  if(q.lessonId==='noun_clause_cases'&&q.task==='meaning'){retired.push(q);return [];}
   if(q.lessonId==='relative_negation'&&q.task==='structure'){
    // Meaning alternatives already contrast relative/main polarity; keep scope in feedback.
    retired.push(q);return [];
