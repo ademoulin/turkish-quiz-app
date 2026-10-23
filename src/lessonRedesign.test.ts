@@ -20,9 +20,9 @@ test('time interpretation reads full Turkish without translation, requested timi
  for(const q of lessonPool('temporal_contrasts','type')){assert.ok(!q.id.endsWith('-v2'));assert.ok(lessonExerciseCopy(q,examples.find(e=>e.id===q.exampleId)!).timing);}
 });
 test('earlier exercises survive backups separately from revised evidence and never enter playable review',()=>{
- assert.equal(retired.length,228);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
+ assert.equal(retired.length,240);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
  const old=retired.map(q=>recordLesson([],q,q.task==='build'?JSON.stringify([q.chunks!.find(c=>!q.expectedChunkIds!.includes(c.id))!.id,...q.expectedChunkIds!.slice(1)]):'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
- let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),228);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
+ let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),240);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
  assert.equal(grammarMistakes(old).length,0);for(const lesson of ['subjects','temporal_contrasts','sentence_building'] as const)assert.equal(lessonMistakes(old,lesson).length,0);
  const q=lessonPool('subjects','meaning')[0],wrong=recordLesson(old,q,'other-1','new'),snapshot=wrong.at(-1)!;assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);
  const fixed=correctPilot(wrong,snapshot.id);assert.equal(fixed.at(-1)!.id,snapshot.id);assert.equal(fixed.at(-1)!.answer,snapshot.answer);assert.equal(fixed.at(-1)!.time,snapshot.time);assert.equal(fixed.length,old.length+1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(grammarMistakes(fixed).length,0);
