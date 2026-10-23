@@ -39,7 +39,7 @@ test('12 balanced typed tasks keep their own instructions, grading, keyboard/tou
   }else{
    await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');
   }
-  await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
+  await expect(field).toBeDisabled();await expect(area.locator(".feedback")).toContainText(q.answer);
   await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===11?'See typed results':'Next typed question'}).click();
  }

@@ -26,7 +26,7 @@ test('all 48 possessed-case answers, touch, keyboard, reveal, scoring and correc
    const after=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts[0]);
    expect(after.id).toBe(before.id);expect(after.time).toBe(before.time);expect(after.manual).toBe(true);
   }else{await field.fill(' '+q.answer.normalize('NFD')+' ');await field.press('Enter');}
-  await expect(field).toBeDisabled();await expect(area.getByText(q.explanation,{exact:true})).toBeVisible();
+  await expect(field).toBeDisabled();await expect(area.locator(".feedback")).toContainText(q.answer);
   await expect(area.getByText(`${i+1} / ${i+1} correct`,{exact:true})).toBeVisible();
   await area.getByRole('button',{name:i===47?'See typed results':'Next typed question'}).click();
  }

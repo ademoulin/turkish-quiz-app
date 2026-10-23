@@ -1,3 +1,4 @@
+import {FormFeedback} from './FormFeedback';
 import {PracticeHeader,ExercisePrompt} from './PracticeLayout';
 import React,{useEffect,useRef,useState} from 'react';
 import type {PracticeProps} from './TypedPractice';
@@ -22,7 +23,7 @@ export function ChooseCase({attempts,updateAttempts}:PracticeProps){
  <fieldset className="exercise-options" disabled={!!feedback}><legend>1. Choose the case</legend>{(Object.keys(choiceCases) as ChoiceCase[]).map((c,i)=><label className="word-row" key={c}><input ref={i===0?firstCase:undefined} type="radio" name="choose-case-answer" value={c} checked={selected===c} onChange={()=>setSelected(c)}/><span>{choiceCases[c]}</span></label>)}</fieldset>
  <label className="field" htmlFor="choose-case-word">2. Complete inflected word</label><input id="choose-case-word" className="answer" ref={input} lang="tr" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.nativeEvent.isComposing){e.preventDefault();check();}}} disabled={!!feedback} autoComplete="off" autoCapitalize="none" spellCheck={false}/>
  {!feedback&&<div className="characters" aria-label="Turkish letters">{'çğıöşü'.split('').map(c=><button type="button" key={c} onClick={()=>insert(c)}>{c}</button>)}</div>}
- {feedback?<><div role="status" className={'feedback '+(feedback.correct?'correct':'incorrect')}><p>Case choice: {feedback.caseCorrect?'Correct':'Incorrect'}. Word form: {feedback.formCorrect?'Correct':'Incorrect'}.</p><p>Correct case: {choiceCases[q.requiredCase]}</p><p lang="tr">Correct answer: {q.answer}</p><p>{q.explanation}</p>{feedback.manual&&<p>Includes a correction by you.</p>}</div>
+ {feedback?<><div role="status" className={'feedback '+(feedback.correct?'correct':'incorrect')}><p>Case choice: {feedback.caseCorrect?'Correct':'Incorrect'}. Word form: {feedback.formCorrect?'Correct':'Incorrect'}.</p><p>Correct case: {choiceCases[q.requiredCase]}</p><p lang="tr">Correct answer: {q.answer}</p><FormFeedback question={q}/>{feedback.manual&&<p>Includes a correction by you.</p>}</div>
  {!feedback.caseCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'case'))}>My case choice was correct</button>}
  {!feedback.formCorrect&&<button className="secondary" onClick={()=>updateAttempts(a=>correctChoice(a,feedback.id,'form'))}>My word form was correct</button>}
  <button ref={next} className="primary" onClick={()=>{setIndex(i=>i+1);setSelected('');setAnswer('');locked.current=false;}}>{index+1===questions.length?'See case choice results':'Next case choice question'}</button></>:<button className="primary" disabled={!selected||!answer.trim()} onClick={check}>Check case and word</button>}
