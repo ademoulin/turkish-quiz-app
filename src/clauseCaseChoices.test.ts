@@ -26,5 +26,5 @@ test('retired boundary and connection results survive backups without giving rev
  const retired=retiredLessonQuestions.filter(q=>['activity','cases','clause_cases'].includes(q.lessonId));assert.equal(retired.length,72);const old=retired.map(q=>recordLesson([],q,'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
  const report=grammarProgress(old);assert.equal(report.unlinked,0);for(const id of ['activity','cases','clause_cases']){const c=report.concepts.find(c=>c.id===`lesson_${id}`)!;assert.equal(c.legacyChecks,24);assert.equal(c.attempts,0);assert.equal(lessonMistakes(old,id as 'activity').length,0);}assert.equal(grammarMistakes(old).length,0);
  const q=lessonPool('clause_cases','structure')[0],wrong=recordLesson(old,q,'other-1','new'),last=wrong.at(-1)!,fixed=correctPilot(wrong,last.id);assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);assert.equal(grammarMistakes(fixed).length,0);for(const key of ['id','questionId','answer','expected','time','sessionId']as const)assert.equal(fixed.at(-1)![key],last[key]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
- assert.equal(verbNounQuestions.length,783);
+ assert.equal(verbNounQuestions.length,684);
 });

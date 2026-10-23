@@ -20,9 +20,9 @@ test('time interpretation reads full Turkish without translation, requested timi
  for(const q of lessonPool('temporal_contrasts','type')){assert.ok(!q.id.endsWith('-v2'));assert.ok(lessonExerciseCopy(q,examples.find(e=>e.id===q.exampleId)!).timing);}
 });
 test('earlier exercises survive backups separately from revised evidence and never enter playable review',()=>{
- assert.equal(retired.length,389);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
+ assert.equal(retired.length,500);assert.equal(new Set([...bank,...retired].map(q=>q.id)).size,bank.length+retired.length);
  const old=retired.map(q=>recordLesson([],q,q.task==='build'?JSON.stringify([q.chunks!.find(c=>!q.expectedChunkIds!.includes(c.id))!.id,...q.expectedChunkIds!.slice(1)]):'other-1','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
- let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),389);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
+ let report=grammarProgress(old);assert.equal(report.unlinked,0);assert.equal(report.concepts.reduce((n,c)=>n+c.legacyChecks,0),500);assert.equal(report.concepts.reduce((n,c)=>n+c.attempts,0),0);
  assert.equal(grammarMistakes(old).length,0);for(const lesson of ['subjects','temporal_contrasts','sentence_building'] as const)assert.equal(lessonMistakes(old,lesson).length,0);
  const q=lessonPool('subjects','type')[0],wrong=recordLesson(old,q,'wrong','new'),snapshot=wrong.at(-1)!;assert.equal(grammarMistakes(wrong).length,1);assert.equal(selectGrammarMix(grammarMistakes(wrong))[0].q.id,q.id);
  const fixed=correctPilot(wrong,snapshot.id);assert.equal(fixed.at(-1)!.id,snapshot.id);assert.equal(fixed.at(-1)!.answer,snapshot.answer);assert.equal(fixed.at(-1)!.time,snapshot.time);assert.equal(fixed.length,old.length+1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);assert.equal(grammarMistakes(fixed).length,0);
@@ -33,4 +33,16 @@ test('focused, random and progress share current task availability and stable mo
  const activeIds=new Set(bank.map(q=>q.id));assert.ok(grammarItems.filter(i=>i.kind==='lesson').every(i=>activeIds.has(i.q.id)));
  const row=grammarProgress([]).concepts.find(c=>c.id==='lesson_subjects')!;assert.equal(row.modes.meaning,undefined);assert.equal(row.modes.typed!.available,12);assert.equal(row.modes.structure,undefined);
  for(let n=0;n<30;n++){const chosen=selectGrammarMix();const models=chosen.filter(i=>i.kind==='lesson').map(i=>i.kind==='lesson'&&i.q.exampleId);assert.equal(new Set(models).size,models.length);assert.ok(chosen.every(i=>!retired.some(q=>q.id===i.q.id)));}
+});
+test('batch 2 keeps application modes and versions nominalizer word choices separately from old schema choices',()=>{
+ for(const lesson of ['negation','content_dik','content_future','noun_clause_building'] as const){assert.deepEqual(lessonTasks(lesson),[lesson==='noun_clause_building'?'build':'type']);assert.equal(lessonPool(lesson).length,12);}
+ assert.deepEqual(lessonTasks('contrasts'),['structure','type']);
+ const old=retired.filter(q=>q.lessonId==='contrasts'&&q.task==='structure');assert.equal(old.length,12);
+ for(const q of lessonPool('contrasts','structure')){
+  assert.equal(q.id,old.find(o=>o.exampleId===q.exampleId)!.id+'-v2');assert.equal(q.expected,lessonPool('contrasts','type').find(t=>t.exampleId===q.exampleId)!.expected);
+  assert.equal(q.optionLanguage,'tr');assert.ok(q.options!.every(o=>!/[ +]/.test(o.text)));
+  for(const option of q.options!)assert.equal(recordLesson([],q,option.id,'choice')[0].correct,option.id==='target');
+ }
+ const history=old.map(q=>recordLesson([],q,'other-1','earlier-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
+ const row=grammarProgress(history).concepts.find(c=>c.id==='lesson_contrasts')!;assert.equal(row.legacyChecks,12);assert.equal(row.attempts,0);assert.equal(row.modes.structure!.attempts,0);assert.equal(grammarMistakes(history).length,0);
 });

@@ -11,7 +11,7 @@ import {correctPilot,validatePilotImport} from './casePilot';
 const current=bank.filter(q=>q.lessonId==='noun_clause_building');
 const earlier=retired.filter(q=>q.lessonId==='noun_clause_building');
 test('12B keeps full sentences and parallel alternatives without explanatory giveaways or suffix recipes',()=>{
- assert.equal(current.length,36);assert.equal(earlier.length,24);
+ assert.equal(current.length,12);assert.equal(earlier.length,48);
  for(const q of current){const e=models.find(e=>e.id===q.exampleId)!;
   assert.equal(lessonExerciseCopy(q,e).construction,undefined);
   if(q.task==='meaning'){assert.ok(!q.id.endsWith('-v2'));continue;}
@@ -28,12 +28,7 @@ test('12B earlier scaffold evidence round-trips separately; revised answers scor
  const old=earlier.map(q=>recordLesson([],q,q.task==='build'?JSON.stringify(q.expectedChunkIds):'target','old-'+q.id)[0]);
  assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);
  const row=grammarProgress(old).concepts.find(c=>c.id==='lesson_noun_clause_building')!;
- assert.equal(row.legacyChecks,24);assert.equal(row.attempts,0);assert.equal(lessonMistakes(old,'noun_clause_building').length,0);
- for(const q of current.filter(q=>q.task==='structure')){
-  assert.ok(grammarItems.some(i=>i.q===q));const wrong=recordLesson(old,q,'other-2','new-'+q.id),a=wrong.at(-1)!;
-  assert.equal(recordLesson(wrong,q,'target',a.sessionId).length,wrong.length);
-  const corrected=correctPilot(wrong,a.id),fixed=corrected.at(-1)!;
-  for(const k of ['id','time','sessionId','questionId','answer'] as const)assert.equal(fixed[k],a[k]);
-  assert.equal(fixed.correct,true);assert.equal(fixed.manual,true);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:corrected}),corrected);
- }
+ assert.equal(row.legacyChecks,48);assert.equal(row.attempts,0);assert.equal(lessonMistakes(old,'noun_clause_building').length,0);
+ assert.ok(current.every(q=>q.task==='build'));
+ assert.ok(current.every(q=>grammarItems.some(i=>i.q===q)));
 });
