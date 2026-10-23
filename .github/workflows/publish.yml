@@ -10,7 +10,11 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PLAYWRIGHT_CHANNEL: chrome
+      PLAYWRIGHT_REUSE_BUILD: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,6 +24,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # A release always passes the complete routine browser suite before upload.
+      - run: npm run test:e2e
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
