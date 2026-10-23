@@ -5,6 +5,22 @@ import {grammarItems,selectGrammarMix} from '../src/grammarRegistry';
 test.use({hasTouch:true});
 async function open(page:Page){await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');await page.getByRole('button',{name:'Open grammar practice',exact:true}).tap();await page.getByLabel('Practice activity',{exact:true}).selectOption('verb-nouns');return page.getByRole('region',{name:'Verb nouns and clauses',exact:true});}
 async function current(area:Locator){const id=await area.locator('[data-question-id]').getAttribute('data-question-id');return bank.find(q=>q.id===id)!;}
+test('4.4 separates inner and main roles with keyboard checking and correction in place',async({page})=>{
+ const area=await open(page),q=lessonPool('relative_roles','structure').find(q=>q.relativeInnerRole==='locative'&&q.relativeHeadCase==='dative')!;
+ await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!);s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},recordLesson([],q,'other-1','seed'));
+ await page.reload();await page.getByRole('button',{name:'Open grammar practice',exact:true}).tap();await page.getByLabel('Practice activity',{exact:true}).selectOption('lesson:relative_roles');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('structure');await area.getByRole('button',{name:'Review lesson mistakes (1)',exact:true}).tap();
+ for(const o of q.options!)await expect(area.getByText(o.text,{exact:true})).toBeVisible();
+ await expect(area.getByText(q.sentence,{exact:true})).toBeVisible();await expect(area.locator('.feedback')).toHaveCount(0);
+ await area.locator('input[value="other-2"]').check();await area.locator('input[value="other-2"]').press('Enter');
+ await expect(area.getByRole('button',{name:'Answer checked',exact:true})).toBeDisabled();await expect(area.locator('.feedback')).toBeVisible();
+ const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts.at(-1));
+ await area.getByRole('button',{name:'My answer was correct',exact:true}).tap();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts),after=saved.at(-1);
+ expect(saved).toHaveLength(2);for(const k of ['id','time','answer','questionId','sessionId','relativeInnerRole','relativeHeadCase'])expect(after[k]).toBe(before[k]);expect(after.manual).toBe(true);
+ await expect(area.getByRole('status',{name:'Session score'})).toHaveText('1 / 1 correct');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
 test('@bank-walkthrough 12E assembles all families/head cases with keyboard, touch and original-attempt corrections',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');await area.getByLabel('Lesson',{exact:true}).selectOption('relative_roles');await expect(area.getByLabel('Lesson practice',{exact:true})).toHaveValue('mixed');await expect(area.getByLabel('Lesson practice',{exact:true}).locator('option[value="type"]')).toHaveCount(0);
  await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).tap();const seen=new Set<string>(),families=new Map<string,number>(),cases=new Map<string,number>();
