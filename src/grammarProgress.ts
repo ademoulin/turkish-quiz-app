@@ -41,6 +41,6 @@ export function grammarProgress(history:PilotAttempt[]):{concepts:GrammarConcept
  for(const a of attempts){const old=retiredById.get(a.questionId);if(old&&a.conceptId===old.conceptId&&a.exerciseType===old.exerciseType){linked.add(a.id);const id=`lesson_${old.lessonId}`;legacyByLesson.set(id,(legacyByLesson.get(id)||0)+1);}}
  const result:GrammarConceptProgress[]=[];
  for(const [id,group] of groups){const modes:GrammarConceptProgress['modes']={},all=new Map<string,PilotAttempt>();for(const [mode,items] of group.questions){const evidence=items.flatMap(item=>(byQuestion.get(item.q.id)||[]).filter(a=>a.conceptId===itemConcept(item)&&a.exerciseType===(item.kind==='multiple_choice'?'grammar_multiple_choice':item.q.exerciseType)));for(const a of evidence){linked.add(a.id);all.set(a.id,a);}modes[mode]=summarizeEvidence(evidence,items.length,mode);}const values=[...all.values()],stats=summarizeEvidence(values,0,'recognition');result.push({id,...describe(group.item),modes,legacyChecks:legacyByLesson.get(id)||0,attempts:all.size,missed:latest(values).filter(a=>!a.correct).length,last:stats.last});}
- result.sort((a,b)=>['lessons','forms','case_choice','multiple_choice'].indexOf(a.family)-['lessons','forms','case_choice','multiple_choice'].indexOf(b.family));
+ result.sort((a,b)=>['lessons','forms','case_choice','multiple_choice'].indexOf(a.family)-['lessons','forms','case_choice','multiple_choice'].indexOf(b.family)||a.label.localeCompare(b.label,undefined,{numeric:true}));
  return {concepts:result,unlinked:attempts.filter(a=>!linked.has(a.id)).length};
 }

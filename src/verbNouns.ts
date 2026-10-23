@@ -1,3 +1,4 @@
+import {grammarLessonCatalog,numberedTitle} from './grammarNavigation';
 import {redesignLessons} from './lessonRedesign';
 import {relativeNegationExamples,type RelativeNegationEvidence} from './verbNounRelativeNegation';
 import {relativeRoleExamples,type RelativeRoleEvidence} from './verbNounRelativeRoles';
@@ -25,33 +26,7 @@ import {subjectExamples,nominalSubjects,type NominalSubject} from './verbNounSub
 /** Newly authored lesson content, not quotations. Yeni Hitit 1 §12.1 p.145
  * and §12.2 p.149 guide scope. Independent review and exact Ödkem mapping pending.
  * Finite predicates are supplied; production targets nonfinite constructions. */
-export const verbNounLessons = {
- activity: '1 · Actions as nouns',
- cases: '2 · Action nouns with case endings',
- action_forms: '2B · Choose -mak or -ma',
- subjects: '3 · The action has its own subject',
- clause_cases: '4 · Case endings on the whole clause',
- negation: '5 · Negation and meaningful contrasts',
- content_dik: '6 · -DIK: facts inside a sentence',
- content_future: '7 · -(y)AcAK: future inside a sentence',
- contrasts: '8 · Choose -mA, -DIK or -(y)AcAK',
- subject_relatives: '9 · -(y)An: describe who does it',
- object_relatives: '10 · Object relatives: who acts on what',
- converb_ip: '11A · -(y)Ip: link actions',
- converb_arak: '11B · -(y)ArAk: how you do it',
- converb_madan: '11C · -mAdAn: without doing',
- temporal_order: '11D · Before and after actions',
- temporal_when: '11E · -(y)IncA: when and once',
- temporal_while: '11F · -ken: while actions overlap',
- state_ken: '11G · -ken: states and places',
- temporal_contrasts: '11H · Choose the time connection',
- sentence_building: '12A · Build a sentence from clauses',
- noun_clause_building: '12B · Build sentences with noun clauses',
- noun_clause_cases: '12C · Noun clauses with dative and ablative',
- relative_building: '12D · Build sentences with relative clauses',
- relative_roles: '12E · Relative clauses: to, in and from',
- relative_negation: '12F · Negation inside relative clauses',
-} as const;
+export const verbNounLessons=Object.fromEntries(Object.entries(grammarLessonCatalog).map(([id,item])=>[id,numberedTitle(item)])) as {[K in keyof typeof grammarLessonCatalog]:string};
 export type VerbNounLesson = keyof typeof verbNounLessons;
 export const verbNounTasks = {meaning:'Understand the meaning',structure:'Unpack the structure',type:'Build the action noun',build:'Assemble the sentence'} as const;
 export type VerbNounTask = keyof typeof verbNounTasks;
