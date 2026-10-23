@@ -1,3 +1,4 @@
+import {refineContentActors} from './contentActorReview';
 import {refineNounClauseBuilding} from './nounClauseReview';
 import {refineClauseChoices} from './relativeChoiceReview';
 import {clauseCaseChoices} from './clauseCaseChoices';
@@ -48,5 +49,6 @@ export function redesignLessons(original:VerbNounQuestion[]){
  });
  const reviewed=refineClauseChoices(active);
  const nounReviewed=refineNounClauseBuilding(reviewed.active);
- return {active:nounReviewed.active,retired:[...retired,...reviewed.retired,...nounReviewed.retired]};
+ const contentReviewed=refineContentActors(nounReviewed.active);
+ return {active:contentReviewed.active,retired:[...retired,...reviewed.retired,...nounReviewed.retired,...contentReviewed.retired]};
 }
