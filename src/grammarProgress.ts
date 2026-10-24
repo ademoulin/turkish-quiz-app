@@ -13,7 +13,7 @@ import {retiredGrammarQuestions} from './yeniHitit';
 import {mcConcept} from './grammarMultipleChoice';
 export const evidenceModes={meaning:'Meaning',structure:'Structure',typed:'Typed production',assembly:'Sentence assembly',recognition:'Recognition / case choice'} as const;
 export type EvidenceMode=keyof typeof evidenceModes;
-export interface EvidenceStats {available:number;attempts:number;distinct:number;sessions:number;days:number;successfulDays:number;manual:number;recentCorrect:number;recentCount:number;missed:number;last?:string}
+export interface EvidenceStats {available:number;attempts:number;distinct:number;sessions:number;days:number;successfulDays:number;manual:number;recentCorrect:number;recentCount:number;recentDays:number;recentDistinct:number;missed:number;last?:string}
 export interface GrammarConceptProgress {id:string;label:string;family:'lessons'|'forms'|'case_choice'|'multiple_choice';modes:Partial<Record<EvidenceMode,EvidenceStats>>;attempts:number;missed:number;legacyChecks:number;last?:string}
 const labels:Record<string,string>={...concepts,...possessiveConcepts,...phraseConcepts,...possessedCaseConcepts,...suffixChainConcepts,...pronounCaseConcepts};
 function describe(item:GrammarItem){
@@ -24,14 +24,14 @@ function describe(item:GrammarItem){
 }
 const latest=(list:PilotAttempt[])=>{const map=new Map<string,PilotAttempt>();for(const a of list){const old=map.get(a.questionId);if(!old||Date.parse(a.time)>=Date.parse(old.time))map.set(a.questionId,a);}return [...map.values()];};
 const utcDay=(time:string)=>new Date(time).toISOString().slice(0,10);
-/** No mastery thresholds. Recent checks are the newest ten question/day results.
+/** Recent checks are the newest ten question/day results.
  * Manual corrections are displayed separately, never counted as independent success. */
 export function summarizeEvidence(attempts:PilotAttempt[],available:number,mode:EvidenceMode):EvidenceStats{
  const success=(a:PilotAttempt)=>a.exerciseType==='case_choice_completion'?(mode==='typed'?!!a.formCorrect:!!a.caseCorrect):a.correct;
  const dayResults=new Map<string,PilotAttempt>();
  for(const a of attempts){const k=a.questionId+':'+utcDay(a.time),old=dayResults.get(k);if(!old||Date.parse(a.time)>=Date.parse(old.time))dayResults.set(k,a);}
  const independent=[...dayResults.values()].filter(a=>!a.manual).sort((a,b)=>Date.parse(b.time)-Date.parse(a.time)),recent=independent.slice(0,10);
- return {available,attempts:attempts.length,distinct:new Set(attempts.map(a=>a.questionId)).size,sessions:new Set(attempts.map(a=>a.sessionId)).size,days:new Set(attempts.map(a=>utcDay(a.time))).size,successfulDays:new Set(independent.filter(success).map(a=>utcDay(a.time))).size,manual:attempts.filter(a=>a.manual).length,recentCorrect:recent.filter(success).length,recentCount:recent.length,missed:latest(attempts).filter(a=>!success(a)).length,last:attempts.reduce<string|undefined>((v,a)=>!v||Date.parse(a.time)>Date.parse(v)?a.time:v,undefined)};
+ return {available,attempts:attempts.length,distinct:new Set(attempts.map(a=>a.questionId)).size,sessions:new Set(attempts.map(a=>a.sessionId)).size,days:new Set(attempts.map(a=>utcDay(a.time))).size,successfulDays:new Set(independent.filter(success).map(a=>utcDay(a.time))).size,manual:attempts.filter(a=>a.manual).length,recentCorrect:recent.filter(success).length,recentCount:recent.length,recentDays:new Set(recent.map(a=>utcDay(a.time))).size,recentDistinct:new Set(recent.map(a=>a.questionId)).size,missed:latest(attempts).filter(a=>!success(a)).length,last:attempts.reduce<string|undefined>((v,a)=>!v||Date.parse(a.time)>Date.parse(v)?a.time:v,undefined)};
 }
 export function grammarProgress(history:PilotAttempt[]):{concepts:GrammarConceptProgress[];unlinked:number}{
  const attempts=[...new Map(history.map(a=>[a.id,a])).values()].filter(a=>Number.isFinite(Date.parse(a.time)));
@@ -49,4 +49,20 @@ export function grammarProgress(history:PilotAttempt[]):{concepts:GrammarConcept
  for(const [id,count] of legacyByGroup){if(groups.has(id))continue;const old=retiredLessonQuestions.find(q=>`lesson_${q.lessonId}`===id);const oldMc=retiredGrammarQuestions.find(q=>mcConcept(q.skill_id)===id);const item:GrammarItem|undefined=old?{kind:'lesson',family:'lessons',q:old}:oldMc?{kind:'multiple_choice',family:'multiple_choice',q:oldMc}:undefined;if(item)result.push({id,...describe(item),modes:{},legacyChecks:count,attempts:0,missed:0});}
  result.sort((a,b)=>['lessons','forms','case_choice','multiple_choice'].indexOf(a.family)-['lessons','forms','case_choice','multiple_choice'].indexOf(b.family)||(a.family==='lessons'?a.label.localeCompare(b.label,undefined,{numeric:true}):0));
  return {concepts:result,unlinked:attempts.filter(a=>!linked.has(a.id)).length};
+}
+
+export const familiarityLevels={new:'New',learning:'Learning',familiar:'Familiar',well_known:'Well known'} as const;
+export type FamiliarityLevel=keyof typeof familiarityLevels;
+/** A transparent practice estimate, derived from history; never stored in backups.
+ * Production takes precedence so recognition cannot mask weak/untried production. */
+export function grammarFamiliarity(c:GrammarConceptProgress){
+ const mode=(['typed','assembly','recognition','structure','meaning'] as EvidenceMode[]).find(m=>c.modes[m]);
+ const stats=mode?c.modes[mode]:undefined;
+ let level:FamiliarityLevel=c.attempts?'learning':'new';
+ if(stats){
+  const varied=stats.recentDistinct>=Math.min(5,stats.available),accuracy=stats.recentCount?stats.recentCorrect/stats.recentCount:0;
+  if(varied&&stats.recentCount>=5&&stats.recentDays>=2&&accuracy>=0.8)level='familiar';
+  if(varied&&stats.recentCount>=10&&stats.recentDays>=3&&accuracy>=0.9)level='well_known';
+ }
+ return {level,mode,stats};
 }
