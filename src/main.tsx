@@ -175,8 +175,10 @@ function App() {
       entries.flatMap((e) => (isVerb(e) ? ["verbs"] : e.type.split("/"))),
     ),
   ];
+  const sourceIds = new Set(entries.filter(e=>settings.vocabSource!=="DL"||e.from==="DL").map(e=>e.id));
   const filtered = entries.filter(
     (e) =>
+      sourceIds.has(e.id) &&
       matchesFamiliarity(e.id) &&
       (!settings.types.length ||
         settings.types.some((savedType) => {
@@ -199,11 +201,12 @@ function App() {
   const eligible = chosen.filter(
     (e) =>
       (settings.mode !== "conjugation" || isVerb(e)) &&
-      matchesFamiliarity(e.id),
+      matchesFamiliarity(e.id) && sourceIds.has(e.id),
   );
   const unresolved = store.attempts.filter(
     (a) =>
       !a.correct &&
+      (settings.vocabSource!=="DL"||sourceIds.has(a.entryId)) &&
       !store.attempts.some(
         (later) =>
           later.entryId === a.entryId &&
@@ -732,6 +735,13 @@ function App() {
                     <span className="count">{eligible.length} selected</span>
                   </div>
                   <label className="field">
+                    Vocabulary source
+                    <select aria-label="Vocabulary source" value={settings.vocabSource} onChange={e=>updateSettings({vocabSource:e.target.value==='DL'?'DL':'all'})}>
+                      <option value="all">All sources</option>
+                      <option value="DL">Duolingo only</option>
+                    </select>
+                  </label>
+                  <label className="field">
                     Word type
                     <select
                       aria-label="Word type"
@@ -924,7 +934,7 @@ function App() {
                     {entries.length > 0 && !filtered.length && (
                       <p className="empty">
                         No words match these filters. Try another familiarity
-                        level, word type, or search.
+                        level, vocabulary source, word type, or search.
                       </p>
                     )}
                   </div>

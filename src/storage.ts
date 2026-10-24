@@ -17,6 +17,7 @@ export interface Settings {
   direction: "en" | "tr" | "mixed";
   length: string;
   types: string[];
+  vocabSource: "all" | "DL";
   familiarities: import("./familiarity").Familiarity[];
   selected: string[];
   tenses: import("./grammar").Tense[];
@@ -29,6 +30,7 @@ export const defaults: Settings = {
   direction: "tr",
   length: "10",
   types: [],
+  vocabSource: "all",
   familiarities: [],
   selected: [],
   tenses: ["present", "past", "future"],
@@ -49,6 +51,7 @@ export function readStore(): Store {
       settings: {
         ...defaults,
         ...s.settings,
+        vocabSource: s.settings?.vocabSource === "DL" ? "DL" : "all",
         familiarities: Array.isArray(s.settings?.familiarities)
           ? s.settings.familiarities.filter((v: unknown) =>
               ["New", "Learning", "Familiar", "Well known"].includes(String(v)),

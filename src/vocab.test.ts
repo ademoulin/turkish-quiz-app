@@ -89,3 +89,10 @@ test('circumflex a is optional in all answer matching without folding other Turk
   assert.ok(matchesEnglish('a', entry('bir', 'â')));
   for (const [a,b] of [['ı','i'],['ş','s'],['ç','c'],['ğ','g'],['ö','o'],['ü','u']]) assert.notEqual(normalize(a,'tr'),normalize(b,'tr'));
 });
+
+test('optional From column identifies Duolingo without changing entry identity',()=>{
+ const rows=parseVocab('ID,Word,Type,Meaning, From \na,ev,n,house, DL \nb,kitap,n,book,dl\nc,su,n,water,Other\nd,yol,n,road,').entries;
+ assert.deepEqual(rows.map(e=>e.from),['DL','DL','OTHER','']);
+ assert.deepEqual(rows.map(e=>e.id),['a','b','c','d']);
+ assert.equal(parseVocab('ID,Word,Type,Meaning\na,ev,n,house').entries[0].from,'');
+});

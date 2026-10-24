@@ -1,0 +1,20 @@
+import {test,expect} from '@playwright/test';
+test('Duolingo source filters words, sessions and review while preserving selections',async({page})=>{
+ await page.route('https://docs.google.com/**',r=>r.fulfill({status:200,contentType:'text/csv',body:'ID,Word,Type,Meaning,From\na,ev,n,house, DL \nb,kitap,n,book,\nc,su,n,water,Other'}));
+ await page.goto('/');await expect(page.getByText('Your vocabulary is up to date')).toBeVisible();
+ await page.getByRole('button',{name:'Select all matching',exact:true}).click();
+ await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!);s.attempts=[{id:'earlier-other',entryId:'b',kind:'meaning',direction:'tr',answer:'wrong',expected:'kitap',correct:false,manual:false,time:'2026-10-01T12:00:00Z'}];localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));});
+ await page.reload();await page.getByLabel('Vocabulary source',{exact:true}).selectOption('DL');
+ await expect(page.locator('.word-row')).toHaveCount(1);await expect(page.locator('.word-row')).toContainText('ev');
+ await expect(page.getByRole('button',{name:'Review mistakes (0)',exact:true})).toBeDisabled();
+ await page.getByLabel('Search words or meanings',{exact:true}).fill('kitap');await expect(page.locator('.word-row')).toHaveCount(0);await page.getByLabel('Search words or meanings',{exact:true}).fill('');
+ await page.reload();await expect(page.getByLabel('Vocabulary source',{exact:true})).toHaveValue('DL');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).settings.selected)).toHaveLength(3);
+ await page.getByRole('button',{name:'Let’s practice'}).click();await expect(page.getByText('Question 1 of 1')).toBeVisible();
+ await page.locator('#answer').fill('wrong');await page.locator('#answer').press('Enter');
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).attempts);expect(saved.at(-1).entryId).toBe('a');
+ await page.getByRole('button',{name:'End session',exact:true}).click();await page.getByRole('button',{name:'Back to practice',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Review mistakes (1)',exact:true})).toBeEnabled();
+ await page.getByLabel('Vocabulary source',{exact:true}).selectOption('all');await expect(page.locator('.word-row')).toHaveCount(3);
+ await expect(page.getByRole('button',{name:'Review mistakes (2)',exact:true})).toBeEnabled();
+});

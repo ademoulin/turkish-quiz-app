@@ -3,6 +3,7 @@ export const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1JrqWacx9e4RH7yhk7dlpPTLr68YwNS5n4L38mQHo8Yo/gviz/tq?tqx=out:csv&sheet=Sheet1";
 export interface Entry {
   id: string;
+  from?: string;
   turkish: string;
   type: string;
   meaning: string;
@@ -42,6 +43,7 @@ export function parseVocab(csv: string): {
     seen.add(id);
     const entry = {
       id,
+      from: get(h.indexOf("from")).toUpperCase(),
       turkish,
       type,
       meaning,
