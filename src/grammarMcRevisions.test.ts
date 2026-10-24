@@ -8,12 +8,12 @@ import {grammarProgress} from './grammarProgress';
 import {validatePilotImport,correctPilot} from './casePilot';
 const revised=active.filter(q=>q.replacesQuestionId),skill='YH1-12-01-S03';
 test('five authored MC revisions preserve the 588 originals and unchanged questions',()=>{
- assert.equal(revised.length,5);assert.equal(retired.length,5);validateBank(bank);validateBank({...bank,questions:active});
+ assert.equal(revised.length,5);assert.equal(retired.length,180);validateBank(bank);
  assert.deepEqual(revised.map(q=>q.id),['YH1-V11-Q038-v2','YH1-V13-Q034-v2','YH1-V52-Q015-v2','YH1-V64-Q019-v2','YH1-V64-Q020-v2']);
  assert.deepEqual(revised.map(q=>q.options.find(o=>o.id===q.correct_option_id)!.text),['çalışmakta','öğrenmek','içmekten','yürümeye','yüzmekten']);
  assert.ok(bank.questions.every(q=>!q.id.endsWith('-v2')));
  for(const q of revised){const old=retired.find(o=>o.id===q.replacesQuestionId)!;assert.equal(old.skill_id,q.skill_id);assert.equal(old.section,q.section);assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.notEqual(old.prompt,q.prompt);}
- const unchanged=bank.questions.filter(q=>!retired.includes(q));assert.equal(unchanged.length,583);
+ const unchanged=bank.questions.filter(q=>!retired.includes(q));assert.equal(unchanged.length,408);
  for(const q of unchanged)assert.equal(active.find(a=>a.id===q.id),q);
  const copy=structuredClone(bank.questions),snapshot=structuredClone(copy);applyMcRevisions(copy);assert.deepEqual(copy,snapshot);
 });
@@ -39,4 +39,23 @@ test('earlier MC evidence imports as legacy, while new misses and corrections ke
  const progress=grammarProgress(fixed).concepts.find(c=>c.id===mcConcept(skill))!;assert.equal(progress.legacyChecks,3);assert.equal(progress.attempts,1);assert.equal(progress.modes.recognition!.manual,1);assert.equal(progress.modes.recognition!.recentCount,0);
  const other=bank.questions.find(q=>!retired.includes(q))!,unaffected=recordGrammarChoice([],other,other.correct_option_id,'other');assert.equal(grammarProgress(unaffected).concepts.find(c=>c.id===mcConcept(other.skill_id))!.attempts,1);
  const unknown={...history[0],id:'unknown',questionId:'unknown-old-mc'};assert.deepEqual(validatePilotImport({version:1,pilotAttempts:[unknown]}),[unknown]);assert.equal(grammarProgress([unknown]).unlinked,1);
+});
+test('MC scope preserves source objects and keeps retired-only history out of practice',()=>{
+ const original=applyMcRevisions(bank.questions);
+ assert.equal(active.length,413);assert.equal(retired.length,180);
+ assert.equal(new Set([...active,...retired].map(q=>q.id)).size,593);
+ for(const q of original.active){
+  assert.deepEqual([...active,...retired].find(x=>x.id===q.id),q);
+ }
+ for(const id of ['YH1-V58-Q002','YH1-V14-Q012','YH1-V70-Q002'])assert.ok(retired.some(q=>q.id===id));
+ assert.ok(active.some(q=>q.id==='YH1-V70-Q001'));
+ assert.equal(selectQuestions('','YH1-04-01-S01').length,0);
+ const old=retired.find(q=>q.skill_id==='YH1-04-01-S01')!;
+ const attempts=recordGrammarChoice([],old,old.options.find(o=>o.id!==old.correct_option_id)!.id,'retired');
+ const report=grammarProgress(attempts),row=report.concepts.find(c=>c.id===mcConcept(old.skill_id))!;
+ assert.equal(report.unlinked,0);assert.equal(row.legacyChecks,1);assert.deepEqual(row.modes,{});assert.equal(row.attempts,0);
+ assert.equal(grammarMistakes(attempts).length,0);
+ const fixed=correctPilot(attempts,attempts[0].id);
+ assert.equal(fixed[0].id,attempts[0].id);assert.equal(fixed[0].correct,true);
+ assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
 });

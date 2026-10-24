@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {grammarItems,selectGrammarMix,recordGrammarItem,grammarMistakes,itemGroup,itemMode,itemConcept,type GrammarItem} from './grammarRegistry';
 import {grammarProgress,summarizeEvidence} from './grammarProgress';
-import {bank} from './yeniHitit';
+import {bank,activeGrammarQuestions} from './yeniHitit';
 import {recordGrammarChoice} from './grammarMultipleChoice';
 import {correctPilot,validatePilotImport,type PilotAttempt} from './casePilot';
 import {correctChoice} from './caseChoice';
@@ -10,11 +10,11 @@ const response=(item:GrammarItem)=>item.kind==='multiple_choice'?item.q.correct_
 const save=(item:GrammarItem,session='session')=>recordGrammarItem([],item,response(item),session,item.kind==='case_choice'?item.q.requiredCase:'')[0];
 const typed=grammarItems.find(i=>i.kind==='typed')!;
 const at=(a:PilotAttempt,id:string,time:string,patch:Partial<PilotAttempt>={})=>({...a,id,time,...patch});
-test('broad registry retains every original question and mixes all nine families without answer leaks',()=>{
+test('broad registry includes current practice and mixes all nine families without answer leaks',()=>{
  assert.equal(new Set(grammarItems.map(i=>i.q.id)).size,grammarItems.length);
- assert.equal(grammarItems.filter(i=>i.kind==='multiple_choice').length,588);assert.equal(grammarItems.filter(i=>i.kind==='lesson').length,397);
+ assert.equal(grammarItems.filter(i=>i.kind==='multiple_choice').length,413);assert.equal(grammarItems.filter(i=>i.kind==='lesson').length,397);
  for(let n=0;n<40;n++){const pool=selectGrammarMix();assert.equal(pool.length,12);assert.equal(new Set(pool.map(i=>i.q.id)).size,12);assert.equal(new Set(pool.map(i=>i.family)).size,9);for(const family of new Set(pool.map(i=>i.family)))assert.ok(pool.filter(i=>i.family===family).length<=2);const models=pool.filter(i=>i.kind==='lesson').map(i=>i.kind==='lesson'&&i.q.exampleId);assert.equal(new Set(models).size,models.length);const skills=pool.filter(i=>i.kind==='multiple_choice').map(i=>i.kind==='multiple_choice'&&i.q.skill_id);assert.equal(new Set(skills).size,skills.length);}
- const first=grammarItems.find(i=>i.kind==='lesson')!;const lesson=grammarItems.filter(i=>i.kind==='lesson'&&first.kind==='lesson'&&i.q.exampleId===first.q.exampleId);assert.equal(selectGrammarMix(lesson).length,1);const mc=grammarItems.filter(i=>i.kind==='multiple_choice'&&i.q.skill_id===bank.questions[0].skill_id);assert.equal(selectGrammarMix(mc).length,1);assert.deepEqual(selectGrammarMix([]),[]);
+ const first=grammarItems.find(i=>i.kind==='lesson')!;const lesson=grammarItems.filter(i=>i.kind==='lesson'&&first.kind==='lesson'&&i.q.exampleId===first.q.exampleId);assert.equal(selectGrammarMix(lesson).length,1);const mc=grammarItems.filter(i=>i.kind==='multiple_choice'&&i.q.skill_id===activeGrammarQuestions[0].skill_id);assert.equal(selectGrammarMix(mc).length,1);assert.deepEqual(selectGrammarMix([]),[]);
 });
 test('every registry item saves with its original grader, concept and backup-compatible snapshots',()=>{
  const all=grammarItems.map(i=>save(i));assert.equal(all.length,grammarItems.length);assert.ok(all.every(a=>a.correct&&a.sessionKind==='random_grammar'));assert.deepEqual(validatePilotImport({version:1,pilotAttempts:all}),all);

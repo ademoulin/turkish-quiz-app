@@ -1,11 +1,15 @@
 import { shuffle } from './shuffle';
+import {filterMcScope} from './grammarMcScope';
 import {applyMcRevisions} from './grammarMcRevisions';
 import dataset from './data/yeni_hitit_1_codex_staging_v82.json' with {type:'json'};
 export type GrammarQuestion = (typeof dataset.questions)[number]&{
  replacesQuestionId?:string;source?:'newly_authored';reviewStatus?:'draft_needs_independent_review';
 };
 export const bank = dataset;
-export const {active:activeGrammarQuestions,retired:retiredGrammarQuestions}=applyMcRevisions(bank.questions);
+const revised=applyMcRevisions(bank.questions);
+const scoped=filterMcScope(revised.active);
+export const activeGrammarQuestions=scoped.active;
+export const retiredGrammarQuestions=[...revised.retired,...scoped.retired];
 export function validateBank(value: unknown): asserts value is typeof dataset {
   const d = value as typeof dataset;
   if (!d || d.schema_version !== '1.0' || d.dataset_version !== 'v82-codex-staging' || d.source_version !== 'v81' || d.review_status !== 'UNVERIFIED_DRAFT_NOT_APPROVED_FOR_PUBLIC_RELEASE' || !Array.isArray(d.questions) || d.questions.length !== 588) throw Error('Invalid v82 dataset metadata/count');

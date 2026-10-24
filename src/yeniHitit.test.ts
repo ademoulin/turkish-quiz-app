@@ -14,13 +14,13 @@ test('v82 schema, counts, exclusions and malformed content', () => {
  ]) {const d=structuredClone(bank);mutate(d);assert.throws(()=>validateBank(d));}
 });
 test('filters, empty/unknown skill and unique session pool', () => {
- const section=bank.questions[0].section, skill=bank.questions[0].skill_id;
+ const section=activeGrammarQuestions[0].section, skill=activeGrammarQuestions[0].skill_id;
  assert.ok(selectQuestions(section).every(q=>q.section===section));
  assert.equal(selectQuestions('',skill).length,3);
  assert.equal(selectQuestions('','unknown').length,0);
  assert.equal(selectQuestions('unknown').length,0);
- assert.equal(selectQuestions('','').length,588);
- assert.equal(new Set(selectQuestions().map(q=>q.id)).size,588);
+ assert.equal(selectQuestions('','').length,413);
+ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,413);
 });
 test('every shuffled option retains answer mapping, only keyed option scores', () => {
  for(const q of selectQuestions('', '', ()=>0.1)) {
@@ -30,7 +30,7 @@ test('every shuffled option retains answer mapping, only keyed option scores', (
  }
 });
 test('duplicate submission, completion and reset', () => {
- let s=startSession('',bank.questions[0].skill_id);
+ let s=startSession('',activeGrammarQuestions[0].skill_id);
  assert.equal(nextQuestion(s),s);
  assert.equal(submitAnswer(s,'unknown'),s);
  for(const q of s.questions) {
