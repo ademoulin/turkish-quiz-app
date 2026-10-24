@@ -1,0 +1,22 @@
+import {test,expect} from '@playwright/test';
+import {grammarItems,itemGroup,recordGrammarItem} from '../src/grammarRegistry';
+const first=grammarItems.find(i=>i.kind==='typed')!;
+const pool=grammarItems.filter(i=>i.kind==='typed'&&itemGroup(i)===itemGroup(first));
+test('familiarity spectrum filters saved results, persists on reload and fits mobile',async({page})=>{
+ await page.route('https://docs.google.com/**',r=>r.abort());await page.goto('/');
+ const history=Array.from({length:10},(_,n)=>{const item=pool[n%5];if(item.kind!=='typed')throw Error('typed');const a=recordGrammarItem([],item,item.q.answer,'session-'+n,'')[0];return {...a,id:'familiarity-'+n,time:`2026-10-${String(1+Math.floor(n/4)).padStart(2,'0')}T12:00:00Z`};});
+ await page.evaluate(a=>{const s=JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!);s.pilotAttempts=a;localStorage.setItem('quiz-my-turkish-v1',JSON.stringify(s));},history);
+ await page.reload();await page.getByRole('button',{name:'Open grammar practice',exact:true}).click();await page.getByLabel('Practice activity',{exact:true}).selectOption('progress');
+ const area=page.getByRole('region',{name:'Your grammar progress',exact:true}),scale=area.getByRole('group',{name:'Grammar familiarity'});
+ await scale.getByRole('button',{name:'Well known',exact:true}).click();
+ const card=area.locator(`[data-concept-id="${itemGroup(first)}"]`);
+ await expect(card.locator('summary')).toContainText('Well known');await expect(card.locator('summary')).toContainText('10 of last 10 correct · Typed production');
+ await expect(scale.getByRole('button',{name:'Well known',exact:true})).toHaveAttribute('aria-pressed','true');
+ await page.screenshot({path:'test-results/layout-grammar-familiarity.png',fullPage:true});
+ await scale.getByRole('button',{name:'New',exact:true}).click();await expect(card).toHaveCount(0);
+ await scale.getByRole('button',{name:'Familiar',exact:true}).click();await expect(area.getByText('No concepts match these filters.',{exact:true})).toBeVisible();
+ await scale.getByRole('button',{name:'Learning',exact:true}).focus();await page.keyboard.press('Enter');await expect(scale.getByRole('button',{name:'Learning',exact:true})).toHaveAttribute('aria-pressed','true');
+ await scale.getByRole('button',{name:'All levels',exact:true}).click();await area.getByLabel('Search concepts',{exact:true}).fill('locative');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts)).toEqual(history);
+});
