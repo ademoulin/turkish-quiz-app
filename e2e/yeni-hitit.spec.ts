@@ -6,8 +6,9 @@ test('grammar preview filters, keyboard check, score, completion and reset on mo
  await page.goto('/');
  await page.getByRole('button',{name:'Open grammar practice'}).click();
  await page.getByLabel('Practice activity',{exact:true}).selectOption('multiple-choice');
- await page.getByLabel('Section',{exact:true}).selectOption('4.1');
- await page.getByLabel('Skill',{exact:true}).selectOption('YH1-04-01-S01');
+ await expect(page.getByLabel('Skill',{exact:true}).locator('option[value="YH1-04-01-S01"]')).toHaveCount(0);
+ await page.getByLabel('Section',{exact:true}).selectOption('3.1');
+ await page.getByLabel('Skill',{exact:true}).selectOption('YH1-03-01-S01');
  await page.getByRole('button',{name:'Start grammar practice'}).click();
  const seen=new Set<string>();
  for(let i=0;i<3;i++) {
