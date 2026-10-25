@@ -13,10 +13,11 @@ const rows:Row[]=[
       "gelmeyen",
       "gelmek"
     ],
-    "stem": "come",
-    "verbMeaning": "future",
-    "time": "The passengers who will come on the first bus tomorrow morning bought tickets.",
-    "meaning": "Future passengers take gelecek olan; gelen does not explicitly anchor the later arrival."
+    "stem": "gel",
+    "verbMeaning": "come",
+    "time": "future",
+    "meaning": "The passengers who will come on the first bus tomorrow morning bought tickets.",
+    "reason": "Gelecek olan explicitly places the arrival in the future."
   },
   {
     "lesson": "subject_relatives",
