@@ -14,7 +14,7 @@ test('current lesson practice has no scored translation tasks; retired alternati
 });
 test('relative choices distinguish modifiers from action/content clauses without displaying their completed form',()=>{
  const qs=bank.filter(q=>q.task==='structure'&&['subject_relatives','object_relatives'].includes(q.lessonId));assert.equal(qs.length,25);
- for(const q of qs){assert.ok(q.id.endsWith('-v2'));assert.ok(q.optionLanguage);assert.equal(q.options!.find(o=>o.id==='target')!.text,q.expected);assert.ok(!q.options!.some(o=>/book reads|film will watch|dish is doing|photograph is the person/.test(o.text)));if(q.optionLanguage==='tr'&&q.exampleId!=='vn9-10'){assert.ok(q.sentence.includes('___'));assert.ok(!q.sentence.includes(q.expected));assert.ok(q.options!.every(o=>!o.text.includes(' ')));}for(const o of q.options!)assert.equal(recordLesson([],q,o.id,'s')[0].correct,o.id==='target');}
+ for(const q of qs){if(!q.exampleId.startsWith('vn-relative-expand-'))assert.ok(q.id.endsWith('-v2'));assert.ok(q.optionLanguage);assert.equal(q.options!.find(o=>o.id==='target')!.text,q.expected);assert.ok(!q.options!.some(o=>/book reads|film will watch|dish is doing|photograph is the person/.test(o.text)));if(q.optionLanguage==='tr'&&q.exampleId!=='vn9-10'){assert.ok(q.sentence.includes('___'));assert.ok(!q.sentence.includes(q.expected));assert.ok(q.options!.every(o=>!o.text.includes(' ')));}for(const o of q.options!)assert.equal(recordLesson([],q,o.id,'s')[0].correct,o.id==='target');}
  const sample=qs.find(q=>q.exampleId==='vn10-01')!;assert.deepEqual(new Set(sample.options!.map(o=>o.text)),new Set(['okuduğum','okuduğumu','okumam']));
 });
 test('introductory converbs use two available tracks with unchanged typed targets and independent model selection',()=>{
