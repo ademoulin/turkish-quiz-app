@@ -12,7 +12,7 @@ test(lesson+' retains guided assembly and retires interpretation/analysis',()=>{
 });
 test(lesson+' preserves old backups separately and updates the original assembly correction',()=>{
  const history=retiredLessonQuestions.filter(q=>q.lessonId===lesson).map(q=>recordLesson([],q,'other-1','old-'+q.id)[0]);
- assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);const row=grammarProgress(history).concepts.find(c=>c.id==='lesson_'+lesson)!;assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.equal(row.modes.structure?.attempts,0);assert.equal(row.modes.meaning,undefined);assert.equal(grammarMistakes(history).length,0);
+ assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);const row=grammarProgress(history).concepts.find(c=>c.id==='lesson_'+lesson)!;assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.equal(row.modes.structure?.attempts,0);assert.equal(row.modes.meaning?.attempts,0);assert.equal(grammarMistakes(history).length,0);
  const q=lessonPool(lesson,'build')[0],ids=[...q.expectedChunkIds!];ids[1]=q.chunks!.find(c=>c.id.endsWith('-wrong-case'))!.id;
  const wrong=recordLesson(history,q,JSON.stringify(ids),'new'),a=wrong.at(-1)!;assert.equal(lessonMistakes(wrong,lesson).length,1);assert.equal(recordLesson(wrong,q,JSON.stringify(q.expectedChunkIds),'new').length,wrong.length);
  const fixed=correctPilot(wrong,a.id),b=fixed.at(-1)!;for(const key of ['id','time','sessionId','answer','questionId','selectedChunkIds'] as const)assert.deepEqual(b[key],a[key]);assert.equal(grammarMistakes(fixed).length,0);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
