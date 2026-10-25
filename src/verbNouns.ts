@@ -1,3 +1,4 @@
+import {relativeNegationCompletionExamples,relativeNegationCompletionQuestions} from './relativeNegationCompletionExpansion';
 import {relativeRoleCompletionExamples,relativeRoleCompletionQuestions} from './relativeRoleCompletionExpansion';
 import {relativeBuildingCompletionExamples,relativeBuildingCompletionQuestions} from './relativeBuildingCompletionExpansion';
 import {relativeCompletionExamples,relativeCompletionQuestions} from './relativeCompletionExpansion';
@@ -37,7 +38,7 @@ export type VerbNounLesson = keyof typeof verbNounLessons;
 export const verbNounTasks = {meaning:'Understand the meaning',structure:'Unpack the structure',type:'Build the action noun',build:'Assemble the sentence'} as const;
 export type VerbNounTask = keyof typeof verbNounTasks;
 export const verbNounConcepts = {
- vn_relative_negation_meaning:"Relative negation · meaning",vn_relative_negation_structure:"Relative negation · scope and clause roles",vn_relative_negation_build:"Relative negation · guided assembly",
+ vn_relative_negation_meaning:"Relative negation · meaning",vn_relative_negation_structure:"Relative negation · scope and clause roles",vn_relative_negation_type:'Relative negation · typed description',vn_relative_negation_build:"Relative negation · guided assembly",
  vn_relative_roles_meaning:"Relative complements · meaning",vn_relative_roles_type:'Relative roles · typed modifier',vn_relative_roles_structure:'Relative roles · head-case choice',vn_relative_roles_build:"Relative complements · guided assembly",
  vn_relative_building_meaning:'Relative sentences · meaning',vn_relative_building_structure:'Relative sentences · actor, head and whole-phrase role',vn_relative_building_build:'Relative sentences · guided assembly',vn_relative_building_type:'Relative sentences · typed completion',
  vn_action_forms_meaning:'Activity forms · meaning',vn_action_forms_structure:'Activity forms · choose from context',vn_action_forms_type:'Activity forms · choose and produce',
@@ -143,7 +144,7 @@ export interface VerbNounQuestion extends Partial<RelativeBuildingEvidence&Relat
  prompt:string;sentence:string;expected:string;options?:LessonOption[];expectedOptionId?:string;
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
-export const verbNounExamples=[...originalExamples,...expandedClauseExamples,...nominalizerExpansionExamples,...relativeCompletionExamples,...relativeBuildingCompletionExamples,...relativeRoleCompletionExamples];
+export const verbNounExamples=[...originalExamples,...expandedClauseExamples,...nominalizerExpansionExamples,...relativeCompletionExamples,...relativeBuildingCompletionExamples,...relativeRoleCompletionExamples,...relativeNegationCompletionExamples];
 const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.lessonId==='noun_clause_cases'&&!e.chunks?['structure'] as const:['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(e.lessonId)?['meaning','structure','build'] as const:['meaning','structure','type'] as const).map(task=>({
  ...(task==='build'?{chunks:e.chunks,expectedChunkIds:e.expectedChunkIds}:{}),
  ...(e.nominalMainSubject?{nominalMainSubject:e.nominalMainSubject}:{}),
@@ -171,5 +172,5 @@ const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.
 })));
 
 const redesigned=redesignLessons(originalLessonQuestions);
-export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions];
+export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions];
 export const retiredLessonQuestions=redesigned.retired;
