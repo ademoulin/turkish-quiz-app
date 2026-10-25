@@ -39,7 +39,7 @@ test('12E enters the broad mix, review and separate assembly evidence without gr
  const items=grammarItems.filter(i=>i.kind==='lesson'&&i.q.lessonId==='relative_roles'&&i.q.id.startsWith('vn12e-'));assert.equal(items.length,12);assert.equal(selectGrammarMix(items).length,12);
  const i=items.find(i=>i.kind==='lesson'&&i.q.task==='build')!;if(i.kind!=='lesson')throw Error('lesson');const selected=[...i.q.expectedChunkIds!];selected[1]=i.q.chunks!.find(c=>c.id.endsWith('-wrong-case'))!.id;
  const a=recordGrammarItem([],i,JSON.stringify(selected),'random','');assert.equal(a[0].sessionKind,'random_grammar');assert.equal(grammarMistakes(a)[0].q.id,i.q.id);assert.equal(lessonMistakes(a,'relative_roles','build').length,1);
- const card=grammarProgress(a).concepts.find(c=>c.id===itemGroup(i))!;assert.equal(card.modes.assembly!.attempts,1);assert.equal(card.modes.typed,undefined);assert.equal(card.modes.structure,undefined);assert.equal(card.missed,1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);
+ const card=grammarProgress(a).concepts.find(c=>c.id===itemGroup(i))!;assert.equal(card.modes.assembly!.attempts,1);assert.equal(card.modes.typed?.available,12);assert.equal(card.modes.structure?.available,12);assert.equal(card.missed,1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);
 });
 test('12E mixed sessions assess each model once and balance meaning, structure and assembly',()=>{
  for(let n=0;n<20;n++){const mixed=selectLessonQuestions('relative_roles','build');assert.equal(mixed.length,12);assert.equal(new Set(mixed.map(q=>q.exampleId)).size,12);for(const task of ['build'] as const){assert.equal(mixed.filter(q=>q.task===task).length,12);assert.equal(selectLessonQuestions('relative_roles',task).length,12);}}
