@@ -10,7 +10,7 @@ test('24 distinct new situations add choices and production without changing the
  assert.equal(models.length,24);assert.equal(new Set(models.map(e=>e.sentence)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);assert.equal(questions.filter(q=>q.task==='structure').length,12);
  assert.equal(lessonPool('noun_clause_cases').length,72);assert.equal(lessonPool('noun_clause_cases','build').length,12);
- assert.equal(verbNounQuestions.filter(q=>!q.id.startsWith('vn12c-expand-')&&!q.id.startsWith('vn8-expand-')&&!q.id.startsWith('vn-relative-expand-')).length,397);
+ assert.equal(verbNounQuestions.filter(q=>!q.id.startsWith('vn12c-expand-')&&!q.id.startsWith('vn8-expand-')&&!q.id.startsWith('vn-relative-expand-')).length,421);
  for(const q of questions){const e=models.find(e=>e.id===q.exampleId)!;assert.equal(q.sentence.replace('___',q.expected),e.sentence);const copy=lessonExerciseCopy(q,e);assert.equal(copy.outerCase,undefined);assert.equal(copy.meaning,e.meaning);assert.equal(copy.construction,q.task==='type'?{ma:'-mA',dik:'-DIK',acak:'-(y)AcAK'}[q.nominalConstruction!]:undefined);assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.deepEqual(q.supportingRuleIds,[]);}
  for(let i=0;i<10;i++){const mix=selectLessonQuestions('noun_clause_cases');assert.equal(new Set(mix.map(q=>q.exampleId)).size,12);for(const task of ['structure','type','build'])assert.equal(mix.filter(q=>q.task===task).length,4);}
 });
