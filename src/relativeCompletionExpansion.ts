@@ -6,7 +6,7 @@ type Row={lesson:'subject_relatives'|'object_relatives';template:string;answer:s
 const rows:Row[]=[
   {
     "lesson": "subject_relatives",
-    "template": "Yarın sabah ilk otobüsle ___ yolcular burada bekliyor.",
+    "template": "Yarın sabah ilk otobüsle ___ yolcular bilet aldı.",
     "answer": "gelecek olan",
     "distractors": [
       "gelen",
@@ -15,7 +15,7 @@ const rows:Row[]=[
     ],
     "stem": "come",
     "verbMeaning": "future",
-    "time": "The passengers who will come on the first bus tomorrow morning are waiting here.",
+    "time": "The passengers who will come on the first bus tomorrow morning bought tickets.",
     "meaning": "Future passengers take gelecek olan; gelen does not explicitly anchor the later arrival."
   },
   {
@@ -221,7 +221,7 @@ const rows:Row[]=[
   },
   {
     "lesson": "object_relatives",
-    "template": "Ayşe’nin dün ___ mektubu masada duruyor.",
+    "template": "Ayşe’nin dün ___ mektup masada duruyor.",
     "answer": "yazmadığı",
     "distractors": [
       "yazdığı",
@@ -401,8 +401,8 @@ const rows:Row[]=[
   }
 ];
 export const relativeCompletionExamples:VerbNounExample[]=rows.map((r,i)=>{
- const id=`vn-relative-expand-${String(i+1).padStart(2,'0')}`,sentence=r.template.replace('___',r.answer),head=r.lesson==='subject_relatives'?'':r.template.split('___ ')[1].split(' ')[0];
- return {id,lessonId:r.lesson,stem:r.stem,verbMeaning:r.verbMeaning,form:r.lesson==='subject_relatives'?'subject_relative_an':r.form==='acak'?'object_relative_acak':'object_relative_dik',relativeForm:r.form,relativeTime:r.time,relativeHead:head||undefined,nominalSubject:r.subject,subjectGenitive:r.genitive,template:r.template,sentence,answer:r.answer,unit:sentence.slice(0,-1),main:'',meaning:r.meaning,distractors:['',''],breakdown:'',explanation:r.reason,supportingRuleIds:[]};
+ const id=`vn-relative-expand-${String(i+1).padStart(2,'0')}`,sentence=r.template.replace('___',r.answer),head=r.template.split('___ ')[1].split(' ')[0],lastSpace=sentence.lastIndexOf(' '),unit=sentence.slice(0,lastSpace),main=sentence.slice(lastSpace+1,-1);
+ return {id,lessonId:r.lesson,stem:r.stem,verbMeaning:r.verbMeaning,form:r.lesson==='subject_relatives'?'subject_relative_an':r.form==='acak'?'object_relative_acak':'object_relative_dik',relativeForm:r.form,relativeTime:r.time,relativeHead:head,nominalSubject:r.subject,subjectGenitive:r.genitive,template:r.template,sentence,answer:r.answer,unit,main,meaning:r.meaning,distractors:['',''],breakdown:'',explanation:r.reason,supportingRuleIds:[]};
 });
 export const relativeCompletionQuestions:VerbNounQuestion[]=rows.map((r,i)=>{
  const e=relativeCompletionExamples[i],task=i%2===0?'structure' as const:'type' as const;
