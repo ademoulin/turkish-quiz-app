@@ -7,7 +7,7 @@ import {grammarMistakes} from './grammarRegistry';
 import {correctPilot,validatePilotImport} from './casePilot';
 const lesson='relative_roles' as const;
 test(lesson+' retains guided assembly and retires interpretation/analysis',()=>{
- assert.deepEqual(lessonTasks(lesson),['build']);assert.equal(lessonPool(lesson).length,12);
+ assert.deepEqual(lessonTasks(lesson),['structure','type','build']);assert.equal(lessonPool(lesson).length,36);
  const old=retiredLessonQuestions.filter(q=>q.lessonId===lesson);assert.equal(old.length,36);assert.equal(old.filter(q=>q.task==='meaning').length,12);assert.equal(old.filter(q=>q.task==='structure').length,24);
 });
 test(lesson+' preserves old backups separately and updates the original assembly correction',()=>{
