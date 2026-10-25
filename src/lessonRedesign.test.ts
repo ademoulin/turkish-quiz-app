@@ -50,7 +50,7 @@ test('5.6 has active while overlap practice and retired results remain available
  assert.deepEqual(lessonTasks('temporal_while'),['structure','type']);assert.equal(selectLessonQuestions('temporal_while').length,12);
  const old=retired.filter(q=>q.lessonId==='temporal_while');assert.equal(old.length,36);
  const history=old.map(q=>recordLesson([],q,q.task==='type'?q.expected:'target','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
- const report=grammarProgress(history),row=report.concepts.find(c=>c.id==='lesson_temporal_while')!;assert.equal(report.unlinked,0);assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.deepEqual(row.modes,{});assert.equal(grammarMistakes(history).length,0);
+ const report=grammarProgress(history),row=report.concepts.find(c=>c.id==='lesson_temporal_while')!;assert.equal(report.unlinked,0);assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.equal(row.modes.structure?.available,12);assert.equal(row.modes.typed?.available,12);assert.equal(grammarMistakes(history).length,0);
  assert.ok(lessonPool('temporal_contrasts','type').some(q=>q.temporalRelation==='while'));
  assert.ok(lessonPool('sentence_building','build').some(q=>q.temporalRelation==='while'));
  for(const id of ['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'] as const){assert.deepEqual(lessonTasks(id),['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while'].includes(id)?['structure','type']:['type']);assert.equal(lessonPool(id).length,['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when'].includes(id)?36:id==='temporal_while'?24:12);}
