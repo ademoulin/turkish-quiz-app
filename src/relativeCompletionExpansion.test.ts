@@ -24,8 +24,8 @@ test('24 new relative completions balance 4.1 and 4.2, choice and typed producti
  }
  assert.equal(lessonPool('subject_relatives').length,31);
  assert.equal(lessonPool('object_relatives').length,30);
- assert.equal(verbNounExamples.length,648);
- assert.equal(verbNounQuestions.length,709);
+ assert.equal(verbNounExamples.length,672);
+ assert.equal(verbNounQuestions.length,733);
  for(const q of questions){
   const e=models.find(e=>e.id===q.exampleId)!;
   assert.equal(e.template.replace('___',e.answer),e.sentence);
