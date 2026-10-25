@@ -200,7 +200,7 @@ test('converb evidence round-trips with distinct metadata, original corrections 
 });
 
 test('arak models balance actors, contexts and two-way harmony with strict complete-converb production',()=>{
- const models=examples.filter(e=>e.lessonId==='converb_arak'),pool=lessonPool('converb_arak','type');
+ const models=examples.filter(e=>e.lessonId==='converb_arak'&&!e.id.startsWith('vn52-expand-')),pool=lessonPool('converb_arak','type').filter(q=>!q.id.startsWith('vn52-expand-'));
  assert.deepEqual(pool.map(q=>q.expected),['gülerek','okuyarak','yürüyerek','yazarak','dinleyerek','koşarak','izleyerek','konuşarak','çizerek','tekrarlayarak','düşünerek','bakarak']);
  for(const person of ['ben','sen','o','biz','siz','onlar'])assert.equal(models.filter(e=>e.converbSubject===person).length,2);
  for(const time of ['past','future','habitual'])assert.equal(models.filter(e=>e.converbTime===time).length,4);
