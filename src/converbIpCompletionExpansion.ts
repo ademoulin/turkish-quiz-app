@@ -21,6 +21,6 @@ export const converbIpCompletionQuestions:VerbNounQuestion[]=converbIpCompletion
   sentence:example.template,expected:example.answer,
   ...(isClause?{}:{optionLanguage:'tr' as const,expectedOptionId:'target',options:[{id:'target',text:example.answer},{id:'other-1',text:alternatives[0].main},{id:'other-2',text:alternatives[1].main}]}),
   converbSubject:source.converbSubject,converbTime:source.converbTime,
-  source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:source.supportingRuleIds,
+  source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:isClause?source.supportingRuleIds:[],
  };
 });
