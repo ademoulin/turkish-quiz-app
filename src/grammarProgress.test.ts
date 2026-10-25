@@ -12,7 +12,7 @@ const typed=grammarItems.find(i=>i.kind==='typed')!;
 const at=(a:PilotAttempt,id:string,time:string,patch:Partial<PilotAttempt>={})=>({...a,id,time,...patch});
 test('broad registry includes current practice and mixes all nine families without answer leaks',()=>{
  assert.equal(new Set(grammarItems.map(i=>i.q.id)).size,grammarItems.length);
- assert.equal(grammarItems.filter(i=>i.kind==='multiple_choice').length,413);assert.equal(grammarItems.filter(i=>i.kind==='lesson').length,469);
+ assert.equal(grammarItems.filter(i=>i.kind==='multiple_choice').length,413);assert.equal(grammarItems.filter(i=>i.kind==='lesson').length,493);
  for(let n=0;n<40;n++){const pool=selectGrammarMix();assert.equal(pool.length,12);assert.equal(new Set(pool.map(i=>i.q.id)).size,12);assert.equal(new Set(pool.map(i=>i.family)).size,9);for(const family of new Set(pool.map(i=>i.family)))assert.ok(pool.filter(i=>i.family===family).length<=2);const models=pool.filter(i=>i.kind==='lesson').map(i=>i.kind==='lesson'&&i.q.exampleId);assert.equal(new Set(models).size,models.length);const skills=pool.filter(i=>i.kind==='multiple_choice').map(i=>i.kind==='multiple_choice'&&i.q.skill_id);assert.equal(new Set(skills).size,skills.length);}
  const first=grammarItems.find(i=>i.kind==='lesson')!;const lesson=grammarItems.filter(i=>i.kind==='lesson'&&first.kind==='lesson'&&i.q.exampleId===first.q.exampleId);assert.equal(selectGrammarMix(lesson).length,1);const mc=grammarItems.filter(i=>i.kind==='multiple_choice'&&i.q.skill_id===activeGrammarQuestions[0].skill_id);assert.equal(selectGrammarMix(mc).length,1);assert.deepEqual(selectGrammarMix([]),[]);
 });
