@@ -1,3 +1,4 @@
+import {temporalWhileCompletionExamples,temporalWhileCompletionQuestions} from './temporalWhileCompletionExpansion';
 import {temporalWhenCompletionExamples,temporalWhenCompletionQuestions} from './temporalWhenCompletionExpansion';
 import {temporalOrderCompletionExamples,temporalOrderCompletionQuestions} from './temporalOrderCompletionExpansion';
 import {converbMadanCompletionExamples,converbMadanCompletionQuestions} from './converbMadanCompletionExpansion';
@@ -149,7 +150,7 @@ export interface VerbNounQuestion extends Partial<RelativeBuildingEvidence&Relat
  prompt:string;sentence:string;expected:string;options?:LessonOption[];expectedOptionId?:string;
  source:'newly_authored';reviewStatus:'draft_needs_independent_review';supportingRuleIds:string[];
 }
-export const verbNounExamples=[...originalExamples,...expandedClauseExamples,...nominalizerExpansionExamples,...relativeCompletionExamples,...relativeBuildingCompletionExamples,...relativeRoleCompletionExamples,...relativeNegationCompletionExamples,...converbIpCompletionExamples,...converbArakCompletionExamples,...converbMadanCompletionExamples,...temporalOrderCompletionExamples,...temporalWhenCompletionExamples];
+export const verbNounExamples=[...originalExamples,...expandedClauseExamples,...nominalizerExpansionExamples,...relativeCompletionExamples,...relativeBuildingCompletionExamples,...relativeRoleCompletionExamples,...relativeNegationCompletionExamples,...converbIpCompletionExamples,...converbArakCompletionExamples,...converbMadanCompletionExamples,...temporalOrderCompletionExamples,...temporalWhenCompletionExamples,...temporalWhileCompletionExamples];
 const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.lessonId==='noun_clause_cases'&&!e.chunks?['structure'] as const:['sentence_building','noun_clause_building','noun_clause_cases','relative_building','relative_roles','relative_negation'].includes(e.lessonId)?['meaning','structure','build'] as const:['meaning','structure','type'] as const).map(task=>({
  ...(task==='build'?{chunks:e.chunks,expectedChunkIds:e.expectedChunkIds}:{}),
  ...(e.nominalMainSubject?{nominalMainSubject:e.nominalMainSubject}:{}),
@@ -177,5 +178,5 @@ const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.
 })));
 
 const redesigned=redesignLessons(originalLessonQuestions);
-export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions,...converbIpCompletionQuestions,...converbArakCompletionQuestions,...converbMadanCompletionQuestions,...temporalOrderCompletionQuestions,...temporalWhenCompletionQuestions];
+export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions,...converbIpCompletionQuestions,...converbArakCompletionQuestions,...converbMadanCompletionQuestions,...temporalOrderCompletionQuestions,...temporalWhenCompletionQuestions,...temporalWhileCompletionQuestions];
 export const retiredLessonQuestions=redesigned.retired;
