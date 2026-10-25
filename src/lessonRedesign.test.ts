@@ -53,6 +53,6 @@ test('5.6 is guide-only while overlap practice and retired results remain availa
  const report=grammarProgress(history),row=report.concepts.find(c=>c.id==='lesson_temporal_while')!;assert.equal(report.unlinked,0);assert.equal(row.legacyChecks,36);assert.equal(row.attempts,0);assert.deepEqual(row.modes,{});assert.equal(grammarMistakes(history).length,0);
  assert.ok(lessonPool('temporal_contrasts','type').some(q=>q.temporalRelation==='while'));
  assert.ok(lessonPool('sentence_building','build').some(q=>q.temporalRelation==='while'));
- for(const id of ['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','state_ken','temporal_contrasts'] as const){assert.deepEqual(lessonTasks(id),id==='converb_ip'?['structure','type']:['type']);assert.equal(lessonPool(id).length,id==='converb_ip'?36:12);}
+ for(const id of ['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','state_ken','temporal_contrasts'] as const){assert.deepEqual(lessonTasks(id),['converb_ip','converb_arak'].includes(id)?['structure','type']:['type']);assert.equal(lessonPool(id).length,['converb_ip','converb_arak'].includes(id)?36:12);}
  assert.deepEqual(lessonTasks('sentence_building'),['build']);
 });
