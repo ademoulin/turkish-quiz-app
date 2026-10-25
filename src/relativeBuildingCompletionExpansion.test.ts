@@ -12,8 +12,8 @@ test('4.3 expands by 24 unique completions with 12 choices and 12 typed',()=>{
  assert.equal(new Set(examples.map(e=>e.sentence)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,528);
- assert.equal(verbNounQuestions.length,589);
+ assert.equal(verbNounExamples.length,552);
+ assert.equal(verbNounQuestions.length,613);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
   assert.equal(q.sentence.replace('___',q.expected),e.sentence);
