@@ -10,7 +10,7 @@ test('4.4 adds 12 typed inner-role modifiers and 12 outer-case choices',()=>{
  assert.equal(new Set(questions.map(q=>q.id)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,576);assert.equal(verbNounQuestions.length,637);
+ assert.equal(verbNounExamples.length,600);assert.equal(verbNounQuestions.length,661);
  assert.equal(lessonPool('relative_roles').filter(q=>q.id.startsWith('vn44-expand-')).length,24);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
