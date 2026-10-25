@@ -38,7 +38,7 @@ export type VerbNounTask = keyof typeof verbNounTasks;
 export const verbNounConcepts = {
  vn_relative_negation_meaning:"Relative negation · meaning",vn_relative_negation_structure:"Relative negation · scope and clause roles",vn_relative_negation_build:"Relative negation · guided assembly",
  vn_relative_roles_meaning:"Relative complements · meaning",vn_relative_roles_structure:"Relative complements · inner role and main-clause role",vn_relative_roles_build:"Relative complements · guided assembly",
- vn_relative_building_meaning:'Relative sentences · meaning',vn_relative_building_structure:'Relative sentences · actor, head and whole-phrase role',vn_relative_building_build:'Relative sentences · guided assembly',
+ vn_relative_building_meaning:'Relative sentences · meaning',vn_relative_building_structure:'Relative sentences · actor, head and whole-phrase role',vn_relative_building_build:'Relative sentences · guided assembly',vn_relative_building_type:'Relative sentences · typed completion',
  vn_action_forms_meaning:'Activity forms · meaning',vn_action_forms_structure:'Activity forms · choose from context',vn_action_forms_type:'Activity forms · choose and produce',
  vn_noun_clause_cases_type:'Noun-clause complements · typed production',
  vn_noun_clause_cases_meaning:"Noun-clause complements · meaning",vn_noun_clause_cases_structure:"Noun-clause complements · whole-clause case",vn_noun_clause_cases_build:"Noun-clause complements · guided sentence assembly",
