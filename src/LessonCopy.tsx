@@ -6,7 +6,7 @@ export function LessonCues({q,example:e}:{q:VerbNounQuestion;example:VerbNounExa
  const c=lessonExerciseCopy(q,e);
  return <>
  {(c.construction||c.timing)&&<div className="exercise-cues">{c.construction&&<p>Requested construction: <strong>{c.construction}</strong></p>}{c.timing&&<p>Requested timing: {c.timing}</p>}</div>}
- {q.task==='type'&&<div className="exercise-cues"><p>{e.temporalPredicate?'Given '+e.temporalPredicate+' base: ':'Verb stem: '}<strong lang="tr">{e.stem}{e.temporalPredicate?'':'-'}</strong> · {e.verbMeaning}</p>
+ {q.task==='type'&&!e.id.startsWith('vn-relative-expand-')&&<div className="exercise-cues"><p>{e.temporalPredicate?'Given '+e.temporalPredicate+' base: ':'Verb stem: '}<strong lang="tr">{e.stem}{e.temporalPredicate?'':'-'}</strong> · {e.verbMeaning}</p>
  {c.outerCase&&<p>Outer case: {c.outerCase}</p>}
  {e.kenBase&&<p>{q.lessonId==='temporal_contrasts'?'Supplied linking base (for while):':'Supplied linking base:'} <strong lang="tr">{e.kenBase}-</strong></p>}
  {c.pluralAgreement&&<p>Use overt -ları/-leri agreement for onlar.</p>}
