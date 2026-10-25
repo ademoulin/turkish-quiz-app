@@ -23,5 +23,5 @@ const reasons:Record<string,string>={
  ...additionalClauseRules,
 };
 export function clauseCaseFeedback(e:VerbNounExample){
- return {reason:reasons[e.main],note:e.nominalSubject==='onlar'?'Singular agreement with onların is also possible in Turkish. This exercise requests overt plural agreement.':undefined};
+ return {reason:e.id.startsWith('vn12c-expand-')?e.explanation:reasons[e.main],note:e.nominalSubject==='onlar'?'Singular agreement with onların is also possible in Turkish. This exercise requests overt plural agreement.':undefined};
 }

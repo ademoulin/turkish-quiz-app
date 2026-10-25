@@ -10,7 +10,7 @@ const pool=lessonPool('action_forms'),choices=lessonPool('action_forms','structu
 
 test('2B asks for context-driven forms without person agreement or answer-bearing suffix cues',()=>{
  assert.equal(models.length,24);assert.equal(pool.length,48);
- assert.equal(verbNounExamples.length,336);assert.equal(verbNounQuestions.length,397);
+ assert.equal(verbNounExamples.length,360);assert.equal(verbNounQuestions.length,421);
  const expected=['yüzmek','yüzmek','yüzmeyi','yüzmeye','yüzmekten','yüzmek','yüzmekte','okumak','okumak','okumayı','okumaya','okumaktan','okumak','okumakta','dinlemeyi','öğrenmeyi','koşmaya','yürümeye','konuşmaktan','çalışmaktan','dinlenmek','konuşmak','öğrenmekte','anlamakta'];
  assert.deepEqual(models.map(e=>e.answer),expected);
  for(const [i,e] of models.entries()){

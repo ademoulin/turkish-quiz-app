@@ -6,10 +6,10 @@ import {clauseCaseFeedback} from './clauseCaseFeedback';
 import {grammarProgress} from './grammarProgress';
 import {grammarMistakes} from './grammarRegistry';
 import {validatePilotImport} from './casePilot';
-const choices=lessonPool('noun_clause_cases','structure');
+const choices=lessonPool('noun_clause_cases','structure').filter(q=>!q.id.startsWith('vn12c-expand-'));
 test('3.11 has 36 distinct case scenarios, twelve predicate patterns and no interpretation tasks',()=>{
  assert.equal(choices.length,36);assert.equal(new Set(choices.map(q=>q.sentence)).size,36);
- assert.deepEqual(lessonTasks('noun_clause_cases'),['structure','build']);
+ assert.deepEqual(lessonTasks('noun_clause_cases'),['structure','type','build']);
  const rules=new Set<string>();
  for(const q of choices){
   const e=verbNounExamples.find(e=>e.id===q.exampleId)!,rule=clauseCaseFeedback(e).reason;assert.ok(rule);assert.ok(rule.includes(q.nominalCase!));rules.add(rule.split(' takes')[0]);
@@ -22,10 +22,10 @@ test('3.11 has 36 distinct case scenarios, twelve predicate patterns and no inte
 });
 test('mixed sessions combine case decisions and assembly without repeating a scenario',()=>{
  for(let n=0;n<30;n++){
-  const mix=selectLessonQuestions('noun_clause_cases');assert.equal(mix.length,12);assert.equal(new Set(mix.map(q=>q.exampleId)).size,12);assert.equal(mix.filter(q=>q.task==='structure').length,6);assert.equal(mix.filter(q=>q.task==='build').length,6);
+  const mix=selectLessonQuestions('noun_clause_cases');assert.equal(mix.length,12);assert.equal(new Set(mix.map(q=>q.exampleId)).size,12);assert.equal(mix.filter(q=>q.task==='structure').length,4);assert.equal(mix.filter(q=>q.task==='build').length,4);
  }
  const removed=retiredLessonQuestions.filter(q=>q.lessonId==='noun_clause_cases');assert.equal(removed.length,36);
  const old=removed.map(q=>recordLesson([],q,'other-1','legacy-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:old}),old);assert.equal(grammarMistakes(old).length,0);
- const card=grammarProgress(old).concepts.find(c=>c.id==='lesson_noun_clause_cases')!;assert.equal(card.legacyChecks,36);assert.equal(card.attempts,0);assert.equal(card.modes.meaning,undefined);assert.equal(card.modes.structure!.available,36);
- assert.ok(verbNounQuestions.every(q=>q.lessonId!=='noun_clause_cases'||q.task==='structure'||q.task==='build'));
+ const card=grammarProgress(old).concepts.find(c=>c.id==='lesson_noun_clause_cases')!;assert.equal(card.legacyChecks,36);assert.equal(card.attempts,0);assert.equal(card.modes.meaning,undefined);assert.equal(card.modes.structure!.available,48);
+ assert.ok(verbNounQuestions.every(q=>q.lessonId!=='noun_clause_cases'||q.task==='structure'||q.task==='type'||q.task==='build'));
 });
