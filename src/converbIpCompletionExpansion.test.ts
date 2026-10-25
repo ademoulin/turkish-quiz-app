@@ -10,7 +10,7 @@ test('5.1 adds 12 complete converb-clause production and 12 finite-predicate cho
  assert.equal(new Set(questions.map(q=>q.id)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,600);assert.equal(verbNounQuestions.length,661);
+ assert.equal(verbNounExamples.length,624);assert.equal(verbNounQuestions.length,685);
  assert.equal(lessonPool('converb_ip').filter(q=>q.id.startsWith('vn51-expand-')).length,24);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
