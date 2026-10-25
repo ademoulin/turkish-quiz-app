@@ -19,7 +19,8 @@ export const constructionNames={ma:'-mA',dik:'-DIK',acak:'-(y)AcAK'} as const;
 export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  const old=lessonPresentation(q.prompt,e.meaning);
  let instruction=old.instruction;
- if(q.task==='build')instruction='Combine the source clauses in the guided frame.';
+ if(e.id.startsWith('vn-relative-expand-'))instruction=q.task==='type'?'Complete the missing expression.':'Choose the form that completes the sentence.';
+ else if(q.task==='build')instruction='Combine the source clauses in the guided frame.';
  else if(q.lessonId==='clause_cases'&&q.task==='structure')instruction='Choose the form that completes the sentence.';
  else if(q.task==='type'&&q.lessonId!=='action_forms')instruction=targets[e.form]||'Complete the missing word.';
  // The subject-choice options already exclude bare -ma; typing still needs
@@ -51,8 +52,8 @@ export function lessonReason(e:VerbNounExample):string{
  case 'content_dik':return e.contentTime==='habitual_fact'?'-DIK expresses a habitual fact here, not necessarily a past event.':'-DIK expresses the past event in this context.';
  case 'content_future':return e.contentTime==='future_report'?'The event is future relative to the past statement.':'-(y)AcAK expresses the future event.';
  case 'contrasts':return e.id.startsWith('vn8-expand-')?e.explanation:e.nominalConstruction==='ma'?'Use -mA for the wanted action with istemek.':e.nominalConstruction==='dik'?'Use -DIK for the nonfuture fact introduced by bilmek.':'Use -(y)AcAK for the future content introduced by bilmek.';
- case 'subject_relatives':return 'The described noun performs the relative-clause action: use -(y)An.';
- case 'object_relatives':return `${e.relativeForm==='acak'?'-(y)AcAK describes the future action':'-DIK describes the nonfuture action'}; agreement matches ${e.subjectGenitive}.`;
+ case 'subject_relatives':return e.id.startsWith('vn-relative-expand-')?e.explanation: 'The described noun performs the relative-clause action: use -(y)An.';
+ case 'object_relatives':return e.id.startsWith('vn-relative-expand-')?e.explanation: `${e.relativeForm==='acak'?'-(y)AcAK describes the future action':'-DIK describes the nonfuture action'}; agreement matches ${e.subjectGenitive}.`;
  case 'converb_ip':return '-(y)Ip links the actions; the final verb carries tense and person.';
  case 'converb_arak':return '-(y)ArAk describes how the main action happens.';
  case 'converb_madan':return '-mAdAn marks the action left undone while the main action happens.';
