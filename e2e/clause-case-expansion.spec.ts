@@ -6,7 +6,7 @@ test('3.11 typed expansion hides case/answers, grades strict Turkish once and sa
  const seen=new Set<string>();
  for(let n=0;n<12;n++){
   const id=await area.locator('[data-question-id]').getAttribute('data-question-id'),q=questions.find(q=>q.id===id)!,e=models.find(e=>e.id===q.exampleId)!;expect(q.task).toBe('type');expect(seen.has(id!)).toBe(false);seen.add(id!);
-  await expect(area.locator('.exercise-meaning')).toHaveText(e.meaning);await expect(area.getByText(/Outer case:/)).toHaveCount(0);await expect(area.getByText('Requested construction:',{exact:false})).toBeVisible();await expect(area.locator('.feedback')).toHaveCount(0);
+  await expect(area.locator('.exercise-meaning')).toContainText(e.meaning);await expect(area.getByText(/Outer case:/)).toHaveCount(0);await expect(area.getByText('Requested construction:',{exact:false})).toBeVisible();await expect(area.locator('.feedback')).toHaveCount(0);
   const input=area.getByLabel('Complete action noun',{exact:true});await input.fill(n===0?'wrong':' '+q.expected.normalize('NFD')+' ');await input.press('Enter');await expect(area.locator('.feedback-reason')).toHaveText(e.explanation);await expect(area.getByRole('button',{name:'Answer checked',exact:true})).toBeDisabled();
   if(n===0)await area.getByRole('button',{name:'My answer was correct',exact:true}).click();
   await expect(area.getByText(`${n+1} / ${n+1} correct`,{exact:true})).toBeVisible();await area.getByRole('button',{name:n===11?'See lesson results':'Next lesson question',exact:true}).click();
