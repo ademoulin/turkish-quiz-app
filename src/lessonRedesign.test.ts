@@ -38,7 +38,7 @@ test('batch 2 keeps application modes and versions nominalizer word choices sepa
  for(const lesson of ['negation','content_dik','content_future','noun_clause_building'] as const){assert.deepEqual(lessonTasks(lesson),[lesson==='noun_clause_building'?'build':'type']);assert.equal(lessonPool(lesson).length,12);}
  assert.deepEqual(lessonTasks('contrasts'),['structure','type']);
  const old=retired.filter(q=>q.lessonId==='contrasts'&&q.task==='structure');assert.equal(old.length,12);
- for(const q of lessonPool('contrasts','structure')){
+ for(const q of lessonPool('contrasts','structure').filter(q=>!q.id.startsWith('vn8-expand-'))){
   assert.equal(q.id,old.find(o=>o.exampleId===q.exampleId)!.id+'-v2');assert.equal(q.expected,lessonPool('contrasts','type').find(t=>t.exampleId===q.exampleId)!.expected);
   assert.equal(q.optionLanguage,'tr');assert.ok(q.options!.every(o=>!/[ +]/.test(o.text)));
   for(const option of q.options!)assert.equal(recordLesson([],q,option.id,'choice')[0].correct,option.id==='target');

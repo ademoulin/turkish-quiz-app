@@ -50,7 +50,7 @@ export function lessonReason(e:VerbNounExample):string{
  case 'negation':return e.negationScope==='action'?'Negate the embedded action; keep the supplied main predicate.':e.negationScope==='main'?'Only the main predicate is negative; the embedded action stays affirmative.':'The requested action is affirmative.';
  case 'content_dik':return e.contentTime==='habitual_fact'?'-DIK expresses a habitual fact here, not necessarily a past event.':'-DIK expresses the past event in this context.';
  case 'content_future':return e.contentTime==='future_report'?'The event is future relative to the past statement.':'-(y)AcAK expresses the future event.';
- case 'contrasts':return e.nominalConstruction==='ma'?'Use -mA for the wanted action with istemek.':e.nominalConstruction==='dik'?'Use -DIK for the nonfuture fact introduced by bilmek.':'Use -(y)AcAK for the future content introduced by bilmek.';
+ case 'contrasts':return e.id.startsWith('vn8-expand-')?e.explanation:e.nominalConstruction==='ma'?'Use -mA for the wanted action with istemek.':e.nominalConstruction==='dik'?'Use -DIK for the nonfuture fact introduced by bilmek.':'Use -(y)AcAK for the future content introduced by bilmek.';
  case 'subject_relatives':return 'The described noun performs the relative-clause action: use -(y)An.';
  case 'object_relatives':return `${e.relativeForm==='acak'?'-(y)AcAK describes the future action':'-DIK describes the nonfuture action'}; agreement matches ${e.subjectGenitive}.`;
  case 'converb_ip':return '-(y)Ip links the actions; the final verb carries tense and person.';
