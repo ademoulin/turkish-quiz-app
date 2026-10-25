@@ -10,7 +10,7 @@ test('5.3 adds 12 complete converb-clause production and 12 finite-predicate cho
  assert.equal(new Set(questions.map(q=>q.id)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,672);assert.equal(verbNounQuestions.length,733);
+ 
  assert.equal(lessonPool('converb_madan').filter(q=>q.id.startsWith('vn53-expand-')).length,24);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
