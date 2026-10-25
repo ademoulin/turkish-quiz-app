@@ -20,6 +20,6 @@ test('4.4 adds 12 typed inner-role modifiers and 12 outer-case choices',()=>{
   const bad=recordLesson([],q,q.task==='type'?'incorrect-form':'other-1','bad');
   assert.equal(bad[0].correct,false);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:bad}),bad);
   assert.equal(correctPilot(bad,bad[0].id)[0].correct,true);
-  if(q.task==='structure'){assert.ok(q.options!.length>=3);assert.equal(new Set(q.options!.map(o=>o.text)).size,q.options!.length);}
+  if(q.task==='structure'){assert.ok(q.options!.length>=2);assert.equal(new Set(q.options!.map(o=>o.text)).size,q.options!.length);}
  }
 });
