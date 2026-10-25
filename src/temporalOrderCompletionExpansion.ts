@@ -1,0 +1,27 @@
+import type {VerbNounExample,VerbNounQuestion} from './verbNouns';
+import {temporalOrderExamples} from './verbNounTemporalOrder';
+
+/** Additional 5.4 before/after production and finite-predicate tasks.
+ * The source examples establish relative order independently of tense.
+ * These are authored exercises, not textbook quotations. */
+export const temporalOrderCompletionExamples:VerbNounExample[]=temporalOrderExamples.flatMap((base,index)=>{
+ const lead=base.converbLead!,clause=base.converbClause!,final=base.main;
+ return [
+  {...base,id:`vn54-expand-${String(index+1).padStart(2,'0')}-clause`,template:`${lead} ___ ${final}.`,answer:clause},
+  {...base,id:`vn54-expand-${String(index+1).padStart(2,'0')}-finite`,template:`${lead} ${clause} ___.`,answer:final},
+ ];
+});
+export const temporalOrderCompletionQuestions:VerbNounQuestion[]=temporalOrderCompletionExamples.map((example,index)=>{
+ const isClause=index%2===0,task=isClause?'type' as const:'structure' as const;
+ const source=temporalOrderExamples[Math.floor(index/2)];
+ const alternatives=temporalOrderExamples.filter(e=>e.main!==source.main && (e.mainSubject!==source.mainSubject || e.temporalTime!==source.temporalTime)).slice(0,2);
+ return {
+  id:`${example.id}-${task}`,exampleId:example.id,lessonId:'temporal_order',conceptId:`vn_temporal_order_${task}` as VerbNounQuestion['conceptId'],task,
+  exerciseType:isClause?'typed_converb':'converb_structure',
+  prompt:isClause?`Intended meaning: ${example.meaning} Type the entire time clause, including its subject and the correct -mAdAn önce or -DIktAn sonra form. The final predicate is supplied.`:`Intended meaning: ${example.meaning} Choose the complete final predicate. The time clause fixes the order of events; the final predicate carries the main action's tense and person.`,
+  sentence:example.template,expected:example.answer,
+  ...(isClause?{}:{optionLanguage:'tr' as const,expectedOptionId:'target',options:[{id:'target',text:example.answer},{id:'other-1',text:alternatives[0].main},{id:'other-2',text:alternatives[1].main}]}),
+  temporalRelation:source.temporalRelation,temporalSubject:source.temporalSubject,mainSubject:source.mainSubject,temporalTime:source.temporalTime,
+  source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:isClause?source.supportingRuleIds:[],
+ };
+});
