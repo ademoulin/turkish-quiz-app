@@ -8,7 +8,7 @@ import {grammarItems} from './grammarRegistry';
 import {correctPilot,validatePilotImport} from './casePilot';
 const current=lessonPool('noun_clause_cases','structure').filter(q=>!q.id.startsWith('vn12c-expand-')),old=retired.filter(q=>q.lessonId==='noun_clause_cases');
 test('3.11 chooses case forms without case/translation giveaways',()=>{
- assert.equal(current.length,36);assert.equal(old.length,36);assert.equal(bank.length,613);
+ assert.equal(current.length,36);assert.equal(old.length,36);assert.equal(bank.length,637);
  const forms=current.filter(q=>q.sentence.includes('___')),boundaries=current.filter(q=>!q.sentence.includes('___'));
  assert.equal(forms.length,36);assert.equal(boundaries.length,0);
  for(const q of current){const e=models.find(e=>e.id===q.exampleId)!;
