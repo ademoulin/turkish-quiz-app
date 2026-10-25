@@ -33,7 +33,7 @@ const rows:Row[]=[
 ];
 export const nominalizerExpansionExamples:VerbNounExample[]=rows.map((r,i)=>{
  const [template,answer,,,stem,nominalSubject,nominalConstruction,meaning,main,explanation]=r;
- return {id:`vn8-expand-${String(i+1).padStart(2,'0')}`,lessonId:'contrasts',template,sentence:template.replace('___',answer),answer,stem,verbMeaning:'Complete the word for the intended message.',nominalSubject,nominalConstruction,nominalCase:'accusative',form:'choose_nominalizer',meaning,main,unit:template.replace('___',answer).slice(0,-main.length-2),distractors:['',''],breakdown:'',explanation,supportingRuleIds:[]};
+ return {id:`vn8-expand-${String(i+1).padStart(2,'0')}`,lessonId:'contrasts',template,sentence:template.replace('___',answer),answer,stem,verbMeaning:'Complete the word for the intended message.',nominalSubject,nominalConstruction,nominalCase:'accusative',form:'choose_nominalizer',meaning,main,unit:template.replace('___',answer).slice(0,-main.length-2),distractors:['',''],structureDistractors:[r[2],r[3]],breakdown:'',explanation,supportingRuleIds:[]};
 });
 export const nominalizerExpansionQuestions:VerbNounQuestion[]=rows.map((r,i)=>{
  const e=nominalizerExpansionExamples[i],task=i%2===0?'structure' as const:'type' as const;
