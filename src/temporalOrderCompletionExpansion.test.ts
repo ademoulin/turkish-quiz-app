@@ -10,7 +10,7 @@ test('5.4 adds 12 complete before/after clause production and 12 finite-predicat
  assert.equal(new Set(questions.map(q=>q.id)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,600);assert.equal(verbNounQuestions.length,661);
+ assert.equal(verbNounExamples.length,624);assert.equal(verbNounQuestions.length,685);
  assert.equal(lessonPool('temporal_order').filter(q=>q.id.startsWith('vn54-expand-')).length,24);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
