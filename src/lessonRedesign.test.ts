@@ -46,7 +46,7 @@ test('batch 2 keeps application modes and versions nominalizer word choices sepa
  const history=old.map(q=>recordLesson([],q,'other-1','earlier-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
  const row=grammarProgress(history).concepts.find(c=>c.id==='lesson_contrasts')!;assert.equal(row.legacyChecks,12);assert.equal(row.attempts,0);assert.equal(row.modes.structure!.attempts,0);assert.equal(grammarMistakes(history).length,0);
 });
-test('5.6 is guide-only while overlap practice and retired results remain available',()=>{
+test('5.6 has active while overlap practice and retired results remain available',()=>{
  assert.deepEqual(lessonTasks('temporal_while'),['structure','type']);assert.equal(selectLessonQuestions('temporal_while').length,12);
  const old=retired.filter(q=>q.lessonId==='temporal_while');assert.equal(old.length,36);
  const history=old.map(q=>recordLesson([],q,q.task==='type'?q.expected:'target','old-'+q.id)[0]);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
