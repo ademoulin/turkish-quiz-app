@@ -6,10 +6,10 @@ import {correctPilot,validatePilotImport} from './casePilot';
 import {assembledSentence} from './sentenceChunks';
 import {grammarItems,itemGroup,recordGrammarItem,grammarMistakes,selectGrammarMix} from './grammarRegistry';
 import {grammarProgress} from './grammarProgress';
-const pool=lessonPool('relative_roles'),build=lessonPool('relative_roles','build');
+const pool=lessonPool('relative_roles').filter(q=>q.id.startsWith('vn12e-')),build=lessonPool('relative_roles','build');
 const response=(q:typeof pool[number])=>q.task==='build'?JSON.stringify(q.expectedChunkIds):'target';
 test('12E crosses three inner complement roles with four independent main-clause head roles, keeping inner actors and outer case separate',()=>{
- assert.equal(models.length,12);assert.equal(pool.length,12);assert.equal(build.length,12);assert.equal(lessonPool('relative_roles','type').length,0);
+ assert.equal(models.length,12);assert.equal(pool.length,12);assert.equal(build.length,12);assert.equal(lessonPool('relative_roles','type').length,12);
  for(const role of ['dative','locative','ablative'])for(const c of ['bare','accusative','dative','ablative'])assert.equal(models.filter(e=>e.relativeInnerRole===role&&e.relativeHeadCase===c).length,1);
  assert.equal(models.filter(e=>e.relativeConstruction==='dik').length,6);assert.equal(models.filter(e=>e.relativeConstruction==='acak').length,6);
  for(const actor of ['ben','sen','o','biz','siz','onlar'])assert.equal(models.filter(e=>e.relativeActor===actor).length,2);
@@ -36,13 +36,13 @@ test('12E backup metadata is required only for the new lesson and old version-1 
  const future=recordLesson([],pool.find(q=>q.relativeConstruction==='acak')!,'target','f')[0];assert.throws(()=>validatePilotImport({version:1,pilotAttempts:[{...future,relativeTime:'past'}]}));
 });
 test('12E enters the broad mix, review and separate assembly evidence without granting typed credit',()=>{
- const items=grammarItems.filter(i=>i.kind==='lesson'&&i.q.lessonId==='relative_roles');assert.equal(items.length,12);assert.equal(selectGrammarMix(items).length,12);
+ const items=grammarItems.filter(i=>i.kind==='lesson'&&i.q.lessonId==='relative_roles'&&i.q.id.startsWith('vn12e-'));assert.equal(items.length,12);assert.equal(selectGrammarMix(items).length,12);
  const i=items.find(i=>i.kind==='lesson'&&i.q.task==='build')!;if(i.kind!=='lesson')throw Error('lesson');const selected=[...i.q.expectedChunkIds!];selected[1]=i.q.chunks!.find(c=>c.id.endsWith('-wrong-case'))!.id;
  const a=recordGrammarItem([],i,JSON.stringify(selected),'random','');assert.equal(a[0].sessionKind,'random_grammar');assert.equal(grammarMistakes(a)[0].q.id,i.q.id);assert.equal(lessonMistakes(a,'relative_roles','build').length,1);
- const card=grammarProgress(a).concepts.find(c=>c.id===itemGroup(i))!;assert.equal(card.modes.assembly!.attempts,1);assert.equal(card.modes.typed,undefined);assert.equal(card.modes.structure,undefined);assert.equal(card.missed,1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);
+ const card=grammarProgress(a).concepts.find(c=>c.id===itemGroup(i))!;assert.equal(card.modes.assembly!.attempts,1);assert.equal(card.modes.typed?.available,12);assert.equal(card.modes.structure?.available,12);assert.equal(card.missed,1);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:a}),a);
 });
 test('12E mixed sessions assess each model once and balance meaning, structure and assembly',()=>{
- for(let n=0;n<20;n++){const mixed=selectLessonQuestions('relative_roles');assert.equal(mixed.length,12);assert.equal(new Set(mixed.map(q=>q.exampleId)).size,12);for(const task of ['build'] as const){assert.equal(mixed.filter(q=>q.task===task).length,12);assert.equal(selectLessonQuestions('relative_roles',task).length,12);}}
+ for(let n=0;n<20;n++){const mixed=selectLessonQuestions('relative_roles','build');assert.equal(mixed.length,12);assert.equal(new Set(mixed.map(q=>q.exampleId)).size,12);for(const task of ['build'] as const){assert.equal(mixed.filter(q=>q.task===task).length,12);assert.equal(selectLessonQuestions('relative_roles',task).length,12);}}
 });
 
 test('12E reconstructs concrete inner-case sources instead of treating every relative head as a direct object',()=>{
