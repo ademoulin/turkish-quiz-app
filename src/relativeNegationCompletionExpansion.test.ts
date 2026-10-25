@@ -10,7 +10,7 @@ test('4.5 adds 12 typed relative descriptions and 12 main-predicate choices, wit
  assert.equal(new Set(questions.map(q=>q.id)).size,24);
  assert.equal(questions.filter(q=>q.task==='type').length,12);
  assert.equal(questions.filter(q=>q.task==='structure').length,12);
- assert.equal(verbNounExamples.length,648);assert.equal(verbNounQuestions.length,709);
+ assert.equal(verbNounExamples.length,672);assert.equal(verbNounQuestions.length,733);
  assert.equal(lessonPool('relative_negation').filter(q=>q.id.startsWith('vn45-expand-')).length,24);
  for(const q of questions){
   const e=examples.find(e=>e.id===q.exampleId)!;
