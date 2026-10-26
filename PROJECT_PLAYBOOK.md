@@ -2,7 +2,7 @@
 
 **Purpose:** Single source of truth for product goals, verified status, known risks, and future work. Read this before proposing or implementing changes.
 
-**Last reviewed:** 2026-10-25. **Baseline:** `main`; documentation records current understanding, not a fresh exhaustive audit.
+**Last reviewed:** 2026-10-26. **Baseline:** `main`; documentation records current understanding, not a fresh exhaustive audit.
 
 ## Product charter
 
@@ -34,8 +34,8 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | --- | --- | --- | --- |
 | CORE | Vocabulary and conjugation app | Implemented | Operational; no redesign requested. Revalidate only when affected. |
 | CURR | Advanced grammar lessons, Sections 3–5 | Implemented | Curriculum and productive exercises exist on main. |
-| CLEAN | Remove low-value recognition/interpretation drills | Implemented / verification pending | `src/lessonRedesign.ts` retires many meaning/structure tasks across Sections 3–5. Do not re-audit from scratch; inventory only remaining active formats, including Sections 1–2 and separate Yeni Hitit 1 bank, to establish closure. |
-| QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | Targeted source review found eight remaining subject-recognition items and six isolated Yeni Hitit 1 recognition items for retirement. Changes are proposed, not yet merged or CI-verified. This is not a linguistic correctness certification or exhaustive manual inspection of every live prompt. |
+| CLEAN | Remove low-value recognition/interpretation drills | Implemented | PR #90 merged with 14 additional low-value exercises retired; automated checks passed. Broader instructional review remains under QUALITY. |
+| QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | PR #90 retired the eight subject-recognition items and six isolated Yeni Hitit 1 items; CI passed. Remaining pedagogical review is not an exhaustive manual inspection or linguistic correctness certification. |
 | ARCH | Maintainability and test-contract stabilization | Open | Identify narrow high-value changes to registry, presentation, grading, and history contracts; demonstrate preserved behavior and reduced special cases. No sweeping rewrite. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Open | Historical `yeni_hitit_1_linguistic_risk_queue_v82.csv` has 34 review flags (15 high, 19 medium), **not 34 missing lessons or confirmed errors**. Match each to current content; record disposition and evidence. |
 | ADV-LING | Advanced grammar linguistic validation | Open | Authored questions carry `draft_needs_independent_review`. Prioritize subject reference in temporal clauses, relative roles/cases, nominalization/agreement, and alternative valid answers; distinguish suspected risks from confirmed errors. |
@@ -47,13 +47,13 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 - PR #86: Lesson 5.8 expansion, merged.
 - PR #87: Playwright CI worker adjustment, merged.
-- PR #88: Full-sentence pilot, draft/paused.
+- PR #88: Full-sentence pilot, draft/paused.\n- PR #90: Low-value exercise retirement and initial test hardening, merged; CI passed.
 - Previous active advanced question count on main: 733; **not a permanent acceptance criterion**.
 - Separate Yeni Hitit 1 staging bank: 588 draft questions across 196 skills; verify live integration and current versions before drawing conclusions.
 
 ## Current priority and scope
 
-**Current active task: targeted exercise-quality closure (PR pending).** The project playbook and agent guidance merged via PR #89. A scoped cleanup branch retires eight remaining subject-actor recognition items and six isolated Yeni Hitit 1 recognition items; keep typed production and contextual form selection. Verify CI and history compatibility before declaring closure. Then prioritize (2) bounded architecture/test stabilization, (3) linguistic risk reconciliation and advanced review. Do not open parallel feature-development tracks. Decide the exact next scoped PR with the user.
+**Current active task: ARCH grammar-wide test-contract stabilization (PR #91).** PR #90 merged and its CI passed. Review all grammar unit and browser tests for brittle inventory assertions while retaining intentional curriculum matrices and session limits. Add small-pool and history compatibility checks. Make narrowly justified changes, run full CI, and report residual risks before declaring ARCH closed. Next: linguistic risk reconciliation and advanced review.
 
 ## Workstream record template
 
