@@ -25,6 +25,16 @@ export function selectLessonQuestions(lesson:VerbNounLesson,task:LessonTaskSelec
  return shuffle(chosen);
 }
 export const lessonMistakes=(attempts:PilotAttempt[],lesson:VerbNounLesson,task:LessonTaskSelection='mixed')=>latestMistakes(lessonPool(lesson,task),attempts);
+/** Turkish personal agreement on the participle can license an unspoken
+ * first/second-person genitive actor. Keep this narrow: other wording,
+ * participle polarity and the required agreement remain checked verbatim. */
+export function matchesRelativeTypedAnswer(q:VerbNounQuestion,answer:string):boolean{
+ if(matchesCase(answer,q.expected))return true;
+ if(q.task!=='type'||!['relative_roles','relative_negation'].includes(q.lessonId))return false;
+ const match=/^(Benim|Senin|Bizim|Sizin)\s+(.+)$/u.exec(q.expected);
+ return !!match&&matchesCase(answer,match[2]);
+}
+
 export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:string,sessionId:string):PilotAttempt[]{
  if(!answer.trim()||attempts.some(a=>a.sessionId===sessionId&&a.questionId===q.id))return attempts;
  const option=q.options?.find(o=>o.id===answer);
@@ -51,7 +61,7 @@ export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:s
   ...(q.task==='build'?{chunks:q.chunks,selectedChunkIds:selected as string[],expectedChunkIds:q.expectedChunkIds}:{}),
   ...(['type','build'].includes(q.task)?{}:{selectedOptionId:answer,expectedOptionId:q.expectedOptionId}),
   answer:q.task==='build'?assembledSentence(selected as string[],q.chunks!):q.task==='type'?answer.trim():option!.text,expected:q.expected,
-  supportingRuleIds:q.supportingRuleIds,correct:q.task==='build'?chunksCorrect(selected as string[],q.expectedChunkIds!):q.task==='type'?(isFullSentencePilot(q.id)?matchesFullSentencePilot(q.id,answer):q.lessonId==='temporal_contrasts'?matchesPhrase(answer,q.expected):matchesCase(answer,q.expected)):answer===q.expectedOptionId,
+  supportingRuleIds:q.supportingRuleIds,correct:q.task==='build'?chunksCorrect(selected as string[],q.expectedChunkIds!):q.task==='type'?(isFullSentencePilot(q.id)?matchesFullSentencePilot(q.id,answer):q.lessonId==='temporal_contrasts'?matchesPhrase(answer,q.expected):matchesRelativeTypedAnswer(q,answer)):answer===q.expectedOptionId,
   manual:false,time:new Date().toISOString(),
  }];
 }
