@@ -39,7 +39,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | ARCH | Maintainability and test-contract stabilization | Implemented / verification pending | PR #91 hardens grammar-wide test contracts, small-pool selection, and history round-trip coverage; CI passed before final documentation edits. No production code changes. Broader architecture redesign remains out of scope. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Merged / independent review outstanding | PR #92 merged as `03c25e84e4237139ea0bb21e1e5de89057e68c7b` after passing CI; five historical flags already retired and three versioned revisions implemented. Independent native-speaker review remains separate from CI. |
 | ADV-LING | Advanced grammar linguistic validation | Merged / independent review outstanding | PR #93 merged as `9a380bf4e36bfa4049a6f7512939734b3e12c278`; 60 authored models desk-reviewed, temporal distractor rotation corrected, regression tests and CI passed. No confirmed grammar defects in sampled models; independent native-speaker review remains outstanding. See `docs/adv-ling-audit.md`. |
-| PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Implemented / verification pending | Original draft PR #88 had 11 failing tests and did not include matching presentation models. User approved restarting as a fresh branch from current main, with dictionary-form vocabulary hints, curated alternatives and a second attempt. New implementation is subject to CI and linguistic review; PR #88 remains unmerged. |
+| PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Implemented / verification pending | Original draft PR #88 had 11 failing tests and did not include matching presentation models. User approved restarting as a fresh branch from current main, with dictionary-form vocabulary hints, curated alternatives and a second attempt. PR #95 implements the fresh pilot. Unit tests (411), bank validation, and production build passed on run 40263509401; browser suite had 137 passes and 3 failures in e2e/verb-noun-lessons.spec.ts from old question-count/task-mode assumptions. Fixes and a dedicated retry browser test are outstanding. Independent linguistic review remains outstanding; PRs #88 and #95 are unmerged. |
 | MIXED | Cross-lesson advanced grammar choice | Wishlist | Consider only after stabilization and evidence of learner need. |
 | MULTI | Multi-construction full-sentence production | Wishlist | Consider only after pilot validation and evidence of learner need. |
 
@@ -54,7 +54,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 ## Current priority and scope
 
-**ADV-LING implementation and desk audit merged:** PR #93 passed CI and merged. Independent native-speaker verification remains outstanding, separate from automated tests and the completed desk review. Active implementation workstream: six-question full-sentence pilot (PILOT-88), with a fresh branch from main. Scope: vocabulary lemmas, curated alternative answers, a second attempt before revealing the solution, and regression coverage. Controlled sentence variation is a follow-on pending pilot verification; independent native-speaker review remains outstanding.
+**ADV-LING implementation and desk audit merged:** PR #93 passed CI and merged. Independent native-speaker verification remains outstanding, separate from automated tests and the completed desk review. Active implementation workstream: six-question full-sentence pilot (PILOT-88), with a fresh branch from main. Scope: vocabulary lemmas, curated alternative answers, a second attempt before revealing the solution, and regression coverage. Controlled sentence variation is a follow-on pending pilot verification; independent native-speaker review remains outstanding. The latest verified PR #95 run 40263509401 failed at browser checks (three outdated assumptions); do not treat the pilot as verified or ready to merge.
 
 ## Workstream record template
 
@@ -80,7 +80,7 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 6. Validate every new/changed question through display, grading, answer alternatives, persistence, and mistake review. Check backward compatibility.
 7. Treat automated tests as code evidence, not native-speaker linguistic certification. Record uncertain Turkish explicitly.
 8. Report exactly what was implemented, tested, linguistically reviewed, and still open.
-9. Update this ledger in the same PR when status materially changes. Do not mark a task closed based only on intent or passing CI.
+9. Update this ledger in the same PR whenever status materially changes, proactively and without requesting separate user approval for routine ledger maintenance. Do not mark a task closed based only on intent or passing CI.
 
 ## Decision guardrails
 
