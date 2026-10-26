@@ -1,7 +1,7 @@
 import {fullSentencePilotExamples,fullSentencePilotQuestions} from './fullSentencePilot';
 import {temporalContrastCompletionExamples,temporalContrastCompletionQuestions} from './temporalContrastCompletionExpansion';
 import {stateKenCompletionExamples,stateKenCompletionQuestions} from './stateKenCompletionExpansion';
-import {temporalWhileCompletionExamples,temporalWhileCompletionQuestions} from './temporalWhileCompletionExpansion';
+import {temporalWhileCompletionExamples,temporalWhileCompletionQuestions,retiredTemporalWhileCompletionQuestions} from './temporalWhileCompletionExpansion';
 import {temporalWhenCompletionExamples,temporalWhenCompletionQuestions} from './temporalWhenCompletionExpansion';
 import {temporalOrderCompletionExamples,temporalOrderCompletionQuestions,retiredTemporalOrderCompletionQuestions} from './temporalOrderCompletionExpansion';
 import {converbMadanCompletionExamples,converbMadanCompletionQuestions} from './converbMadanCompletionExpansion';
@@ -183,4 +183,4 @@ const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.
 
 const redesigned=redesignLessons(originalLessonQuestions);
 export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions,...converbIpCompletionQuestions,...converbArakCompletionQuestions,...converbMadanCompletionQuestions,...temporalOrderCompletionQuestions,...temporalWhenCompletionQuestions,...temporalWhileCompletionQuestions,...stateKenCompletionQuestions,...temporalContrastCompletionQuestions,...fullSentencePilotQuestions];
-export const retiredLessonQuestions=[...redesigned.retired,...retiredTemporalOrderCompletionQuestions];
+export const retiredLessonQuestions=[...redesigned.retired,...retiredTemporalOrderCompletionQuestions,...retiredTemporalWhileCompletionQuestions];
