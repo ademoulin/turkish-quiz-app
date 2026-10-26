@@ -40,3 +40,13 @@ Reviewed **all 36 source sentence/English-meaning pairs** across the three tempo
 3. The model `Benim gelmeme sevindi` correctly uses dative with `sevinmek`; review generated distractors to ensure they do not wrongly imply that the nominalized action's dative is optional.
 
 **Disposition:** 60/60 authored model rows desk-reviewed; **0 confirmed key/form errors at model level**, **3 review cautions**. Still outstanding: generated question options, typed-answer normalization, ambiguous alternate valid completions, and independent Turkish-speaker review. No content fixes justified by this pass alone.
+
+## Generated exercise and scoring inspection
+
+Inspected `src/temporalWhenCompletionExpansion.ts`, `src/temporalWhileCompletionExpansion.ts`, `src/relativeRoleCompletionExpansion.ts`, `src/verbNouns.ts`, and `src/verbNounPractice.ts`.
+
+- Temporal expansion creates one typed complete time-clause item and one multiple-choice finite-predicate item per source model; both retain the source intended meaning. Distractors are selected from other models with different main subjects or temporal frames. **Potential risk:** selection by metadata is not proof that each alternative is semantically impossible in the supplied frame; full rendered-option checking remains necessary.
+- Relative-role expansion creates a typed relative modifier and a head-case multiple-choice item per source model. Distractors include the embedded-case head form and bare head form, explicitly contrasting embedded versus main-clause case. **Potential risk:** grammatical alternatives may arise when the main predicate accepts multiple case readings, although no confirmed case-key conflict was found in the reviewed 12 source models.
+- `verbNounPractice.ts` grades typed responses via `matchesCase` (or `matchesPhrase` for temporal contrasts) and MC responses by option ID. Consequently the next high-priority verification is whether `matchesCase` fairly accepts legitimate orthographic or morphological variants; an MC answer's grammatical acceptability cannot be inferred from ID-based scoring.
+
+No production code changed in this inspection. Avoid claiming that 60 source-model reviews imply all generated exercises are validated.
