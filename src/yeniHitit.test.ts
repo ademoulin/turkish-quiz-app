@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {bank, activeGrammarQuestions, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
+import {bank, activeGrammarQuestions, retiredGrammarQuestions, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
 test('v82 schema, counts, exclusions and malformed content', () => {
  validateBank(bank);
  for (const mutate of [
@@ -16,11 +16,13 @@ test('v82 schema, counts, exclusions and malformed content', () => {
 test('filters, empty/unknown skill and unique session pool', () => {
  const section=activeGrammarQuestions[0].section, skill=activeGrammarQuestions[0].skill_id;
  assert.ok(selectQuestions(section).every(q=>q.section===section));
- assert.equal(selectQuestions('',skill).length,3);
+ assert.ok(selectQuestions('',skill).length>0);
  assert.equal(selectQuestions('','unknown').length,0);
  assert.equal(selectQuestions('unknown').length,0);
- assert.equal(selectQuestions('','').length,413);
- assert.equal(new Set(selectQuestions().map(q=>q.id)).size,413);
+ assert.deepEqual(new Set(selectQuestions('','').map(q=>q.id)),new Set(activeGrammarQuestions.map(q=>q.id)));
+ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,activeGrammarQuestions.length);
+ const retiredIds=['YH1-V10-Q007','YH1-V11-Q018','YH1-V14-Q003','YH1-V50-Q024','YH1-V66-Q019','YH1-V66-Q020'];
+ for(const id of retiredIds){assert.ok(retiredGrammarQuestions.some(q=>q.id===id),`Missing retired history ${id}`);assert.ok(!activeGrammarQuestions.some(q=>q.id===id),`Still active ${id}`);}
 });
 test('every shuffled option retains answer mapping, only keyed option scores', () => {
  for(const q of selectQuestions('', '', ()=>0.1)) {

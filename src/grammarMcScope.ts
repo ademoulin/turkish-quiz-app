@@ -11,6 +11,9 @@ const finiteFamilies=new Set([
 const theorySkills=new Set(['YH1-FOUND-01-S01','YH1-FOUND-02-S01','YH1-FOUND-07-S03']);
 const excludedIds=new Set([
  'YH1-V58-Q002', // Finite past drill filed under object marking.
+ // Isolated English-to-Turkish vocabulary/connector recognition, not contextual grammar.
+ 'YH1-V10-Q007','YH1-V11-Q018','YH1-V14-Q003',
+ 'YH1-V50-Q024','YH1-V66-Q019','YH1-V66-Q020',
  'YH1-V13-Q008','YH1-V14-Q005','YH1-V14-Q012','YH1-V14-Q014',
  'YH1-V14-Q018','YH1-V70-Q002',
 ]);
