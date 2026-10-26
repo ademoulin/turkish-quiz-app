@@ -452,3 +452,12 @@ test('12D authored completion choices express distinct forms and grade consisten
   }
  }
 });
+
+test('12D future subject relatives explain -AcAK + olan rather than treating olan alone as the future marker',()=>{
+ for(const [id,form] of [['vn43-expand-05','gelecek olan'],['vn43-expand-11','çalışacak olan'],['vn43-expand-17','çalacak olan'],['vn43-expand-23','gelecek olan']] as const){
+  const e=examples.find(e=>e.id===id)!;
+  assert.equal(e.answer,form,id);
+  assert.ok(e.explanation.includes('plus olan'),id);
+  assert.ok(e.explanation.includes('future'),id);
+ }
+});
