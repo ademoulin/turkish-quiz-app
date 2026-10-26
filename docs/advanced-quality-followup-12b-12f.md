@@ -20,3 +20,25 @@ Inspect the **actual generated structure options and pre-check presentation** fo
 ## Verification boundary
 
 No live learner performance data or native-speaker review was used. User has accepted assistant desk review as sufficient for this personal app. This is not a certification of all generated options.
+
+## Active-question pipeline verification (2026-10-26)
+
+**Correction to the initial source-level concern:** the long, explanation-heavy `structureAnswer` and `structureDistractors` authored in `src/verbNounNounClauseBuilding.ts` **are not the live 12B structure choices**. `src/lessonRedesign.ts` calls `refineNounClauseBuilding` and later retires 12B meaning/structure tasks in its productive-only pass. Active 12B practice retains guided `build` questions (versioned `-v2`), not the source's verbose analysis MC. Do **not** file a defect against those retired choices.
+
+Likewise, `refineRelativeBuilding` and `refineRelativeRoles` prepare shorter, parallel analysis choices, but `lessonRedesign.ts` then retires non-blanked relative `meaning` and `structure` tasks. Active 12D–F exercises instead include guided `build` and separately authored targeted completion items from `relativeBuildingCompletionExpansion.ts`, `relativeRoleCompletionExpansion.ts`, and `relativeNegationCompletionExpansion.ts`.
+
+### Current live design, based on source flow
+
+- **12B:** guided chunk assembly with stable versioned questions; long actor-analysis answers are historical only.
+- **12D:** targeted modifier completion, alternating Turkish-choice and typed production; distractors contrast tense, relative actor, and polarity. 
+- **12E:** typed relative modifier and Turkish head-case selection; distractors include the embedded-case form, the bare noun, and an alternate outer case, deduplicated when identical.
+- **12F:** typed relative-description completion and Turkish predicate polarity choice; the latter is a binary contrast rather than a verbose grammatical analysis.
+
+### Remaining audit risks
+
+1. **12D distractor validity:** Some alternate participles can be grammatical in isolation; verify each *complete intended meaning + frame* rules them out. Do not assume that a string being different makes it invalid.
+2. **12E case-choice uniqueness:** Verify case distractors against the full supplied predicate and clause context, not only their suffix shape. Preserve legitimate distinctions between inner and outer case.
+3. **12F polarity difficulty:** Binary polarity selection may be easy when the English intended meaning explicitly includes “not.” This is potentially valid beginner scaffolding, not a confirmed defect; prioritize production questions when assessing mastery.
+4. **UI and registry:** The source-flow inspection establishes which objects are active but does not replace a rendered browser inspection or live learner error data.
+
+**Disposition:** No confirmed new live defect or authorized content change from this pass. Continue item-level and rendered-choice validation before editing questions. The initial 12B concern is resolved as an audit false positive, not a production bug.
