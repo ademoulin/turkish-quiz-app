@@ -5,11 +5,11 @@ import {matchesPhrase} from './nounPhrases';
 // Variants are curated; do not generate arbitrary word orders.
 const rows=[
  {meaning:'Before I went to work, I called my friend.',vocab:'gitmek (go); iş (work); arkadaş (friend); aramak (call)',answers:['İşe gitmeden önce arkadaşımı aradım.','Arkadaşımı işe gitmeden önce aradım.']},
- {meaning:'After I finished dinner, I watched a film.',vocab:'bitirmek (finish); akşam yemeği (dinner); izlemek (watch); film (film)',answers:['Akşam yemeğini bitirdikten sonra film izledim.','Film izledim, akşam yemeğini bitirdikten sonra.']},
- {meaning:'When I arrived home, I called my mother.',vocab:'varmak (arrive); ev (home); anne (mother); aramak (call)',answers:['Eve varınca annemi aradım.','Annemi eve varınca aradım.']},
- {meaning:'While I was studying, my friend called me.',vocab:'ders çalışmak (study); arkadaş (friend); aramak (call)',answers:['Ben ders çalışırken arkadaşım beni aradı.','Ders çalışırken arkadaşım beni aradı.']},
- {meaning:'Before we left the hotel, we bought water.',vocab:'ayrılmak (leave); otel (hotel); almak (buy); su (water)',answers:['Otelden ayrılmadan önce su aldık.','Su aldık, otelden ayrılmadan önce.']},
- {meaning:'After she bought the tickets, she called me.',vocab:'almak (buy); bilet (ticket); aramak (call)',answers:['Biletleri aldıktan sonra beni aradı.','Beni biletleri aldıktan sonra aradı.']},
+ {meaning:'After I finished dinner, I watched a film.',vocab:'bitirmek (finish); akşam yemeği (dinner); izlemek (watch); film (film)',answers:['Akşam yemeğini bitirdikten sonra film izledim.','Akşam yemeğini bitirdikten sonra bir film izledim.']},
+ {meaning:'When I arrived home, I called my mother.',vocab:'varmak / gelmek (arrive); ev (home); anne (mother); aramak (call)',answers:['Eve varınca annemi aradım.','Annemi eve varınca aradım.','Eve geldiğimde annemi aradım.']},
+ {meaning:'While I was studying, my friend called me.',vocab:'ders çalışmak (study); arkadaş (friend); aramak (call)',answers:['Ben ders çalışırken arkadaşım beni aradı.','Ders çalışırken arkadaşım beni aradı.','Arkadaşım ben ders çalışırken beni aradı.']},
+ {meaning:'Before we left the hotel, we bought water.',vocab:'ayrılmak (leave); otel (hotel); almak (buy); su (water)',answers:['Otelden ayrılmadan önce su aldık.','Otelden ayrılmadan önce biraz su aldık.']},
+ {meaning:'After she bought the tickets, she called me.',vocab:'almak (buy); bilet (ticket); aramak (call)',answers:['Biletleri aldıktan sonra beni aradı.','O, biletleri aldıktan sonra beni aradı.']},
 ] as const;
 export const fullSentencePilotAlternatives=new Map<string,readonly string[]>();
 export const fullSentencePilotQuestions:VerbNounQuestion[]=rows.map((row,index)=>{
