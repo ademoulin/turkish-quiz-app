@@ -387,3 +387,20 @@ test('12D–F typed relative mistakes survive import and clear after correction'
   }
  }
 });
+
+test('12D–F mixed practice keeps distinct source examples and both task types',()=>{
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  const pool=lessonPool(lesson);
+  const tasks=new Set(pool.map(q=>q.task));
+  assert.ok(tasks.has('type')&&tasks.has('structure'),lesson);
+  for(let iteration=0;iteration<20;iteration++){
+   const selected=selectLessonQuestions(lesson,'mixed');
+   assert.ok(selected.length>0&&selected.length<=12,lesson);
+   assert.equal(new Set(selected.map(q=>q.id)).size,selected.length,lesson);
+   assert.equal(new Set(selected.map(q=>q.exampleId)).size,selected.length,lesson);
+   assert.ok(selected.every(q=>q.lessonId===lesson),lesson);
+   assert.ok(selected.some(q=>q.task==='type'),lesson);
+   assert.ok(selected.some(q=>q.task==='structure'),lesson);
+  }
+ }
+});
