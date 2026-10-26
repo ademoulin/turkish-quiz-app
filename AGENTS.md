@@ -9,7 +9,7 @@
 - Prefer existing question, grading, presentation, and history mechanisms; avoid unnecessary abstractions and broad rewrites.
 - Treat draft linguistic content and historical review flags as **unverified**, not confirmed errors.
 - Preserve stable question IDs, learner progress, history compatibility, and import/export behavior.
-- Create focused branches and PRs. **Never merge a PR without the user's explicit approval.**
+- Create focused branches and PRs. Follow the risk-based merge authorization in `PROJECT_PLAYBOOK.md`; obtain explicit approval for significant or uncertain changes.
 - Run relevant tests and report failures honestly. CI green does not certify Turkish correctness.
 - Update the playbook ledger and link PR/test evidence when workstream status changes.
 - Do not start a second implementation workstream until the current one is closed or explicitly paused.
@@ -21,7 +21,7 @@
 2. State the problem, smallest proposed fix, acceptance criteria, and non-goals.
 3. Confirm the requested scope; do not turn a discussion into an unsolicited feature.
 4. Implement on a branch; verify grading, rendering, saved history, and regression tests where relevant.
-5. Return a PR for user review; do not merge.
+5. Review the PR and follow the playbook's risk-based merge policy; seek explicit approval when required.
 
 For documentation-only work, keep changes documentation-only.
 
@@ -30,4 +30,4 @@ For documentation-only work, keep changes documentation-only.
 - Within an explicitly approved workstream, continue through successive useful tasks without requiring a fresh user message after every commit, CI check, or progress update. A running CI job is not by itself a reason to stop if independent work remains.
 - Before ending a development response, check whether the workstream is complete, explicit user authorization is needed, or a genuine blocker prevents **all** further useful work. Otherwise continue within the current response.
 - Give progress updates without treating them as handoffs. At a real stopping point, report **What I'm waiting on** (name the precise approval, external result, or blocker; otherwise say Nothing) and **What I will do next**. Never imply work will run in the background after the response ends.
-- Preserve all existing approval boundaries: never merge without explicit user approval, and never silently expand implementation scope.
+- Follow the playbook's risk-based approval boundaries and never silently expand implementation scope.

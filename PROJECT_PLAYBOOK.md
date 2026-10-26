@@ -14,8 +14,14 @@ Principles:
 3. **Fair Turkish:** Natural, correct examples and unambiguous prompts; accept reasonable alternatives where supported. Don't pretend a finite string matcher understands all valid Turkish.
 4. **Simple architecture:** Reuse established question formats and grading paths. Prefer small, tested refactors over rewrites.
 5. **Preserve learner data:** Question IDs, retired content, progress snapshots, and imports/exports require compatibility review.
-6. **No unauthorized merges:** Changes belong in a branch and PR. The user explicitly approves merges.
+6. **Risk-based merges:** Use branches and PRs. The user authorizes autonomous merges of low-risk changes within previously approved scope, subject to tests and review. Significant changes require explicit approval.
 7. **Finish before expanding:** One active implementation workstream; ideas may be discussed without becoming work.
+
+## Merge authorization (user approved 2026-10-25)
+
+Low-risk changes within an already approved workstream (scoped bug fixes, minor UI changes, and carefully reviewed existing answer corrections) may be merged without separate approval **only after** inspecting the diff, confirming scope and compatibility, passing relevant automated checks, and reviewing linguistic/pedagogical implications as appropriate. Passing CI alone does not establish Turkish correctness.
+
+Ask the user before merging new question batches, new exercise types, substantial lesson or curriculum changes, learner-data migrations or progress-affecting changes, or anything with unresolved linguistic uncertainty. When risk or authorization is unclear, ask. Report autonomous merges and evidence afterward. This is merge delegation, not permission to expand scope.
 
 ## Status vocabulary
 
@@ -75,7 +81,7 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 1. Read `AGENTS.md`, this playbook, relevant source, and existing open PRs.
 2. Confirm the request's workstream, its status, and whether a similar change already exists.
 3. For implementation, define acceptance criteria and smallest safe scope; ask approval before broadening.
-4. Use a dedicated branch/PR. Do not merge without explicit user permission.
+4. Use a dedicated branch/PR. Follow the risk-based merge policy below.
 5. Run appropriate typecheck, unit, integration, and browser tests; inspect logs, not just the status badge.
 6. Validate every new/changed question through display, grading, answer alternatives, persistence, and mistake review. Check backward compatibility.
 7. Treat automated tests as code evidence, not native-speaker linguistic certification. Record uncertain Turkish explicitly.
@@ -96,4 +102,4 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 - Within an explicitly approved workstream, continue through successive useful tasks without requiring a fresh user message after every commit, CI check, or progress update. A running CI job is not by itself a reason to stop if independent work remains.
 - Before ending a development response, check whether the workstream is complete, explicit user authorization is needed, or a genuine blocker prevents **all** further useful work. Otherwise continue within the current response.
 - Give progress updates without treating them as handoffs. At a real stopping point, report **What I'm waiting on** (name the precise approval, external result, or blocker; otherwise say Nothing) and **What I will do next**. Never imply work will run in the background after the response ends.
-- Preserve all existing approval boundaries: never merge without explicit user approval, and never silently expand implementation scope.
+- Follow the risk-based merge policy; never silently expand implementation scope.
