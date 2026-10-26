@@ -19,11 +19,16 @@ export const fullSentencePilotQuestions:VerbNounQuestion[]=rows.map((row,index)=
  prompt:`Translate into Turkish: ${row.meaning} Vocabulary: ${row.vocab}`,
  sentence:row.meaning,expected:row.answers[0],source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:[]};
 });
-export const fullSentencePilotExamples:VerbNounExample[]=rows.map((row,index)=>({
+export const fullSentencePilotExamples:VerbNounExample[]=rows.map((row,index)=>{
+ const parts=row.answers[0].slice(0,-1).split(' ');
+ const main=parts.pop()!;
+ const unit=parts.join(' ');
+ return ({
  id:`vn59-full-${index+1}`,lessonId:'sentence_building',stem:'',verbMeaning:'',form:'sentence_chunks',
- sentence:row.answers[0],meaning:row.meaning,distractors:['',''],unit:row.answers[0],main:'',
- template:'',answer:row.answers[0],breakdown:'',explanation:'Use the supplied dictionary forms and construct the complete sentence.',supportingRuleIds:[]
-}));
+ sentence:row.answers[0],meaning:row.meaning,distractors:['',''],unit,main,
+ template:`___ ${main}.`,answer:unit,breakdown:'',explanation:'Use the supplied dictionary forms and construct the complete sentence.',supportingRuleIds:[]
+ });
+});
 export const isFullSentencePilot=(id:string)=>fullSentencePilotAlternatives.has(id);
 export const matchesFullSentencePilot=(id:string,answer:string)=>fullSentencePilotAlternatives.get(id)?.some(expected=>matchesPhrase(answer,expected))??false;
 export function fullSentencePilotDecision(id:string,answer:string,previousMisses:number):'correct'|'retry'|'incorrect'{
