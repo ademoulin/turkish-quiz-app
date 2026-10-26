@@ -365,3 +365,24 @@ test('5.9 typed pilot saves a failed second attempt, then clears mistake after a
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
  expect(saved).toHaveLength(2);expect(saved.map((a:any)=>a.correct)).toEqual([false,true]);
 });
+
+test('12D–F active Turkish choices render with the intended meaning and keep feedback hidden until submission',async({page})=>{
+ const area=await open(page);
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  await area.getByLabel('Lesson',{exact:true}).selectOption(lesson);
+  await area.getByLabel('Lesson practice',{exact:true}).selectOption('structure');
+  await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).click();
+  const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;
+  expect(q.task).toBe('structure');
+  expect(q.optionLanguage).toBe('tr');
+  await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
+  await expect(area.getByText(q.prompt,{exact:true})).toBeVisible();
+  for(const option of q.options!)await expect(area.getByText(option.text,{exact:true})).toBeVisible();
+  await expect(area.getByRole('button',{name:'Check lesson answer',exact:true})).toBeDisabled();
+  await area.locator('input[value="target"]').check();
+  await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+  await expect(area.getByText('Correct.',{exact:true})).toBeVisible();
+  await expect(area.getByText(e.explanation,{exact:true})).toBeVisible();
+  await area.getByRole('button',{name:'End lesson session',exact:true}).click();
+ }
+});
