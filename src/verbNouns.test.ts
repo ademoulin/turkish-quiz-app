@@ -329,3 +329,41 @@ test('time comparison evidence preserves relation and raw expression snapshots t
  const spaced=recordLesson([],q,q.expected.replace(' ',' \t '),'space');assert.equal(spaced[0].correct,true);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:spaced}),spaced);const old=recordPilot([],caseQuestions[0],caseQuestions[0].answer,'old');assert.deepEqual(validatePilotImport({version:1,pilotAttempts:[...old,...spaced]}),[...old,...spaced]);assert.deepEqual(validatePilotImport({version:1}),[]);
  const prior=lessonPool('temporal_when','type')[0];assert.equal(recordLesson([],prior,prior.expected.slice(0,2)+' '+prior.expected.slice(2),'s')[0].correct,false);
 });
+
+test('active 12E–F completions preserve unique choices, intended polarity and correctable mistakes',()=>{
+ for(const lesson of ['relative_roles','relative_negation'] as const){
+  const generated=bank.filter(q=>q.exampleId.startsWith(lesson==='relative_roles'?'vn44-expand-':'vn45-expand-'));
+  assert.ok(generated.length>0);
+  for(const q of generated){
+   const e=examples.find(e=>e.id===q.exampleId)!;
+   assert.equal(q.sentence.split('___').length,2,q.id);
+   assert.equal(q.sentence.replace('___',q.expected),e.sentence,q.id);
+   assert.ok(q.prompt.includes(e.meaning),q.id);
+   if(q.task==='structure'){
+    const choices=q.options!.map(o=>o.text);
+    assert.ok(choices.length>=2, q.id);
+    assert.equal(new Set(choices).size,choices.length,q.id);
+    assert.equal(choices.filter(x=>x===q.expected).length,1,q.id);
+    for(const o of q.options!){
+     const attempt=recordLesson([],q,o.id,'quality-check');
+     assert.equal(attempt[0].correct,o.id===q.expectedOptionId,q.id+' '+o.id);
+    }
+   }else{
+    assert.equal(q.task,'type');
+    assert.equal(recordLesson([],q,q.expected,'quality-check')[0].correct,true,q.id);
+    assert.equal(recordLesson([],q,'not an answer','quality-check')[0].correct,false,q.id);
+   }
+  }
+ }
+ const roles=bank.filter(q=>q.exampleId.startsWith('vn44-expand-')&&q.task==='structure');
+ for(const q of roles){
+  const e=examples.find(e=>e.id===q.exampleId)!;
+  assert.ok(q.options!.some(o=>o.text===e.relativeHead),q.id);
+  assert.ok(q.options!.every(o=>o.text!==''),q.id);
+ }
+ const polarity=bank.filter(q=>q.exampleId.startsWith('vn45-expand-')&&q.task==='structure');
+ for(const q of polarity){
+  assert.equal(q.options!.length,2,q.id);
+  assert.notEqual(q.options![0].text,q.options![1].text,q.id);
+ }
+});
