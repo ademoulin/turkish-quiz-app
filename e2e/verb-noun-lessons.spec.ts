@@ -371,7 +371,7 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
  for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
   await area.getByLabel('Lesson',{exact:true}).selectOption(lesson);
   await area.getByLabel('Lesson practice',{exact:true}).selectOption('structure');
-  await area.getByRole('button',{name:'Start verb noun lesson',exact:true}).click();
+  await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).click();
   const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;
   expect(q.task).toBe('structure');
   expect(q.optionLanguage).toBe('tr');
