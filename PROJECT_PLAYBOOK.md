@@ -82,7 +82,9 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 2. Confirm the request's workstream, its status, and whether a similar change already exists.
 3. For implementation, define acceptance criteria and smallest safe scope; ask approval before broadening.
 4. Use a dedicated branch/PR. Follow the risk-based merge policy below.
-5. Run appropriate typecheck, unit, integration, and browser tests; inspect logs, not just the status badge.
+5. Complete the implementation and corresponding tests before pushing. Run appropriate available local typecheck, unit, integration, and browser tests; inspect failures and resolve known breakage before publishing when feasible. If local execution is unavailable, disclose that limitation and rely on CI for verification.
+   - Prefer one coherent commit/push per logical change (implementation + tests + related documentation). Avoid back-to-back pushes of a knowingly incomplete state solely to trigger CI twice.
+   - CI remains the independent gate. Unexpected failures must stay visible and be diagnosed; do not skip checks, suppress failures, or assume a green run on a different SHA validates the current head.
 6. Validate every new/changed question through display, grading, answer alternatives, persistence, and mistake review. Check backward compatibility.
 7. Treat automated tests as code evidence, not native-speaker linguistic certification. Record uncertain Turkish explicitly.
 8. Report exactly what was implemented, tested, linguistically reviewed, and still open.
