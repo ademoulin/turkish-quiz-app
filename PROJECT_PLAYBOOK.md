@@ -35,7 +35,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | CORE | Vocabulary and conjugation app | Implemented | Operational; no redesign requested. Revalidate only when affected. |
 | CURR | Advanced grammar lessons, Sections 3–5 | Implemented | Curriculum and productive exercises exist on main. |
 | CLEAN | Remove low-value recognition/interpretation drills | Implemented / verification pending | `src/lessonRedesign.ts` retires many meaning/structure tasks across Sections 3–5. Do not re-audit from scratch; inventory only remaining active formats, including Sections 1–2 and separate Yeni Hitit 1 bank, to establish closure. |
-| QUALITY | Remaining exercise difficulty and instructional value | Open | Inspect actual active prompts and actions required; list specific exceptions, not generic concerns. |
+| QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | Targeted source review found eight remaining subject-recognition items and six isolated Yeni Hitit 1 recognition items for retirement. Changes are proposed, not yet merged or CI-verified. This is not a linguistic correctness certification or exhaustive manual inspection of every live prompt. |
 | ARCH | Maintainability and test-contract stabilization | Open | Identify narrow high-value changes to registry, presentation, grading, and history contracts; demonstrate preserved behavior and reduced special cases. No sweeping rewrite. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Open | Historical `yeni_hitit_1_linguistic_risk_queue_v82.csv` has 34 review flags (15 high, 19 medium), **not 34 missing lessons or confirmed errors**. Match each to current content; record disposition and evidence. |
 | ADV-LING | Advanced grammar linguistic validation | Open | Authored questions carry `draft_needs_independent_review`. Prioritize subject reference in temporal clauses, relative roles/cases, nominalization/agreement, and alternative valid answers; distinguish suspected risks from confirmed errors. |
@@ -53,7 +53,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 ## Current priority and scope
 
-**Current active task: establish this playbook and agent guidance (documentation only).** Once merged, prioritize (1) targeted active-question quality closure, (2) bounded architecture/test stabilization, (3) linguistic risk reconciliation and advanced review. Do not open parallel feature-development tracks. Decide the exact next scoped PR with the user.
+**Current active task: targeted exercise-quality closure (PR pending).** The project playbook and agent guidance merged via PR #89. A scoped cleanup branch retires eight remaining subject-actor recognition items and six isolated Yeni Hitit 1 recognition items; keep typed production and contextual form selection. Verify CI and history compatibility before declaring closure. Then prioritize (2) bounded architecture/test stabilization, (3) linguistic risk reconciliation and advanced review. Do not open parallel feature-development tracks. Decide the exact next scoped PR with the user.
 
 ## Workstream record template
 
