@@ -1,3 +1,4 @@
+import {isFullSentencePilot,matchesFullSentencePilot} from './fullSentencePilot';
 import {parseChunkAnswer,completeChunks,assembledSentence,chunksCorrect} from './sentenceChunks';
 import {matchesPhrase} from './nounPhrases';
 import {matchesCase,type PilotAttempt} from './casePilot';
@@ -50,7 +51,7 @@ export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:s
   ...(q.task==='build'?{chunks:q.chunks,selectedChunkIds:selected as string[],expectedChunkIds:q.expectedChunkIds}:{}),
   ...(['type','build'].includes(q.task)?{}:{selectedOptionId:answer,expectedOptionId:q.expectedOptionId}),
   answer:q.task==='build'?assembledSentence(selected as string[],q.chunks!):q.task==='type'?answer.trim():option!.text,expected:q.expected,
-  supportingRuleIds:q.supportingRuleIds,correct:q.task==='build'?chunksCorrect(selected as string[],q.expectedChunkIds!):q.task==='type'?(q.lessonId==='temporal_contrasts'?matchesPhrase(answer,q.expected):matchesCase(answer,q.expected)):answer===q.expectedOptionId,
+  supportingRuleIds:q.supportingRuleIds,correct:q.task==='build'?chunksCorrect(selected as string[],q.expectedChunkIds!):q.task==='type'?(isFullSentencePilot(q.id)?matchesFullSentencePilot(q.id,answer):q.lessonId==='temporal_contrasts'?matchesPhrase(answer,q.expected):matchesCase(answer,q.expected)):answer===q.expectedOptionId,
   manual:false,time:new Date().toISOString(),
  }];
 }
