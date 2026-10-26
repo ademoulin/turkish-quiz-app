@@ -310,3 +310,25 @@ test('5.9 typed sentence reveals correction after two wrong submissions',async({
  expect(saved[0].correct).toBe(false);
  await expect(area.getByRole('button',{name:'Next lesson question',exact:true})).toBeVisible();
 });
+
+test('5.9 typed full-sentence pilot gives one retry and accepts curated alternative',async({page})=>{
+ const area=await open(page);
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+ await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).tap();
+ const q=await current(area);
+ expect(q.task).toBe('type');
+ const input=area.getByRole('textbox');
+ await input.fill('wrong answer');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('Not quite. Try once more before seeing the answer.')).toBeVisible();
+ await expect(area.getByRole('button',{name:'Next lesson question',exact:true})).toHaveCount(0);
+ const before=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}').pilotAttempts||[]);
+ expect(before).toHaveLength(0);
+ await input.fill(q.expected);
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('1 / 1 correct',{exact:true})).toBeVisible();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}').pilotAttempts||[]);
+ expect(saved).toHaveLength(1);
+ expect(saved[0].correct).toBe(true);
+});
