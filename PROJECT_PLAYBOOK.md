@@ -45,7 +45,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | ARCH | Maintainability and test-contract stabilization | Implemented / verification pending | PR #91 hardens grammar-wide test contracts, small-pool selection, and history round-trip coverage; CI passed before final documentation edits. No production code changes. Broader architecture redesign remains out of scope. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Merged / independent review outstanding | PR #92 merged as `03c25e84e4237139ea0bb21e1e5de89057e68c7b` after passing CI; five historical flags already retired and three versioned revisions implemented. Independent native-speaker review remains separate from CI. |
 | ADV-LING | Advanced grammar linguistic validation | Merged / independent review outstanding | PR #93 merged as `9a380bf4e36bfa4049a6f7512939734b3e12c278`; 60 authored models desk-reviewed, temporal distractor rotation corrected, regression tests and CI passed. No confirmed grammar defects in sampled models; independent native-speaker review remains outstanding. See `docs/adv-ling-audit.md`. |
-| PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Implemented / verification pending | Original draft PR #88 had 11 failing tests and did not include matching presentation models. User approved restarting as a fresh branch from current main, with dictionary-form vocabulary hints, curated alternatives and a second attempt. New implementation is subject to CI and linguistic review; PR #88 remains unmerged. |
+| PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Implemented / verification pending | Six typed sentences are active on main, with dictionary-form vocabulary cues, curated alternatives and a second attempt; PR #88 closed as superseded. PR #101 merged after CI and desk review, accepting natural -ken word order and optional final punctuation. E2E retry and storage tests exist; end-to-end mistake-review coverage is being added. Native-speaker certification is not required for this personal app; desk review is accepted by the user. |
 | MIXED | Cross-lesson advanced grammar choice | Wishlist | Consider only after stabilization and evidence of learner need. |
 | MULTI | Multi-construction full-sentence production | Wishlist | Consider only after pilot validation and evidence of learner need. |
 
@@ -53,14 +53,14 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 - PR #86: Lesson 5.8 expansion, merged.
 - PR #87: Playwright CI worker adjustment, merged.
-- PR #88: Full-sentence pilot, draft/paused.
+- PR #88: Full-sentence pilot, closed as superseded by the newer implementation on main. PR #101: pilot grading fixes merged. PRs #102–103: autonomy and handoff instructions merged.
 - PR #90: Low-value exercise retirement and initial test hardening, merged; CI passed.
 - Previous active advanced question count on main: 733; **not a permanent acceptance criterion**.
 - Separate Yeni Hitit 1 staging bank: 588 draft questions across 196 skills; verify live integration and current versions before drawing conclusions.
 
 ## Current priority and scope
 
-**ADV-LING implementation and desk audit merged:** PR #93 passed CI and merged. Independent native-speaker verification remains outstanding, separate from automated tests and the completed desk review. Active implementation workstream: six-question full-sentence pilot (PILOT-88), with a fresh branch from main. Scope: vocabulary lemmas, curated alternative answers, a second attempt before revealing the solution, and regression coverage. Controlled sentence variation is a follow-on pending pilot verification; independent native-speaker review remains outstanding.
+**Current priority: finish PILOT-88 verification and remaining QUALITY audit.** The six full-sentence questions are implemented on main and desk-reviewed; PR #101 corrected two grading gaps. The user accepts assistant desk review as sufficient for this personal project; external native-speaker certification is optional rather than a blocking requirement. Finish targeted UI, retry, storage, and mistake-review validation before considering any new question batch. MIXED and MULTI remain unapproved wishlist items.
 
 ## Workstream record template
 
