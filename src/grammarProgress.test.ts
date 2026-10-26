@@ -16,6 +16,22 @@ test('broad registry includes current practice and mixes all nine families witho
  for(let n=0;n<40;n++){const pool=selectGrammarMix();assert.equal(pool.length,12);assert.equal(new Set(pool.map(i=>i.q.id)).size,12);assert.equal(new Set(pool.map(i=>i.family)).size,9);for(const family of new Set(pool.map(i=>i.family)))assert.ok(pool.filter(i=>i.family===family).length<=2);const models=pool.filter(i=>i.kind==='lesson').map(i=>i.kind==='lesson'&&i.q.exampleId);assert.equal(new Set(models).size,models.length);const skills=pool.filter(i=>i.kind==='multiple_choice').map(i=>i.kind==='multiple_choice'&&i.q.skill_id);assert.equal(new Set(skills).size,skills.length);}
  const first=grammarItems.find(i=>i.kind==='lesson')!;const lesson=grammarItems.filter(i=>i.kind==='lesson'&&first.kind==='lesson'&&i.q.exampleId===first.q.exampleId);assert.equal(selectGrammarMix(lesson).length,1);const mc=grammarItems.filter(i=>i.kind==='multiple_choice'&&i.q.skill_id===activeGrammarQuestions[0].skill_id);assert.equal(selectGrammarMix(mc).length,1);assert.deepEqual(selectGrammarMix([]),[]);
 });
+
+test('random grammar handles empty, undersized, duplicate and same-model pools without padding',()=>{
+ assert.deepEqual(selectGrammarMix([]),[]);
+ const unique=grammarItems.filter(i=>i.kind==='typed').slice(0,3);
+ assert.equal(unique.length,3,'fixture needs three typed grammar questions');
+ for(const size of [1,2,3]){
+  const pool=unique.slice(0,size);
+  const selected=selectGrammarMix([...pool,...pool],()=>0.5);
+  assert.equal(selected.length,size);
+  assert.deepEqual(new Set(selected.map(i=>i.q.id)),new Set(pool.map(i=>i.q.id)));
+ }
+ const mc=grammarItems.filter(i=>i.kind==='multiple_choice');
+ const first=mc[0];if(!first||first.kind!=='multiple_choice')throw Error('Missing MC fixture');
+ const variants=mc.filter(i=>i.kind==='multiple_choice'&&i.q.skill_id===first.q.skill_id);
+ assert.equal(selectGrammarMix(variants,()=>0.5).length,1,'one question per MC skill');
+});
 test('every registry item saves with its original grader, concept and backup-compatible snapshots',()=>{
  const all=grammarItems.map(i=>save(i));assert.equal(all.length,grammarItems.length);assert.ok(all.every(a=>a.correct&&a.sessionKind==='random_grammar'));assert.deepEqual(validatePilotImport({version:1,pilotAttempts:all}),all);
  for(const i of selectGrammarMix()){const a=save(i);assert.equal(a.conceptId,itemConcept(i));assert.equal(recordGrammarItem([a],i,response(i),'session',i.kind==='case_choice'?i.q.requiredCase:'').length,1);assert.deepEqual(recordGrammarItem([],i,'','s',''),[]);}
