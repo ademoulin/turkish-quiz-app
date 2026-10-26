@@ -27,11 +27,12 @@ export const retiredTemporalWhileCompletionQuestions:VerbNounQuestion[]=retiredT
 });
 
 /** Active Lesson 5.6 forms: both tasks target the -ken converb, not a finite predicate. */
+/** Same-verb near misses avoid revealing the answer merely by its -ken ending. */
 const alternatives:readonly [string,string][]=[
- ['okumadan','okuyunca'],['yapmadan','yapınca'],['konuşmadan','konuşunca'],
- ['yürümeden','yürüyünce'],['beklemeden','bekleyince'],['çalışmadan','çalışınca'],
- ['gitmeden','gidince'],['hazırlamadan','hazırlayınca'],['dinlemeden','dinleyince'],
- ['izlemeden','izleyince'],['yüzmeden','yüzünce'],['koşmadan','koşunca'],
+ ['okuyarken','okururken'],['yapayken','yapararken'],['konuşarken','konuşururken'],
+ ['yürüyürken','yürürürken'],['bekleyerken','beklererken'],['çalışarken','çalışırırken'],
+ ['giterken','gidererken'],['hazırlayarken','hazırlararken'],['dinleyerken','dinlererken'],
+ ['izleyerken','izlererken'],['yüzürken','yüzererken'],['koşurken','koşararken'],
 ];
 export const temporalWhileCompletionExamples:VerbNounExample[]=temporalWhileExamples.flatMap((base,index)=>[
  {...base,id:`vn56-form-${String(index+1).padStart(2,'0')}-typed`,template:base.template,answer:base.answer},
@@ -43,7 +44,7 @@ export const temporalWhileCompletionQuestions:VerbNounQuestion[]=temporalWhileCo
  return {
   id:`${example.id}-${task}`,exampleId:example.id,lessonId:'temporal_while',conceptId:`vn_temporal_while_${task}` as VerbNounQuestion['conceptId'],task,
   exerciseType:isTyped?'typed_converb':'converb_structure',
-  prompt:`Intended meaning: ${example.meaning} ${isTyped?'Type only the -ken form of the verb expressing the overlapping action.':'Choose the verb form that expresses an overlapping action (-ken), not before/without (-mAdAn) or when/once (-(y)IncA).'}`,
+  prompt:`Intended meaning: ${example.meaning} ${isTyped?'Type only the -ken form of the verb expressing the overlapping action.':'Choose the correctly formed -ken construction; the alternatives contain incorrect linking bases.'}`,
   sentence:example.template,expected:example.answer,
   ...(isTyped?{}:{optionLanguage:'tr' as const,expectedOptionId:'target',options:[
    {id:'target',text:example.answer},{id:'other-1',text:distractors[0]},{id:'other-2',text:distractors[1]},
