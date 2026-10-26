@@ -29,10 +29,13 @@ export const lessonMistakes=(attempts:PilotAttempt[],lesson:VerbNounLesson,task:
  * first/second-person genitive actor. Keep this narrow: other wording,
  * participle polarity and the required agreement remain checked verbatim. */
 export function matchesRelativeTypedAnswer(q:VerbNounQuestion,answer:string):boolean{
- if(matchesCase(answer,q.expected))return true;
- if(q.task!=='type'||!['relative_roles','relative_negation'].includes(q.lessonId))return false;
+ if(q.task!=='type'||!['relative_building','relative_roles','relative_negation'].includes(q.lessonId))return matchesCase(answer,q.expected);
+ // Internal spacing is not a Turkish grammatical distinction. Normalize it
+ // only for these authored relative-description completions.
+ const compact=(value:string)=>value.trim().replace(/\s+/gu,' ');
+ if(matchesCase(compact(answer),compact(q.expected)))return true;
  const match=/^(Benim|Senin|Bizim|Sizin)\s+(.+)$/u.exec(q.expected);
- return !!match&&matchesCase(answer,match[2]);
+ return !!match&&matchesCase(compact(answer),compact(match[2]));
 }
 
 export function recordLesson(attempts:PilotAttempt[],q:VerbNounQuestion,answer:string,sessionId:string):PilotAttempt[]{
