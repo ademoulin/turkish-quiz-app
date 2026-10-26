@@ -27,6 +27,8 @@ test('5.4 practices 12 typed and 12 selected before/after verb forms',()=>{
    assert.equal(q.options!.length,3);
    assert.equal(new Set(q.options!.map(o=>o.text)).size,3);
    assert.ok(q.options!.every(o=>!o.text.includes(' ')));
+   assert.ok(q.options!.every(o=>o.text!==''));
+   assert.ok(q.options!.some(o=>o.id==='other-1'&&o.text.endsWith('madan')||o.id==='other-1'&&o.text.endsWith('meden')||o.id==='other-1'&&o.text.endsWith('dıktan')||o.id==='other-1'&&o.text.endsWith('dikten')||o.id==='other-1'&&o.text.endsWith('duktan')||o.id==='other-1'&&o.text.endsWith('dükten')||o.id==='other-1'&&o.text.endsWith('tıktan')||o.id==='other-1'&&o.text.endsWith('tikten')||o.id==='other-1'&&o.text.endsWith('tuktan')||o.id==='other-1'&&o.text.endsWith('tükten')),'first distractor tests opposite event order');
   }
  }
 });
