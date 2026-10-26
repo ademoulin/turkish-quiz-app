@@ -376,7 +376,7 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
   expect(q.task).toBe('structure');
   expect(q.optionLanguage).toBe('tr');
   await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
-  await expect(area.getByText(q.prompt,{exact:true})).toBeVisible();
+  await expect(area.getByText(lessonExerciseCopy(q,e).instruction,{exact:true})).toBeVisible();
   for(const option of q.options!)await expect(area.getByText(option.text,{exact:true})).toBeVisible();
   await expect(area.getByRole('button',{name:'Check lesson answer',exact:true})).toBeDisabled();
   await area.locator('input[value="target"]').check();
