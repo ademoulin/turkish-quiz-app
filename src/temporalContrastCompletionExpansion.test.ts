@@ -7,8 +7,8 @@ import {lessonPool} from './verbNounPractice';
 test('Lesson 5.8 adds 12 whole-clause completions and 12 finite-predicate choices without replacing original IDs',()=>{
  assert.equal(temporalContrastCompletionExamples.length,24);
  assert.equal(temporalContrastCompletionQuestions.length,24);
- assert.equal(verbNounExamples.length,672);
- assert.equal(verbNounQuestions.length,733);
+ assert.equal(verbNounExamples.length,672+6);
+ assert.equal(verbNounQuestions.length,733+6);
  const pool=lessonPool('temporal_contrasts');
  assert.equal(pool.length,36);
  assert.equal(pool.filter(q=>q.id.startsWith('vn58-expand-')&&q.task==='type').length,12);
