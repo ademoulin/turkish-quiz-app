@@ -28,6 +28,7 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  // the explicit infinitive request to avoid rejecting another valid noun form.
  if(q.lessonId==='action_forms'&&q.task==='structure')instruction=instruction.replace(' Name the general activity with an infinitive.','');
  const relativeIntendedMeaning=['relative_building','relative_roles','relative_negation'].includes(q.lessonId)&&q.prompt.startsWith(`Intended meaning: ${e.meaning} `);
+ if(relativeIntendedMeaning)instruction=instruction.replace(`Intended meaning: ${e.meaning} `,'');
  const meaning=q.task==='type'&&q.lessonId==='negation'?e.meaning:relativeIntendedMeaning?e.meaning:old.meaning;
  // These families deliberately request a construction to avoid grading valid alternatives as wrong.
  const construction=(q.task==='build'||q.task==='type')&&q.lessonId==='noun_clause_cases'?constructionNames[e.nominalConstruction!]:undefined;
