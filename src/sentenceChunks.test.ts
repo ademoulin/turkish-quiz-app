@@ -6,14 +6,14 @@ import {correctPilot,validatePilotImport,caseQuestions,recordPilot} from './case
 import {completeChunks,assembledSentence,parseChunkAnswer} from './sentenceChunks';
 const pool=lessonPool('sentence_building'),build=lessonPool('sentence_building','build');
 test('12A has 12 models, 36 exercises, balanced connections, times and independent subjects',()=>{
- assert.equal(models.length,12);assert.equal(pool.length,12);assert.equal(build.length,12);
+ assert.equal(models.length,12);assert.equal(pool.length,18);assert.equal(build.length,12);
  for(const r of ['before','after','when','while'])assert.equal(models.filter(m=>m.temporalRelation===r).length,3);
  for(const t of ['past','future','habitual'])assert.equal(models.filter(m=>m.temporalTime===t).length,4);
  for(const m of models){assert.notEqual(m.temporalSubject,m.mainSubject);assert.equal(m.sourceClauses!.length,2);assert.equal(m.chunks!.length,6);assert.equal(assembledSentence(m.expectedChunkIds!,m.chunks!),m.sentence);assert.ok(m.explanation.includes('other Turkish word orders'));}
  for(const q of pool){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.deepEqual(q.supportingRuleIds,[]);}
  const mixed=selectLessonQuestions('sentence_building');assert.equal(new Set(mixed.map(q=>q.exampleId)).size,12);
- for(const task of ['build'] as const){assert.equal(mixed.filter(q=>q.task===task).length,12);assert.equal(selectLessonQuestions('sentence_building',task).length,12);}
- assert.equal(selectLessonQuestions('sentence_building','type').length,0);
+ assert.equal(mixed.filter(q=>q.task==='type').length,6);assert.equal(mixed.filter(q=>q.task==='build').length,6);assert.equal(selectLessonQuestions('sentence_building','build').length,12);
+ assert.equal(selectLessonQuestions('sentence_building','type').length,6);
 });
 test('assembly grades stable IDs in guided slots, saves readable text and rejects incomplete or fabricated chunks',()=>{
  for(const q of build){const ids=q.expectedChunkIds!,answer=JSON.stringify(ids),a=recordLesson([],q,answer,'s')[0];assert.equal(a.correct,true);assert.equal(a.answer,q.expected);assert.deepEqual(a.selectedChunkIds,ids);assert.equal(a.exerciseType,'sentence_chunk_assembly');assert.ok(a.id&&a.time&&a.sessionId&&a.conceptId);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:[a]}),[a]);
