@@ -22,6 +22,7 @@ export function lessonExerciseCopy(q:VerbNounQuestion,e:VerbNounExample){
  if(e.id.startsWith('vn-relative-expand-'))instruction=q.task==='type'?'Complete the missing expression.':'Choose the form that completes the sentence.';
  else if(q.task==='build')instruction='Combine the source clauses in the guided frame.';
  else if(q.lessonId==='clause_cases'&&q.task==='structure')instruction='Choose the form that completes the sentence.';
+ else if(q.task==='type'&&['relative_building','relative_roles','relative_negation'].includes(q.lessonId))instruction='Complete the missing relative description.';
  else if(q.task==='type'&&q.lessonId!=='action_forms')instruction=targets[e.form]||'Complete the missing word.';
  // The subject-choice options already exclude bare -ma; typing still needs
  // the explicit infinitive request to avoid rejecting another valid noun form.

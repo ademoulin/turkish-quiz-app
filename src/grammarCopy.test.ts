@@ -20,3 +20,12 @@ test('named production drills retain their targets and all strict-grading constr
  for(const q of qs.filter(q=>(q.task==='type'||q.task==='build')&&model(q.exampleId).temporalIntent)){const c=lessonExerciseCopy(q,model(q.exampleId));assert.ok(c.timing);assert.ok(!/-mAdAn|-DIktAn|-(y)IncA/.test(c.timing));}
  for(const q of qs.filter(q=>q.task==='type'))assert.equal(lessonExerciseCopy(q,model(q.exampleId)).pluralAgreement,q.nominalSubject==='onlar');
 });
+
+test('12D–F typed relative instructions allow multiword descriptions without giving away the answer',()=>{
+ for(const q of qs.filter(q=>q.task==='type'&&['relative_building','relative_roles','relative_negation'].includes(q.lessonId))){
+  const e=model(q.exampleId),copy=lessonExerciseCopy(q,e);
+  assert.equal(copy.instruction,'Complete the missing relative description.',q.id);
+  assert.ok(!copy.instruction.includes(q.expected),q.id);
+  assert.ok(copy.meaning===undefined||copy.meaning===e.meaning,q.id);
+ }
+});
