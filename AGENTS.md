@@ -11,6 +11,7 @@
 - Preserve stable question IDs, learner progress, history compatibility, and import/export behavior.
 - Create focused branches and PRs. Follow the risk-based merge authorization in `PROJECT_PLAYBOOK.md`; obtain explicit approval for significant or uncertain changes.
 - Run relevant tests and report failures honestly. CI green does not certify Turkish correctness.
+- Keep implementation and its matching test updates in the same coherent push whenever practical. Validate locally before pushing when the environment permits; do not knowingly push an incomplete implementation that will fail existing tests.
 - Update the playbook ledger and link PR/test evidence when workstream status changes.
 - Do not start a second implementation workstream until the current one is closed or explicitly paused.
 - Separate **implemented**, **tested**, **linguistically reviewed**, and **closed** in all reports.
