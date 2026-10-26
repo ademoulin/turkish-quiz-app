@@ -30,10 +30,9 @@ export function redesignLessons(original:VerbNounQuestion[]){
   }
   if(q.lessonId==='subjects'&&q.task!=='type'){
    retired.push(q);
-   // First/second-person agreement identifies the actor without discourse context.
-   // Third-person reference needs context; retain it in the explicit form drills.
+   // Actor recognition is redundant with typed possessive-agreement production.
    if(q.task==='structure'||q.nominalSubject==='o'||q.nominalSubject==='onlar')return [];
-   return [{...q,id:q.id+'-v2',prompt:'Who needs to do the action? Choose the sentence meaning.',sentence:q.sentence.replace(/^(Benim|Senin|Bizim|Sizin) /,'').replace(/^./,c=>c.toLocaleUpperCase('tr'))}];
+   return [];
   }
   if(q.task!=='structure'||!['temporal_contrasts','sentence_building'].includes(q.lessonId))return [q];
   retired.push(q);
