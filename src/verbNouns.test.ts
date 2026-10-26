@@ -404,3 +404,26 @@ test('12D–F mixed practice keeps distinct source examples and both task types'
   }
  }
 });
+
+test('12D–F mixed relative sessions retain mistake-review identity across task modes',()=>{
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  const typed=lessonPool(lesson,'type')[0];
+  const structure=lessonPool(lesson,'structure')[0];
+  assert.ok(typed&&structure,lesson);
+  const wrongTyped=recordLesson([],typed,'not an answer','relative-mixed-wrong');
+  assert.equal(wrongTyped[0].correct,false,typed.id);
+  assert.deepEqual(lessonMistakes(wrongTyped,lesson,'mixed').map(q=>q.id),[typed.id]);
+  assert.deepEqual(lessonMistakes(wrongTyped,lesson,'type').map(q=>q.id),[typed.id]);
+  assert.deepEqual(lessonMistakes(wrongTyped,lesson,'structure'),[]);
+  const wrongOption=structure.options!.find(o=>o.id!==structure.expectedOptionId)!;
+  const bothWrong=recordLesson(wrongTyped,structure,wrongOption.id,'relative-mixed-choice');
+  assert.equal(bothWrong.at(-1)!.correct,false,structure.id);
+  assert.deepEqual(new Set(lessonMistakes(bothWrong,lesson,'mixed').map(q=>q.id)),new Set([typed.id,structure.id]));
+  assert.deepEqual(lessonMistakes(bothWrong,lesson,'structure').map(q=>q.id),[structure.id]);
+  const restored=validatePilotImport({version:1,pilotAttempts:bothWrong});
+  assert.deepEqual(new Set(lessonMistakes(restored,lesson,'mixed').map(q=>q.id)),new Set([typed.id,structure.id]));
+  const corrected=recordLesson(restored,typed,typed.expected,'relative-mixed-fixed');
+  assert.equal(corrected.at(-1)!.correct,true,typed.id);
+  assert.deepEqual(lessonMistakes(corrected,lesson,'mixed').map(q=>q.id),[structure.id]);
+ }
+});
