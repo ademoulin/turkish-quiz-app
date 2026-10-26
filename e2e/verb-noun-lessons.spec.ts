@@ -391,3 +391,25 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
   await area.getByRole('button',{name:'End lesson session',exact:true}).click();
  }
 });
+
+test('12D–F typed relative modifiers render, grade and retain original attempts',async({page})=>{
+ const area=await open(page);
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  await area.getByLabel('Lesson',{exact:true}).selectOption(lesson);
+  await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+  await area.getByRole('button',{name:'Start relative clause building lesson',exact:true}).click();
+  const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;
+  expect(q.task).toBe('type');
+  await expect(area.getByText(lessonExerciseCopy(q,e).instruction,{exact:true})).toBeVisible();
+  await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
+  const field=area.getByLabel('Complete action noun',{exact:true});
+  await field.fill(q.expected);
+  await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+  await expect(area.getByText('Correct.',{exact:true})).toBeVisible();
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
+  const latest=saved.at(-1);
+  expect(latest.questionId).toBe(q.id);
+  expect(latest.correct).toBe(true);
+  await area.getByRole('button',{name:'End lesson session',exact:true}).click();
+ }
+});
