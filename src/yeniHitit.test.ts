@@ -1,8 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {bank, activeGrammarQuestions, retiredGrammarQuestions, validateBank, selectQuestions, startSession, submitAnswer, nextQuestion, score} from './yeniHitit';
-test('v82 schema, counts, exclusions and malformed content', () => {
+test('v82 schema, variable bank size, exclusions and malformed content', () => {
  validateBank(bank);
+ const added=structuredClone(bank);
+ added.questions.push({...structuredClone(added.questions[0]),id:'YH1-AUDIT-ADDED-QUESTION'});
+ assert.doesNotThrow(()=>validateBank(added),'adding a valid question must not invalidate the curriculum');
+ const removed=structuredClone(bank);
+ removed.questions.pop();
+ assert.doesNotThrow(()=>validateBank(removed),'removing a question must not invalidate the curriculum');
  for (const mutate of [
  (d: typeof bank) => {d.questions[1].id=d.questions[0].id;},
  (d: typeof bank) => {d.questions[0].correct_option_id='missing';},
@@ -35,12 +41,13 @@ test('duplicate submission, completion and reset', () => {
  let s=startSession('',activeGrammarQuestions[0].skill_id);
  assert.equal(nextQuestion(s),s);
  assert.equal(submitAnswer(s,'unknown'),s);
+ const expected=s.questions.length;
  for(const q of s.questions) {
   s=submitAnswer(s,q.correct_option_id);
   assert.equal(submitAnswer(s,q.options.find(o=>o.id!==q.correct_option_id)!.id),s);
   s=nextQuestion(s);
  }
- assert.equal(s.index,3);assert.deepEqual(score(s),{correct:3,attempted:3});
+ assert.equal(s.index,expected);assert.deepEqual(score(s),{correct:expected,attempted:expected});
  assert.equal(submitAnswer(s,'A'),s);
  assert.deepEqual(score(startSession()),{correct:0,attempted:0});
 });

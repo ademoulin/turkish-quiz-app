@@ -4,7 +4,7 @@ import {pronounCaseQuestions as bank,personalPronouns,selectPronounCaseQuestions
 import {recordPilot,correctPilot,validatePilotImport,caseQuestions,pilotMistakes} from './casePilot';
 import {mixedGrammarFamily,mixedGrammarMistakes,mixedGrammarQuestions} from './mixedGrammar';
 test('24 authored pronoun forms cover six pronouns and four explicit cases without colliding with old IDs',()=>{
- assert.equal(bank.length,24);assert.equal(new Set(mixedGrammarQuestions.map(q=>q.id)).size,238);
+ assert.equal(bank.length,24);assert.equal(new Set(mixedGrammarQuestions.map(q=>q.id)).size,mixedGrammarQuestions.length);
  for(const c of ['locative','dative','ablative','accusative']){const qs=bank.filter(q=>q.requiredCase===c);assert.equal(qs.length,6);assert.deepEqual(qs.map(q=>q.pronoun),Object.keys(personalPronouns));}
  for(const q of bank){assert.equal(q.base,q.pronoun);assert.equal(q.conceptId,`pronoun_${q.requiredCase}`);assert.equal(q.exerciseType,'typed_pronoun_case');assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.ok(q.explanation.includes(q.answer));assert.equal(mixedGrammarFamily(q),'pronoun_cases');}
 });
