@@ -32,7 +32,7 @@ export function matchesRelativeTypedAnswer(q:VerbNounQuestion,answer:string):boo
  if(q.task!=='type'||!['relative_building','relative_roles','relative_negation'].includes(q.lessonId))return matchesCase(answer,q.expected);
  // Internal spacing is not a Turkish grammatical distinction. Normalize it
  // only for these authored relative-description completions.
- const compact=(value:string)=>value.trim().replace(/\\s+/gu,' ');
+ const compact=(value:string)=>value.trim().replace(/\s+/gu,' ');
  if(matchesCase(compact(answer),compact(q.expected)))return true;
  const match=/^(Benim|Senin|Bizim|Sizin)\s+(.+)$/u.exec(q.expected);
  return !!match&&matchesCase(compact(answer),compact(match[2]));
