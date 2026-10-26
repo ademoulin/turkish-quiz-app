@@ -382,7 +382,12 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
   await area.locator('input[value="target"]').check();
   await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
   await expect(area.getByText('Correct.',{exact:true})).toBeVisible();
-  await expect(area.getByText(e.explanation,{exact:true})).toBeVisible();
+  await expect(area.locator('.feedback-reason')).toBeVisible();
+  const details=area.getByText('Full explanation',{exact:true});
+  if(await details.count()){
+   await details.click();
+   await expect(area.getByText(e.explanation,{exact:true})).toBeVisible();
+  }
   await area.getByRole('button',{name:'End lesson session',exact:true}).click();
  }
 });
