@@ -367,3 +367,23 @@ test('active 12E–F completions preserve unique choices, intended polarity and 
   assert.notEqual(q.options![0].text,q.options![1].text,q.id);
  }
 });
+
+test('12D–F typed relative mistakes survive import and clear after correction',()=>{
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  const questions=lessonPool(lesson,'type');
+  assert.ok(questions.length>0,lesson);
+  for(const q of questions){
+   const wrong=recordLesson([],q,'not an answer','relative-wrong');
+   assert.equal(wrong.length,1,q.id);
+   assert.equal(wrong[0].correct,false,q.id);
+   assert.deepEqual(lessonMistakes(wrong,lesson,'type').map(x=>x.id),[q.id],q.id);
+   const restored=validatePilotImport({version:1,pilotAttempts:wrong});
+   assert.deepEqual(restored,wrong,q.id);
+   assert.deepEqual(lessonMistakes(restored,lesson,'type').map(x=>x.id),[q.id],q.id);
+   const corrected=recordLesson(restored,q,q.expected,'relative-correct');
+   assert.equal(corrected.at(-1)!.correct,true,q.id);
+   assert.equal(lessonMistakes(corrected,lesson,'type').length,0,q.id);
+   assert.equal(lessonMistakes(corrected,lesson,'structure').length,0,q.id);
+  }
+ }
+});
