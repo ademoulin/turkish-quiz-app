@@ -402,7 +402,7 @@ test('12D–F typed relative modifiers render, grade and retain original attempt
   expect(q.task).toBe('type');
   await expect(area.getByText(lessonExerciseCopy(q,e).instruction,{exact:true})).toBeVisible();
   await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
-  const field=area.getByLabel('Complete action noun',{exact:true});
+  const field=area.getByLabel('Complete participle',{exact:true});
   await field.fill(q.expected);
   await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
   await expect(area.getByText('Correct.',{exact:true})).toBeVisible();
