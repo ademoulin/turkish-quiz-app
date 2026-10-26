@@ -54,3 +54,9 @@ No production code changed in this inspection. Avoid claiming that 60 source-mod
 ## Regression verification added
 
 `src/advLingGeneratedChoices.test.ts` now exercises generated multiple-choice option uniqueness, correct-key identity, and every offered option's scoring for temporal when/while/order and relative-role completion. It also protects Turkish-sensitive typed comparison (`öğretmeni` vs `öğretmene`, Turkish diacritics, nominal case and person contrasts). These are **mechanical** checks, not proof that every distractor is linguistically invalid. CI status must be checked against the latest commit before declaring tested.
+
+## Option-level temporal finite-predicate review
+
+Inspected all **36 generated finite-predicate multiple-choice items** (12 each for when, while, before/after) by reconstructing the two distractors selected by the current source-array filter. All 36 use the same two early source-row distractors in most later items. This is **a confirmed pedagogical-quality issue** (repetitive, predictable choices), though not a confirmed second-correct-answer bug: the intended English meaning differentiates those unrelated predicates. Future improvement should select varied, semantically close but unambiguously wrong alternatives without introducing valid alternate completions. Do not silently count this as linguistic invalidity.
+
+The first new regression suite passed the CI **unit-test step**; overall workflow was still running when checked. It tests keyed uniqueness and scoring, not semantic uniqueness. The repetitive-distractor finding warrants a targeted improvement with tests, ideally separately from full independent linguistic certification.
