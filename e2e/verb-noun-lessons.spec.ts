@@ -377,6 +377,7 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
   expect(q.optionLanguage).toBe('tr');
   await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
   await expect(area.getByText(lessonExerciseCopy(q,e).instruction,{exact:true})).toBeVisible();
+  if(lesson!=='relative_building')await expect(area.getByText(e.meaning,{exact:true})).toBeVisible();
   for(const option of q.options!)await expect(area.getByText(option.text,{exact:true})).toBeVisible();
   await expect(area.getByRole('button',{name:'Check lesson answer',exact:true})).toBeDisabled();
   await area.locator('input[value="target"]').check();
@@ -401,6 +402,7 @@ test('12D–F typed relative modifiers render, grade and retain original attempt
   const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;
   expect(q.task).toBe('type');
   await expect(area.getByText(lessonExerciseCopy(q,e).instruction,{exact:true})).toBeVisible();
+  if(lesson!=='relative_building')await expect(area.getByText(e.meaning,{exact:true})).toBeVisible();
   await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);
   const field=area.getByLabel('Complete participle',{exact:true});
   await field.fill(q.expected);
