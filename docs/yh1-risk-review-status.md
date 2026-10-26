@@ -67,3 +67,7 @@ The 29 potentially active source questions were inspected against their complete
 ### Disposition and limits
 
 **Five retired**, **one high-priority potential replacement/retirement (V68-Q013)**, **two minor editorial clarifications (V6-Q014, V7-Q014)**, **26 other potentially active source questions with no second-pass key conflict identified**. These categories overlap the 29 active total as 1+2+26. The assessment is limited to these 34 historical flags, not the entire 588-question bank. No source question or answer key has been modified in this review. Before implementation, preserve original question IDs for history and test old/new progress behavior.
+
+## Implemented follow-up (branch only)
+
+Three versioned revisions now replace YH1-V68-Q013, YH1-V6-Q014, and YH1-V7-Q014 in active practice, using `-v2` IDs. The source originals remain available as retired history. The first now practices `koşa koşa` rather than the pragmatically ambiguous `güle güle`; the other two clarify the accusative ending and `binerek` gloss without changing their keyed option. `src/grammarMcRevisions.test.ts` checks scoring and old-history import. These are branch changes, not deployed; CI and independent Turkish review remain gates.
