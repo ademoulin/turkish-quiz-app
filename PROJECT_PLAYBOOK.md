@@ -37,7 +37,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | CLEAN | Remove low-value recognition/interpretation drills | Implemented | PR #90 merged with 14 additional low-value exercises retired; automated checks passed. Broader instructional review remains under QUALITY. |
 | QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | PR #90 retired the eight subject-recognition items and six isolated Yeni Hitit 1 items; CI passed. Remaining pedagogical review is not an exhaustive manual inspection or linguistic correctness certification. |
 | ARCH | Maintainability and test-contract stabilization | Implemented / verification pending | PR #91 hardens grammar-wide test contracts, small-pool selection, and history round-trip coverage; CI passed before final documentation edits. No production code changes. Broader architecture redesign remains out of scope. |
-| YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Implemented / verification pending | PR #92 reconciles 34 historical flags: five already retired, 29 potentially active reviewed, three versioned editorial revisions with history tests. CI and independent naturalness review remain gates; not a certification of the full bank. |
+| YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Merged / independent review outstanding | PR #92 merged as `03c25e84e4237139ea0bb21e1e5de89057e68c7b` after passing CI; five historical flags already retired and three versioned revisions implemented. Independent native-speaker review remains separate from CI. |
 | ADV-LING | Advanced grammar linguistic validation | Open | Authored questions carry `draft_needs_independent_review`. Prioritize subject reference in temporal clauses, relative roles/cases, nominalization/agreement, and alternative valid answers; distinguish suspected risks from confirmed errors. |
 | PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Paused | Draft PR #88 has failing unit tests (11 in initial run). Do not merge or resume without explicit decision. |
 | MIXED | Cross-lesson advanced grammar choice | Wishlist | Consider only after stabilization and evidence of learner need. |
@@ -54,7 +54,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 ## Current priority and scope
 
-**Current active task: YH1-RISK PR #92.** PR #91 is merged. Review and verify the three versioned editorial changes and the historical 34-flag reconciliation, preserve old results, and finish CI before requesting merge approval. Next: ADV-LING, a separate advanced grammar linguistic review.
+**Current active task: ADV-LING linguistic audit.** YH1-RISK PR #92 merged with passing CI. Audit advanced authored content for actor reference, relative case roles, nominalization, and alternative valid answers; distinguish desk findings from independent native-speaker verification. No new exercise formats or content expansion.
 
 ## Workstream record template
 
