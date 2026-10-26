@@ -492,3 +492,20 @@ test('12D–F typed relatives ignore extra internal whitespace without accepting
   }
  }
 });
+
+test('12F main-clause polarity options isolate the predicate',()=>{
+ const active=lessonPool('relative_negation','structure').filter(q=>q.id.startsWith('vn45-expand-'));
+ assert.equal(active.length,12);
+ for(const q of active){
+  const expanded=examples.find(e=>e.id===q.exampleId)!;
+  const index=q.exampleId.split('-')[2];
+  const source=examples.find(e=>e.id===`vn12f-${index}`)!;
+  const detail=source.chunks!.find(c=>c.id.endsWith('-detail'))!.text;
+  const predicate=source.chunks!.find(c=>c.id.endsWith('-predicate'))!.text;
+  const opposite=source.chunks!.find(c=>c.id.endsWith('-wrong-predicate'))!.text;
+  assert.equal(q.expected,predicate,q.id);
+  assert.equal(q.sentence,`${source.unit} ${detail} ___.`,q.id);
+  assert.equal(q.sentence.replace('___',q.expected),expanded.sentence,q.id);
+  assert.deepEqual(q.options!.map(o=>o.text),[predicate,opposite],q.id);
+ }
+});

@@ -5,8 +5,10 @@ import {relativeNegationExamples} from './verbNounRelativeNegation';
  * their original assembly questions or question IDs. */
 export const relativeNegationCompletionExamples:VerbNounExample[]=relativeNegationExamples.flatMap((base,i)=>[0,1].map(kind=>{
  const id=`vn45-expand-${String(i+1).padStart(2,'0')}-${kind===0?'relative':'main'}`;
- const answer=kind===0?base.relativeClause!:base.main!.slice(base.main!.indexOf(' ')+1);
- const template=kind===0?`___ ${base.relativeHead} ${base.main}.`:`${base.unit} ${base.main!.slice(0,base.main!.indexOf(' '))} ___.`;
+ const detail=base.chunks!.find(c=>c.id.endsWith('-detail'))!.text;
+ const predicate=base.chunks!.find(c=>c.id.endsWith('-predicate'))!.text;
+ const answer=kind===0?base.relativeClause!:predicate;
+ const template=kind===0?`___ ${base.relativeHead} ${base.main}.`:`${base.unit} ${detail} ___.`;
  return {...base,id,template,answer};
 }));
 export const relativeNegationCompletionQuestions:VerbNounQuestion[]=relativeNegationCompletionExamples.map((e,i)=>{
