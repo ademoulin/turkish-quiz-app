@@ -19,8 +19,8 @@ test('filters, empty/unknown skill and unique session pool', () => {
  assert.equal(selectQuestions('',skill).length,3);
  assert.equal(selectQuestions('','unknown').length,0);
  assert.equal(selectQuestions('unknown').length,0);
- assert.equal(selectQuestions('','').length,413);
- assert.equal(new Set(selectQuestions().map(q=>q.id)).size,413);
+ assert.equal(selectQuestions('','').length,407);
+ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,407);
 });
 test('every shuffled option retains answer mapping, only keyed option scores', () => {
  for(const q of selectQuestions('', '', ()=>0.1)) {
