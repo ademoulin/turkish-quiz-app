@@ -26,6 +26,14 @@ test('12D–F typed relative instructions allow multiword descriptions without g
   const e=model(q.exampleId),copy=lessonExerciseCopy(q,e);
   assert.equal(copy.instruction,'Complete the missing relative description.',q.id);
   assert.ok(!copy.instruction.includes(q.expected),q.id);
-  assert.ok(copy.meaning===undefined||copy.meaning===e.meaning,q.id);
+  assert.equal(copy.meaning,e.meaning,q.id);
+ }
+});
+
+test('12E–F intended English meaning remains visible in typed and choice exercises',()=>{
+ for(const q of qs.filter(q=>['relative_roles','relative_negation'].includes(q.lessonId)&&q.prompt.startsWith('Intended meaning: '))){
+  const e=model(q.exampleId),copy=lessonExerciseCopy(q,e);
+  assert.equal(copy.meaning,e.meaning,q.id);
+  assert.ok(!copy.instruction.includes(e.meaning),q.id);
  }
 });
