@@ -19,8 +19,8 @@ test('filters, empty/unknown skill and unique session pool', () => {
  assert.ok(selectQuestions('',skill).length>0);
  assert.equal(selectQuestions('','unknown').length,0);
  assert.equal(selectQuestions('unknown').length,0);
- assert.equal(selectQuestions('','').length,407);
- assert.equal(new Set(selectQuestions().map(q=>q.id)).size,407);
+ assert.deepEqual(new Set(selectQuestions('','').map(q=>q.id)),new Set(activeGrammarQuestions.map(q=>q.id)));
+ assert.equal(new Set(selectQuestions().map(q=>q.id)).size,activeGrammarQuestions.length);
  const retiredIds=['YH1-V10-Q007','YH1-V11-Q018','YH1-V14-Q003','YH1-V50-Q024','YH1-V66-Q019','YH1-V66-Q020'];
  for(const id of retiredIds){assert.ok(retiredGrammarQuestions.some(q=>q.id===id),`Missing retired history ${id}`);assert.ok(!activeGrammarQuestions.some(q=>q.id===id),`Still active ${id}`);}
 });
