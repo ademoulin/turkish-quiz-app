@@ -223,7 +223,7 @@ test('12A chunk building supports keyboard, touch edits, delayed feedback and on
 });
 
 test('12A mixed session balances tasks and preserves corrections, review and backup after reload',async({page})=>{
- const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).tap();const tasks=new Map<string,number>(),seen=new Set<string>();
+ const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');await area.getByLabel('Lesson practice',{exact:true}).selectOption('build');await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).tap();const tasks=new Map<string,number>(),seen=new Set<string>();
  for(let i=0;i<12;i++){
  const q=await current(area);tasks.set(q.task,(tasks.get(q.task)||0)+1);seen.add(q.exampleId);
  if(q.task==='build'){
