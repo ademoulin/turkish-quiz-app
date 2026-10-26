@@ -1,3 +1,4 @@
+import {grammarItems} from './grammarRegistry';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {fullSentencePilotQuestions,fullSentencePilotExamples,fullSentencePilotDecision,matchesFullSentencePilot} from './fullSentencePilot';
@@ -28,4 +29,9 @@ test('pilot scoring preserves stable ID and stored answer',()=>{
  assert.equal(attempts[0].correct,true);
  assert.equal(attempts[0].questionId,q.id);
  assert.equal(attempts[0].answer,'Arkadaşımı işe gitmeden önce aradım.');
+});
+
+test('pilot is only offered in the lesson UI until random practice supports retries',()=>{
+ const ids=new Set(fullSentencePilotQuestions.map(q=>q.id));
+ assert.ok(grammarItems.every(item=>!ids.has(item.q.id)));
 });
