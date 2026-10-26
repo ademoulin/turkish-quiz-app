@@ -50,3 +50,7 @@ Inspected `src/temporalWhenCompletionExpansion.ts`, `src/temporalWhileCompletion
 - `verbNounPractice.ts` grades typed responses via `matchesCase` (or `matchesPhrase` for temporal contrasts) and MC responses by option ID. Consequently the next high-priority verification is whether `matchesCase` fairly accepts legitimate orthographic or morphological variants; an MC answer's grammatical acceptability cannot be inferred from ID-based scoring.
 
 No production code changed in this inspection. Avoid claiming that 60 source-model reviews imply all generated exercises are validated.
+
+## Regression verification added
+
+`src/advLingGeneratedChoices.test.ts` now exercises generated multiple-choice option uniqueness, correct-key identity, and every offered option's scoring for temporal when/while/order and relative-role completion. It also protects Turkish-sensitive typed comparison (`öğretmeni` vs `öğretmene`, Turkish diacritics, nominal case and person contrasts). These are **mechanical** checks, not proof that every distractor is linguistically invalid. CI status must be checked against the latest commit before declaring tested.
