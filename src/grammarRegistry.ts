@@ -1,3 +1,4 @@
+import {isFullSentencePilot} from './fullSentencePilot';
 import {skillLabel} from './grammarLabels';
 import {mixedGrammarQuestions,mixedGrammarFamily} from './mixedGrammar';
 import {choiceQuestions,recordChoice,type ChoiceCase} from './caseChoice';
@@ -13,7 +14,7 @@ export type GrammarItem=
  |{kind:'case_choice';family:'case_choice';q:typeof choiceQuestions[number]}
  |{kind:'lesson';family:'lessons';q:typeof verbNounQuestions[number]}
  |{kind:'multiple_choice';family:'multiple_choice';q:GrammarQuestion};
-export const grammarItems:GrammarItem[]=[...mixedGrammarQuestions.map(q=>({kind:'typed' as const,family:mixedGrammarFamily(q),q})),...choiceQuestions.map(q=>({kind:'case_choice' as const,family:'case_choice' as const,q})),...verbNounQuestions.map(q=>({kind:'lesson' as const,family:'lessons' as const,q})),...activeGrammarQuestions.map(q=>({kind:'multiple_choice' as const,family:'multiple_choice' as const,q}))];
+export const grammarItems:GrammarItem[]=[...mixedGrammarQuestions.map(q=>({kind:'typed' as const,family:mixedGrammarFamily(q),q})),...choiceQuestions.map(q=>({kind:'case_choice' as const,family:'case_choice' as const,q})),...verbNounQuestions.filter(q=>!isFullSentencePilot(q.id)).map(q=>({kind:'lesson' as const,family:'lessons' as const,q})),...activeGrammarQuestions.map(q=>({kind:'multiple_choice' as const,family:'multiple_choice' as const,q}))];
 export const itemConcept=(item:GrammarItem)=>item.kind==='multiple_choice'?mcConcept(item.q.skill_id):item.q.conceptId;
 export const itemGroup=(item:GrammarItem)=>item.kind==='lesson'?`lesson_${item.q.lessonId}`:itemConcept(item);
 export const itemMode=(item:GrammarItem)=>item.kind==='lesson'?(item.q.task==='type'?'typed':item.q.task==='build'?'assembly':item.q.task):item.kind==='typed'?'typed':'recognition';
