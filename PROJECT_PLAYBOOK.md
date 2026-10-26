@@ -38,7 +38,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | PR #90 retired the eight subject-recognition items and six isolated Yeni Hitit 1 items; CI passed. Remaining pedagogical review is not an exhaustive manual inspection or linguistic correctness certification. |
 | ARCH | Maintainability and test-contract stabilization | Implemented / verification pending | PR #91 hardens grammar-wide test contracts, small-pool selection, and history round-trip coverage; CI passed before final documentation edits. No production code changes. Broader architecture redesign remains out of scope. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Merged / independent review outstanding | PR #92 merged as `03c25e84e4237139ea0bb21e1e5de89057e68c7b` after passing CI; five historical flags already retired and three versioned revisions implemented. Independent native-speaker review remains separate from CI. |
-| ADV-LING | Advanced grammar linguistic validation | Open | Authored questions carry `draft_needs_independent_review`. Prioritize subject reference in temporal clauses, relative roles/cases, nominalization/agreement, and alternative valid answers; distinguish suspected risks from confirmed errors. |
+| ADV-LING | Advanced grammar linguistic validation | Merged / independent review outstanding | PR #93 merged as `9a380bf4e36bfa4049a6f7512939734b3e12c278`; 60 authored models desk-reviewed, temporal distractor rotation corrected, regression tests and CI passed. No confirmed grammar defects in sampled models; independent native-speaker review remains outstanding. See `docs/adv-ling-audit.md`. |
 | PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Paused | Draft PR #88 has failing unit tests (11 in initial run). Do not merge or resume without explicit decision. |
 | MIXED | Cross-lesson advanced grammar choice | Wishlist | Consider only after stabilization and evidence of learner need. |
 | MULTI | Multi-construction full-sentence production | Wishlist | Consider only after pilot validation and evidence of learner need. |
@@ -54,7 +54,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 ## Current priority and scope
 
-**Current active task: ADV-LING linguistic audit.** YH1-RISK PR #92 merged with passing CI. Audit advanced authored content for actor reference, relative case roles, nominalization, and alternative valid answers; distinguish desk findings from independent native-speaker verification. No new exercise formats or content expansion.
+**ADV-LING implementation and desk audit merged:** PR #93 passed CI and merged. Independent native-speaker verification remains outstanding, separate from automated tests and the completed desk review. No new implementation workstream is active; choose the next scope explicitly before coding.
 
 ## Workstream record template
 
