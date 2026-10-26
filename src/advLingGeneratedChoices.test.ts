@@ -43,3 +43,13 @@ test('ADV-LING typed grading preserves Turkish vowel and consonant contrasts',()
  assert.equal(matchesCase('gelmeme','gelmeni'),false);
  assert.equal(matchesCase('gelmelerine','gelmesini'),false);
 });
+
+test('ADV-LING temporal distractors vary across generated questions',()=>{
+ for(const questions of [temporalWhenCompletionQuestions,temporalWhileCompletionQuestions,temporalOrderCompletionQuestions]){
+  const finite=questions.filter(q=>q.task==='structure');
+  const firstWrong=finite.map(q=>q.options!.find(o=>o.id==='other-1')!.text);
+  const secondWrong=finite.map(q=>q.options!.find(o=>o.id==='other-2')!.text);
+  assert.ok(new Set(firstWrong).size>=5,'first distractor should vary across the lesson');
+  assert.ok(new Set(secondWrong).size>=5,'second distractor should vary across the lesson');
+ }
+});
