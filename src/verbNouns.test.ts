@@ -427,3 +427,28 @@ test('12D–F mixed relative sessions retain mistake-review identity across task
   assert.deepEqual(lessonMistakes(corrected,lesson,'mixed').map(q=>q.id),[structure.id]);
  }
 });
+
+test('12D authored completion choices express distinct forms and grade consistently',()=>{
+ const questions=bank.filter(q=>q.exampleId.startsWith('vn43-expand-'));
+ assert.equal(questions.length,24);
+ for(const q of questions){
+  const e=examples.find(e=>e.id===q.exampleId)!;
+  assert.equal(q.sentence.split('___').length,2,q.id);
+  assert.equal(q.sentence.replace('___',q.expected),e.sentence,q.id);
+  assert.ok(q.prompt.includes(e.meaning),q.id);
+  if(q.task==='structure'){
+   const options=q.options!;
+   assert.equal(options.length,4,q.id);
+   assert.equal(new Set(options.map(o=>o.text)).size,4,q.id);
+   assert.equal(options.filter(o=>o.text===q.expected).length,1,q.id);
+   for(const option of options){
+    const attempt=recordLesson([],q,option.id,'12d-option-check');
+    assert.equal(attempt[0].correct,option.id===q.expectedOptionId,q.id+' '+option.id);
+   }
+  }else{
+   assert.equal(q.task,'type',q.id);
+   assert.equal(recordLesson([],q,q.expected,'12d-typed-check')[0].correct,true,q.id);
+   assert.equal(recordLesson([],q,'not an answer','12d-typed-wrong')[0].correct,false,q.id);
+  }
+ }
+});
