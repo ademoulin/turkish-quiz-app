@@ -90,3 +90,10 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 - Historical staging files are not proof of current live defects.
 - Preserve the distinction between **missing coverage**, **review risk**, and **confirmed bug**.
 - If a requested change risks significant new complexity, surface alternatives and tradeoffs before coding.
+
+## Autonomous execution and honest handoffs
+
+- Within an explicitly approved workstream, continue through successive useful tasks without requiring a fresh user message after every commit, CI check, or progress update. A running CI job is not by itself a reason to stop if independent work remains.
+- Before ending a development response, check whether the workstream is complete, explicit user authorization is needed, or a genuine blocker prevents **all** further useful work. Otherwise continue within the current response.
+- Give progress updates without treating them as handoffs. At a real stopping point, report **What I'm waiting on** (name the precise approval, external result, or blocker; otherwise say Nothing) and **What I will do next**. Never imply work will run in the background after the response ends.
+- Preserve all existing approval boundaries: never merge without explicit user approval, and never silently expand implementation scope.
