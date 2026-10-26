@@ -42,3 +42,7 @@ End every substantive development response, including in a new chat, with this e
 ### SUMMARY:
 - **What I'm waiting on:** Name the actual blocker or say Nothing.
 - **What I will do next:** Name the next concrete action, or None — workstream complete.
+
+## Resume previously committed next actions
+
+When the user returns with a status update that resolves the last reported blocker (for example, "CI passed"), treat it as the signal to resume and execute the previously stated **What I will do next** action automatically. First independently verify the status and current repository state. Do not respond with only a status acknowledgement or ask for a redundant confirmation. Exceptions: the user says stop, changes scope, a new safety/merge-approval boundary applies, or verification reveals a genuine blocker. The same rule applies across chats when the previous plan can be established from the project ledger or conversation context.
