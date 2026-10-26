@@ -7,7 +7,7 @@ import {phraseQuestions} from './nounPhrases';
 import {possessiveQuestions} from './possessives';
 test('48 authored whole-chain questions are distinct, balanced and explicit',()=>{
  assert.equal(bank.length,48);assert.equal(bank.filter(q=>q.nounNumber==='singular').length,24);
- assert.equal(new Set([...bank,...caseQuestions,...possessedCaseQuestions,...phraseQuestions,...possessiveQuestions].map(q=>q.id)).size,214);
+ const allQuestions=[...bank,...caseQuestions,...possessedCaseQuestions,...phraseQuestions,...possessiveQuestions];assert.equal(new Set(allQuestions.map(q=>q.id)).size,allQuestions.length);
  for(const c of ['locative','dative','ablative','accusative']){
   const qs=bank.filter(q=>q.requiredCase===c);assert.equal(qs.length,12);assert.equal(qs.filter(q=>q.nounNumber==='plural').length,6);assert.deepEqual(qs.map(q=>q.owner),['ben','sen','o','biz','siz','onlar','ben','sen','o','biz','siz','onlar']);
  }
