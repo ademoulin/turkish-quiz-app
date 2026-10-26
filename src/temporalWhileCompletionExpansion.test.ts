@@ -21,7 +21,7 @@ test('5.6 practices overlapping -ken forms in both modes',()=>{
   const bad=recordLesson([],q,q.task==='type'?'incorrect-form':'other-1','bad');
   assert.equal(bad[0].correct,false);assert.deepEqual(validatePilotImport({version:1,pilotAttempts:bad}),bad);
   assert.equal(correctPilot(bad,bad[0].id)[0].correct,true);
-  if(q.task==='structure'){assert.equal(q.options!.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.ok(q.options!.every(o=>!o.text.includes(' ')));assert.ok(q.options!.find(o=>o.id==='other-1')!.text.endsWith('madan')||q.options!.find(o=>o.id==='other-1')!.text.endsWith('meden'));}
+  if(q.task==='structure'){assert.equal(q.options!.length,3);assert.equal(new Set(q.options!.map(o=>o.text)).size,3);assert.ok(q.options!.every(o=>!o.text.includes(' ')));assert.ok(q.options!.every(o=>o.text.endsWith('ken')));assert.ok(q.options!.filter(o=>o.id!=='target').every(o=>o.text!==q.expected));}
  }
 });
 
