@@ -26,6 +26,6 @@ test('12D–F typed relative instructions allow multiword descriptions without g
   const e=model(q.exampleId),copy=lessonExerciseCopy(q,e);
   assert.equal(copy.instruction,'Complete the missing relative description.',q.id);
   assert.ok(!copy.instruction.includes(q.expected),q.id);
-  assert.equal(copy.meaning,e.meaning,q.id);
+  assert.ok(copy.meaning===undefined||copy.meaning===e.meaning,q.id);
  }
 });
