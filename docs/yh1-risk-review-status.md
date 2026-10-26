@@ -33,9 +33,9 @@
 | YH1-V6-Q015 | 6.1 | provisionally sound; verify | A |
 | YH1-V64-Q005 | 10.2 | provisionally sound; verify | B |
 | YH1-V64-Q006 | 10.2 | provisionally sound; verify | C |
-| YH1-V7-Q002 | 7.2 | provisionally sound; verify | B |
+| YH1-V7-Q002 | 7.2 | retired | B |
 | YH1-V7-Q006 | 8.3 | provisionally sound; verify | B |
-| YH1-V7-Q008 | 9.2 | provisionally sound; verify | C |
+| YH1-V7-Q008 | 9.2 | retired | C |
 | YH1-V7-Q014 | 11.2 | editorial candidate | A |
 | YH1-V7-Q016 | 12.3 | provisionally sound; verify | A |
 
