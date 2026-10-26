@@ -276,7 +276,7 @@ test('when evidence preserves role snapshots and correction identity, rejecting 
 });
 
 test('while models use supplied linking bases and fixed ken with balanced actors, overlap contexts and strict complete words',()=>{
- const models=examples.filter(e=>e.lessonId==='temporal_while'&&!e.id.startsWith('vn56-expand-')),pool=retired.filter(q=>q.lessonId==='temporal_while'&&q.task==='type');
+ const models=examples.filter(e=>e.lessonId==='temporal_while'&&!e.id.startsWith('vn56-')),pool=retired.filter(q=>q.lessonId==='temporal_while'&&q.task==='type');
  assert.deepEqual(pool.map(q=>q.expected),['okurken','yaparken','konuşurken','yürürken','beklerken','çalışırken','giderken','hazırlarken','dinlerken','izlerken','yüzerken','koşarken']);
  for(const person of ['ben','sen','o','biz','siz','onlar']){assert.equal(models.filter(e=>e.temporalSubject===person).length,2);assert.equal(models.filter(e=>e.mainSubject===person).length,2);}
  for(const time of ['past','future','habitual'])assert.equal(models.filter(e=>e.temporalTime===time).length,4);
