@@ -105,3 +105,13 @@ Update ledger statuses only when evidence warrants it. Link concrete issues rath
 - Before ending a development response, check whether the workstream is complete, explicit user authorization is needed, or a genuine blocker prevents **all** further useful work. Otherwise continue within the current response.
 - Give progress updates without treating them as handoffs. At a real stopping point, report **What I'm waiting on** (name the precise approval, external result, or blocker; otherwise say Nothing) and **What I will do next**. Never imply work will run in the background after the response ends.
 - Follow the risk-based merge policy; never silently expand implementation scope.
+
+## Consistent development handoff
+
+For approved work, carry out the next available safe step without waiting for a new user prompt. Complete implementation, review, tests, and eligible merges within the agreed scope. Preserve the existing approval boundaries and do not imply background work continues after a response.
+
+End every substantive development response, including in a new chat, with this exact structure:
+
+### SUMMARY:
+- **What I'm waiting on:** Name the actual blocker or say Nothing.
+- **What I will do next:** Name the next concrete action, or None — workstream complete.
