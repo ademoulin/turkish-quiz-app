@@ -1,3 +1,4 @@
+import {isFullSentencePilot,matchesFullSentencePilot} from './fullSentencePilot';
 import {validRelativeNegationEvidence,type RelativeNegationEvidence} from './verbNounRelativeNegation';
 import {validRelativeRoleEvidence,type RelativeRoleEvidence} from './verbNounRelativeRoles';
 import {validRelativeBuildingEvidence,type RelativeBuildingEvidence} from './verbNounRelativeBuilding';
@@ -675,7 +676,7 @@ export function validatePilotImport(value: unknown): PilotAttempt[] {
           typeof a.exampleId !== "string" || !a.exampleId.trim() ||
           a.exerciseType !== (a.lessonTask === "build" ? "sentence_chunk_assembly" : ["converb_ip","converb_arak","converb_madan","temporal_order","temporal_when","temporal_while","state_ken","temporal_contrasts","sentence_building"].includes(a.lessonId || "") ? (a.lessonTask === "type" ? "typed_converb" : `converb_${a.lessonTask}`) : a.lessonId === "object_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `object_relative_${a.lessonTask}`) : a.lessonId === "subject_relatives" ? (a.lessonTask === "type" ? "typed_participle" : `subject_relative_${a.lessonTask}`) : a.lessonTask === "type" ? "typed_verb_noun" : `verb_noun_${a.lessonTask}`) ||
           (a.lessonTask === "build" ? a.selectedOptionId!==undefined || a.expectedOptionId!==undefined || !validChunkSnapshot(a) : a.lessonTask === "type"
-            ? a.selectedOptionId !== undefined || a.expectedOptionId !== undefined || (!a.manual && a.correct !== (a.lessonId === "temporal_contrasts" ? matchesPhrase(a.answer,a.expected) : matchesCase(a.answer,a.expected)))
+            ? a.selectedOptionId !== undefined || a.expectedOptionId !== undefined || (!a.manual && a.correct !== (isFullSentencePilot(a.questionId) ? matchesFullSentencePilot(a.questionId,a.answer) : a.lessonId === "temporal_contrasts" ? matchesPhrase(a.answer,a.expected) : matchesCase(a.answer,a.expected)))
             : typeof a.selectedOptionId !== "string" || !a.selectedOptionId.trim() ||
               typeof a.expectedOptionId !== "string" || !a.expectedOptionId.trim() ||
               (!a.manual && a.correct !== (a.selectedOptionId === a.expectedOptionId)))
