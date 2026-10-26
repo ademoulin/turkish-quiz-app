@@ -275,3 +275,38 @@ test('@bank-walkthrough 12C builds all dative/ablative complements with supplied
 test('@bank-walkthrough 3.11 case completion support keyboard checks and separate saved tasks',async({page})=>{
  const area=await open(page);await area.getByLabel('Lesson',{exact:true}).selectOption('noun_clause_cases');for(const task of ['structure']){await area.getByLabel('Lesson practice',{exact:true}).selectOption(task);await area.getByRole('button',{name:'Start noun clause case lesson',exact:true}).tap();for(let i=0;i<12;i++){const q=await current(area),e=examples.find(e=>e.id===q.exampleId)!;await expect(area.getByText(e.explanation,{exact:true})).toHaveCount(0);await area.locator('input[value="target"]').check();await area.locator('input[value="target"]').press('Enter');const next=area.getByRole('button',{name:i===11?'See lesson results':'Next lesson question',exact:true});await expect(next).toBeFocused();await expect(area.locator('.feedback .feedback-reason')).toHaveText(lessonReason(e));await expect(area.getByText('Build-up:',{exact:true})).toHaveCount(0);await next.tap();}await expect(area.getByText('12 / 12 correct',{exact:true})).toBeVisible();await area.getByRole('button',{name:'Restart noun clause case lesson',exact:true}).tap();}const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);expect(saved).toHaveLength(12);expect(saved.every((a:any)=>['dative','ablative'].includes(a.nominalCase)&&a.nominalMainSubject&&a.nominalSubject)).toBe(true);
 });
+
+test('5.9 typed sentence gives a second attempt and accepts curated alternative without saving first miss',async({page})=>{
+ const area=await open(page);
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+ await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).click();
+ const q=await current(area);
+ const field=area.getByLabel('Complete Turkish sentence',{exact:true});
+ await field.fill('wrong');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('Not quite. Try once more before seeing the answer.')).toBeVisible();
+ const first=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')||'{}').pilotAttempts||[]);
+ expect(first).toHaveLength(0);
+ await field.fill(q.expected);
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('1 / 1 correct',{exact:true})).toBeVisible();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
+ expect(saved).toHaveLength(1);
+ expect(saved[0].correct).toBe(true);
+});
+test('5.9 typed sentence reveals correction after two wrong submissions',async({page})=>{
+ const area=await open(page);
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+ await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).click();
+ const field=area.getByLabel('Complete Turkish sentence',{exact:true});
+ await field.fill('wrong');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await field.fill('still wrong');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
+ expect(saved).toHaveLength(1);
+ expect(saved[0].correct).toBe(false);
+ await expect(area.getByRole('button',{name:'Next lesson question',exact:true})).toBeVisible();
+});
