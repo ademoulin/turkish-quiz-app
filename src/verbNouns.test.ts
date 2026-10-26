@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {verbNounExamples as examples,verbNounQuestions as bank,retiredLessonQuestions as retired} from './verbNouns';
-import {lessonTasks,lessonPool,selectLessonQuestions,lessonMistakes,recordLesson} from './verbNounPractice';
+import {lessonTasks,lessonPool,selectLessonQuestions,lessonMistakes,recordLesson,matchesRelativeTypedAnswer} from './verbNounPractice';
 import {validatePilotImport,correctPilot,recordPilot,caseQuestions} from './casePilot';
 
 test('registry integrity and lesson-specific practice',()=>{
@@ -460,4 +460,23 @@ test('12D future subject relatives explain -AcAK + olan rather than treating ola
   assert.ok(e.explanation.includes('plus olan'),id);
   assert.ok(e.explanation.includes('future'),id);
  }
+});
+
+test('12E–F typed relatives accept omitted first/second-person genitive actors but preserve agreement and negation',()=>{
+ for(const lesson of ['relative_roles','relative_negation'] as const){
+  const questions=lessonPool(lesson,'type');
+  let checked=0;
+  for(const q of questions){
+   const match=/^(Benim|Senin|Bizim|Sizin)\s+(.+)$/u.exec(q.expected);
+   if(!match)continue;
+   checked++;
+   assert.equal(matchesRelativeTypedAnswer(q,match[2]),true,q.id);
+   assert.equal(recordLesson([],q,match[2],'relative-implicit-actor')[0].correct,true,q.id);
+   assert.equal(matchesRelativeTypedAnswer(q,q.expected),true,q.id);
+   assert.equal(matchesRelativeTypedAnswer(q,'not a participle'),false,q.id);
+  }
+  assert.ok(checked>0,lesson);
+ }
+ const thirdPerson=lessonPool('relative_roles','type').find(q=>q.expected.startsWith('Onun '))!;
+ assert.equal(matchesRelativeTypedAnswer(thirdPerson,thirdPerson.expected.slice(5)),false,thirdPerson.id);
 });
