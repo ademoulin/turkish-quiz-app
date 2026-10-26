@@ -332,3 +332,36 @@ test('5.9 typed full-sentence pilot gives one retry and accepts curated alternat
  expect(saved).toHaveLength(1);
  expect(saved[0].correct).toBe(true);
 });
+
+test('5.9 typed pilot saves a failed second attempt, then clears mistake after a correct review',async({page})=>{
+ const area=await open(page);
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+ await area.getByRole('button',{name:'Start sentence building lesson',exact:true}).click();
+ const q=await current(area),field=area.getByLabel('Complete Turkish sentence',{exact:true});
+ await field.fill('wrong');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('Not quite. Try once more before seeing the answer.')).toBeVisible();
+ await field.fill('still wrong');
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ const failed=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
+ expect(failed).toHaveLength(1);expect(failed[0].questionId).toBe(q.id);expect(failed[0].correct).toBe(false);
+ await area.getByRole('button',{name:'End lesson session',exact:true}).click();
+ await expect(area.getByRole('button',{name:'Review lesson mistakes (1)',exact:true})).toBeVisible();
+ await area.getByRole('button',{name:'Review lesson mistakes (1)',exact:true}).click();
+ expect((await current(area)).id).toBe(q.id);
+ await area.getByLabel('Complete Turkish sentence',{exact:true}).fill(q.expected);
+ await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
+ await expect(area.getByText('1 / 1 correct',{exact:true})).toBeVisible();
+ await area.getByRole('button',{name:'See lesson results',exact:true}).click();
+ await area.getByRole('button',{name:'Restart sentence building lesson',exact:true}).click();
+ await expect(area.getByRole('button',{name:'Review lesson mistakes (0)',exact:true})).toBeDisabled();
+ await page.reload();
+ await page.getByRole('button',{name:'Open grammar practice'}).click();
+ await page.getByLabel('Practice activity',{exact:true}).selectOption('verb-nouns');
+ await area.getByLabel('Lesson',{exact:true}).selectOption('sentence_building');
+ await area.getByLabel('Lesson practice',{exact:true}).selectOption('type');
+ await expect(area.getByRole('button',{name:'Review lesson mistakes (0)',exact:true})).toBeDisabled();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('quiz-my-turkish-v1')!).pilotAttempts);
+ expect(saved).toHaveLength(2);expect(saved.map((a:any)=>a.correct)).toEqual([false,true]);
+});
