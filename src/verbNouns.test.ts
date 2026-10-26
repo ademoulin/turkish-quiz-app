@@ -480,3 +480,15 @@ test('12E–F typed relatives accept omitted first/second-person genitive actors
  const thirdPerson=lessonPool('relative_roles','type').find(q=>q.expected.startsWith('Onun '))!;
  assert.equal(matchesRelativeTypedAnswer(thirdPerson,thirdPerson.expected.slice(5)),false,thirdPerson.id);
 });
+
+test('12D–F typed relatives ignore extra internal whitespace without accepting changed forms',()=>{
+ for(const lesson of ['relative_building','relative_roles','relative_negation'] as const){
+  for(const q of lessonPool(lesson,'type')){
+   if(!q.expected.includes(' '))continue;
+   const spaced=q.expected.replace(/ /gu,'   ');
+   assert.equal(matchesRelativeTypedAnswer(q,spaced),true,q.id);
+   assert.equal(recordLesson([],q,spaced,'relative-spacing')[0].correct,true,q.id);
+   assert.equal(matchesRelativeTypedAnswer(q,q.expected+' değil'),false,q.id);
+  }
+ }
+});
