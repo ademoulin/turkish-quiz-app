@@ -54,5 +54,5 @@ test('5.6 has active while overlap practice and retired results remain available
  assert.ok(lessonPool('temporal_contrasts','type').some(q=>q.temporalRelation==='while'));
  assert.ok(lessonPool('sentence_building','build').some(q=>q.temporalRelation==='while'));
  for(const id of ['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'] as const){assert.deepEqual(lessonTasks(id),['converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'].includes(id)?['structure','type']:['type']);assert.ok(lessonPool(id).length>0);}
- assert.deepEqual(lessonTasks('sentence_building'),['build']);
+ assert.deepEqual(lessonTasks('sentence_building'),['type','build']);
 });
