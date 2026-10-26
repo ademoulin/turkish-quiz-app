@@ -1,3 +1,4 @@
+import {fullSentencePilotQuestions} from './fullSentencePilot';
 import {temporalContrastCompletionExamples,temporalContrastCompletionQuestions} from './temporalContrastCompletionExpansion';
 import {stateKenCompletionExamples,stateKenCompletionQuestions} from './stateKenCompletionExpansion';
 import {temporalWhileCompletionExamples,temporalWhileCompletionQuestions} from './temporalWhileCompletionExpansion';
@@ -53,6 +54,7 @@ export const verbNounConcepts = {
  vn_noun_clause_cases_type:'Noun-clause complements · typed production',
  vn_noun_clause_cases_meaning:"Noun-clause complements · meaning",vn_noun_clause_cases_structure:"Noun-clause complements · whole-clause case",vn_noun_clause_cases_build:"Noun-clause complements · guided sentence assembly",
  vn_noun_clause_building_meaning:"Noun-clause building · meaning",vn_noun_clause_building_structure:"Noun-clause building · actors and whole-clause role",vn_noun_clause_building_build:"Noun-clause building · guided chunk assembly",
+ vn_sentence_building_type:'Sentence building · full-sentence production',
  vn_sentence_building_meaning:"Sentence building · meaning",vn_sentence_building_structure:"Sentence building · clause roles",vn_sentence_building_build:"Sentence building · guided chunk assembly",
  vn_temporal_contrasts_meaning:'Time connection · meaning',vn_temporal_contrasts_structure:'Time connection · requested construction',vn_temporal_contrasts_type:'Time connection · complete expression',
  vn_state_ken_meaning:'State/location -ken · meaning',vn_state_ken_structure:'State/location -ken · clause subjects and form',vn_state_ken_type:'State/location -ken · production',
@@ -180,5 +182,5 @@ const originalLessonQuestions:VerbNounQuestion[]=originalExamples.flatMap(e=>(e.
 })));
 
 const redesigned=redesignLessons(originalLessonQuestions);
-export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions,...converbIpCompletionQuestions,...converbArakCompletionQuestions,...converbMadanCompletionQuestions,...temporalOrderCompletionQuestions,...temporalWhenCompletionQuestions,...temporalWhileCompletionQuestions,...stateKenCompletionQuestions,...temporalContrastCompletionQuestions];
+export const verbNounQuestions=[...redesigned.active,...expandedClauseQuestions,...nominalizerExpansionQuestions,...relativeCompletionQuestions,...relativeBuildingCompletionQuestions,...relativeRoleCompletionQuestions,...relativeNegationCompletionQuestions,...converbIpCompletionQuestions,...converbArakCompletionQuestions,...converbMadanCompletionQuestions,...temporalOrderCompletionQuestions,...temporalWhenCompletionQuestions,...temporalWhileCompletionQuestions,...stateKenCompletionQuestions,...temporalContrastCompletionQuestions,...fullSentencePilotQuestions];
 export const retiredLessonQuestions=redesigned.retired;
