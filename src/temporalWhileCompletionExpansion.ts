@@ -14,7 +14,7 @@ export const temporalWhileCompletionExamples:VerbNounExample[]=temporalWhileExam
 export const temporalWhileCompletionQuestions:VerbNounQuestion[]=temporalWhileCompletionExamples.map((example,index)=>{
  const isClause=index%2===0,task=isClause?'type' as const:'structure' as const;
  const source=temporalWhileExamples[Math.floor(index/2)];
- const alternatives=temporalWhileExamples.filter(e=>e.main!==source.main && (e.mainSubject!==source.mainSubject || e.temporalTime!==source.temporalTime)).slice(0,2);
+ const alternatives=temporalWhileExamples.filter(e=>e.main!==source.main && (e.mainSubject!==source.mainSubject || e.temporalTime!==source.temporalTime)).filter((_,i,all)=>i===Math.floor(index/2)%all.length||i===(Math.floor(index/2)+1)%all.length);
  return {
   id:`${example.id}-${task}`,exampleId:example.id,lessonId:'temporal_while',conceptId:`vn_temporal_while_${task}` as VerbNounQuestion['conceptId'],task,
   exerciseType:isClause?'typed_converb':'converb_structure',
