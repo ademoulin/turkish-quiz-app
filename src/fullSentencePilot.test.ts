@@ -46,3 +46,10 @@ test('pilot accepts reviewed natural alternatives and rejects removed afterthoug
  assert.equal(matchesFullSentencePilot('vn59-full-6','Beni biletleri aldıktan sonra aradı.'),false);
  assert.equal(matchesFullSentencePilot('vn59-full-6','Biletleri aldıktan sonra beni aradım.'),false);
 });
+
+test('pilot does not penalize optional final period or natural while-clause placement',()=>{
+ assert.equal(matchesFullSentencePilot('vn59-full-1','İşe gitmeden önce arkadaşımı aradım'),true);
+ assert.equal(matchesFullSentencePilot('vn59-full-4','Arkadaşım ben ders çalışırken beni aradı.'),true);
+ assert.equal(matchesFullSentencePilot('vn59-full-4','Arkadaşım ben ders çalışırken beni aradım.'),false);
+ assert.equal(matchesFullSentencePilot('vn59-full-1','İşe gitmeden önce arkadaşımı aradık'),false);
+});

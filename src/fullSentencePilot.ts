@@ -7,7 +7,7 @@ const rows=[
  {meaning:'Before I went to work, I called my friend.',vocab:'gitmek (go); iş (work); arkadaş (friend); aramak (call)',answers:['İşe gitmeden önce arkadaşımı aradım.','Arkadaşımı işe gitmeden önce aradım.']},
  {meaning:'After I finished dinner, I watched a film.',vocab:'bitirmek (finish); akşam yemeği (dinner); izlemek (watch); film (film)',answers:['Akşam yemeğini bitirdikten sonra film izledim.','Akşam yemeğini bitirdikten sonra bir film izledim.']},
  {meaning:'When I arrived home, I called my mother.',vocab:'varmak / gelmek (arrive); ev (home); anne (mother); aramak (call)',answers:['Eve varınca annemi aradım.','Annemi eve varınca aradım.','Eve geldiğimde annemi aradım.']},
- {meaning:'While I was studying, my friend called me.',vocab:'ders çalışmak (study); arkadaş (friend); aramak (call)',answers:['Ben ders çalışırken arkadaşım beni aradı.','Ders çalışırken arkadaşım beni aradı.']},
+ {meaning:'While I was studying, my friend called me.',vocab:'ders çalışmak (study); arkadaş (friend); aramak (call)',answers:['Ben ders çalışırken arkadaşım beni aradı.','Ders çalışırken arkadaşım beni aradı.','Arkadaşım ben ders çalışırken beni aradı.']},
  {meaning:'Before we left the hotel, we bought water.',vocab:'ayrılmak (leave); otel (hotel); almak (buy); su (water)',answers:['Otelden ayrılmadan önce su aldık.']},
  {meaning:'After she bought the tickets, she called me.',vocab:'almak (buy); bilet (ticket); aramak (call)',answers:['Biletleri aldıktan sonra beni aradı.','O, biletleri aldıktan sonra beni aradı.']},
 ] as const;
@@ -30,7 +30,9 @@ export const fullSentencePilotExamples:VerbNounExample[]=rows.map((row,index)=>{
  });
 });
 export const isFullSentencePilot=(id:string)=>fullSentencePilotAlternatives.has(id);
-export const matchesFullSentencePilot=(id:string,answer:string)=>fullSentencePilotAlternatives.get(id)?.some(expected=>matchesPhrase(answer,expected))??false;
+// Terminal sentence punctuation is optional in a typed response; internal word order and suffixes are not.
+const withoutTerminalPeriod=(sentence:string)=>sentence.trim().replace(/\.$/u,'');
+export const matchesFullSentencePilot=(id:string,answer:string)=>fullSentencePilotAlternatives.get(id)?.some(expected=>matchesPhrase(withoutTerminalPeriod(answer),withoutTerminalPeriod(expected)))??false;
 export function fullSentencePilotDecision(id:string,answer:string,previousMisses:number):'correct'|'retry'|'incorrect'{
  if(matchesFullSentencePilot(id,answer))return 'correct';
  return previousMisses===0?'retry':'incorrect';
