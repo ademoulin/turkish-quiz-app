@@ -36,7 +36,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 | CURR | Advanced grammar lessons, Sections 3–5 | Implemented | Curriculum and productive exercises exist on main. |
 | CLEAN | Remove low-value recognition/interpretation drills | Implemented | PR #90 merged with 14 additional low-value exercises retired; automated checks passed. Broader instructional review remains under QUALITY. |
 | QUALITY | Remaining exercise difficulty and instructional value | Implemented / verification pending | PR #90 retired the eight subject-recognition items and six isolated Yeni Hitit 1 items; CI passed. Remaining pedagogical review is not an exhaustive manual inspection or linguistic correctness certification. |
-| ARCH | Maintainability and test-contract stabilization | Open | Identify narrow high-value changes to registry, presentation, grading, and history contracts; demonstrate preserved behavior and reduced special cases. No sweeping rewrite. |
+| ARCH | Maintainability and test-contract stabilization | Implemented / verification pending | PR #91 hardens grammar-wide test contracts, small-pool selection, and history round-trip coverage; CI passed before final documentation edits. No production code changes. Broader architecture redesign remains out of scope. |
 | YH1-RISK | Yeni Hitit 1 linguistic risk reconciliation | Open | Historical `yeni_hitit_1_linguistic_risk_queue_v82.csv` has 34 review flags (15 high, 19 medium), **not 34 missing lessons or confirmed errors**. Match each to current content; record disposition and evidence. |
 | ADV-LING | Advanced grammar linguistic validation | Open | Authored questions carry `draft_needs_independent_review`. Prioritize subject reference in temporal clauses, relative roles/cases, nominalization/agreement, and alternative valid answers; distinguish suspected risks from confirmed errors. |
 | PILOT-88 | Six typed full-sentence questions in Lesson 5.9 | Paused | Draft PR #88 has failing unit tests (11 in initial run). Do not merge or resume without explicit decision. |
@@ -47,13 +47,14 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 - PR #86: Lesson 5.8 expansion, merged.
 - PR #87: Playwright CI worker adjustment, merged.
-- PR #88: Full-sentence pilot, draft/paused.\n- PR #90: Low-value exercise retirement and initial test hardening, merged; CI passed.
+- PR #88: Full-sentence pilot, draft/paused.
+- PR #90: Low-value exercise retirement and initial test hardening, merged; CI passed.
 - Previous active advanced question count on main: 733; **not a permanent acceptance criterion**.
 - Separate Yeni Hitit 1 staging bank: 588 draft questions across 196 skills; verify live integration and current versions before drawing conclusions.
 
 ## Current priority and scope
 
-**Current active task: ARCH grammar-wide test-contract stabilization (PR #91).** PR #90 merged and its CI passed. Review all grammar unit and browser tests for brittle inventory assertions while retaining intentional curriculum matrices and session limits. Add small-pool and history compatibility checks. Make narrowly justified changes, run full CI, and report residual risks before declaring ARCH closed. Next: linguistic risk reconciliation and advanced review.
+**Current active task: finish and merge ARCH PR #91 after final CI verification.** PR #90 merged. PR #91 addresses targeted inventory brittleness and adds small-pool/history regression coverage without changing production behavior. Once merged and CI verified, proceed to YH1-RISK reconciliation, followed by ADV-LING review. Do not open parallel feature-development tracks.
 
 ## Workstream record template
 
