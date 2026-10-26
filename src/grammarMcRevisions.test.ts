@@ -7,10 +7,10 @@ import {grammarItems,grammarMistakes,selectGrammarMix,recordGrammarItem} from '.
 import {grammarProgress} from './grammarProgress';
 import {validatePilotImport,correctPilot} from './casePilot';
 const revised=active.filter(q=>q.replacesQuestionId),skill='YH1-12-01-S03';
-test('five authored MC revisions preserve the 588 originals and unchanged questions',()=>{
- assert.equal(revised.length,5);assert.ok(retired.length>0);validateBank(bank);
- assert.deepEqual(revised.map(q=>q.id),['YH1-V11-Q038-v2','YH1-V13-Q034-v2','YH1-V52-Q015-v2','YH1-V64-Q019-v2','YH1-V64-Q020-v2']);
- assert.deepEqual(revised.map(q=>q.options.find(o=>o.id===q.correct_option_id)!.text),['çalışmakta','öğrenmek','içmekten','yürümeye','yüzmekten']);
+test('eight authored MC revisions preserve the 588 originals and unchanged questions',()=>{
+ assert.equal(revised.length,8);assert.ok(retired.length>0);validateBank(bank);
+ assert.deepEqual(revised.map(q=>q.id),['YH1-V6-Q014-v2','YH1-V7-Q014-v2','YH1-V11-Q038-v2','YH1-V13-Q034-v2','YH1-V52-Q015-v2','YH1-V64-Q019-v2','YH1-V64-Q020-v2','YH1-V68-Q013-v2']);
+ assert.deepEqual(revised.map(q=>q.options.find(o=>o.id===q.correct_option_id)!.text),['yı','erek','çalışmakta','öğrenmek','içmekten','yürümeye','yüzmekten','Çocuk koşa koşa eve gitti.']);
  assert.ok(bank.questions.every(q=>!q.id.endsWith('-v2')));
  for(const q of revised){const old=retired.find(o=>o.id===q.replacesQuestionId)!;assert.equal(old.skill_id,q.skill_id);assert.equal(old.section,q.section);assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');assert.notEqual(old.prompt,q.prompt);}
  const unchanged=bank.questions.filter(q=>!retired.includes(q));assert.equal(unchanged.length+bank.questions.filter(q=>retired.includes(q)).length,bank.questions.length);
@@ -59,4 +59,25 @@ test('MC scope preserves source objects and keeps retired-only history out of pr
  const fixed=correctPilot(attempts,attempts[0].id);
  assert.equal(fixed[0].id,attempts[0].id);assert.equal(fixed[0].correct,true);
  assert.deepEqual(validatePilotImport({version:1,pilotAttempts:fixed}),fixed);
+});
+
+test('YH1 risk revisions keep historical IDs and defensible answer keys',()=>{
+ for(const id of ['YH1-V68-Q013','YH1-V6-Q014','YH1-V7-Q014']){
+  const old=retired.find(q=>q.id===id)!;
+  const next=active.find(q=>q.replacesQuestionId===id)!;
+  assert.ok(old&&next);
+  assert.equal(next.id,id+'-v2');
+  assert.equal(next.skill_id,old.skill_id);
+  assert.equal(next.correct_option_id,old.correct_option_id);
+  assert.ok(!active.some(q=>q.id===id));
+  assert.equal(selectQuestions('',next.skill_id).some(q=>q.id===next.id),true);
+  const history=recordGrammarChoice([],old,old.correct_option_id,'legacy');
+  assert.deepEqual(validatePilotImport({version:1,pilotAttempts:history}),history);
+  assert.equal(grammarProgress(history).concepts.find(c=>c.id===mcConcept(old.skill_id))!.legacyChecks,1);
+  for(const option of next.options){
+   const result=recordGrammarChoice([],next,option.id,'new');
+   assert.equal(result[0].correct,option.id===next.correct_option_id);
+  }
+ }
+ assert.equal(active.find(q=>q.id==='YH1-V68-Q013-v2')!.options[0].text,'Çocuk koşa koşa eve gitti.');
 });

@@ -3,6 +3,21 @@ import type {GrammarQuestion} from './yeniHitit';
 // App-authored drafts guided by Yeni Hitit 1 purpose/nominalization material.
 // Not textbook quotations; independent review and exact Ödkem mapping pending.
 const revisions:Record<string,Pick<GrammarQuestion,'prompt'|'options'|'correct_option_id'|'explanation'>>={
+ 'YH1-V68-Q013':{
+  prompt:'Choose the sentence with the repeated -A converb expressing how the child went home.',
+  options:[{id:'A',text:'Çocuk koşa koşa eve gitti.'},{id:'B',text:'Çocuk koşmadan eve gitti.'},{id:'C',text:'Çocuk koşacak eve gitti.'},{id:'D',text:'Çocuk koşmuş eve gitti.'}],correct_option_id:'A',
+  explanation:'Koşa koşa is the repeated -A converb of koşmak (“to run”), describing the child going home running. Unlike the conventional farewell güle güle, this is a straightforward manner expression.',
+ },
+ 'YH1-V6-Q014':{
+  prompt:'Complete the accusative ending of the marked direct object: Bu araba___ satın aldım. (I bought this car.)',
+  options:[{id:'A',text:'yı'},{id:'B',text:'ya'},{id:'C',text:'da'},{id:'D',text:'dan'}],correct_option_id:'A',
+  explanation:'Bu araba is the specified direct object of satın aldım. Add the accusative suffix -(y)I: araba + yı → arabayı. The buffer y joins the vowel-final noun to the suffix.',
+ },
+ 'YH1-V7-Q014':{
+  prompt:'Complete with the manner/means converb -(y)ArAk: Otobüse bin___ şehir merkezine gittim. (I went to the city center by taking the bus.)',
+  options:[{id:'A',text:'erek'},{id:'B',text:'meden'},{id:'C',text:'miş'},{id:'D',text:'ecek'}],correct_option_id:'A',
+  explanation:'Binerek = bin- (“board/get on”) + -erek. Otobüse binerek şehir merkezine gittim describes going to the center by taking the bus; binmek itself denotes boarding, not the whole journey. Binmeden means “without boarding.”',
+ },
  'YH1-V11-Q038':{
   prompt:'Choose the word that completes the sentence: Uzun süre ___ zorlanıyorum. (çalışmak)',
   options:[{id:'A',text:'çalışmayı'},{id:'B',text:'çalışmak'},{id:'C',text:'çalışmakta'},{id:'D',text:'çalışmaktan'}],correct_option_id:'C',
