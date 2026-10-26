@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: "./e2e",
   timeout: 45000,
   fullyParallel: true,
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   grepInvert: process.env.UI_FULL_BANK === "1" ? undefined : /@bank-walkthrough/,
   use: {
     baseURL: "http://127.0.0.1:5173",
