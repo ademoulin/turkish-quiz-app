@@ -509,3 +509,18 @@ test('12F main-clause polarity options isolate the predicate',()=>{
   assert.deepEqual(q.options!.map(o=>o.text),[predicate,opposite],q.id);
  }
 });
+
+
+test('12E head-case choices offer three distinct forms with the authored answer intact',()=>{
+ const questions=lessonPool('relative_roles','structure').filter(q=>q.id.startsWith('vn44-expand-'));
+ assert.equal(questions.length,12);
+ for(const q of questions){
+  assert.equal(q.options!.length,3,q.id);
+  assert.equal(new Set(q.options!.map(o=>o.text)).size,3,q.id);
+  assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected,q.id);
+ }
+ const bare=questions.filter(q=>['komşu','doktor'].includes(q.expected));
+ assert.equal(bare.length,2);
+ assert.ok(bare.find(q=>q.expected==='komşu')!.options!.some(o=>o.text==='komşuyu'));
+ assert.ok(bare.find(q=>q.expected==='doktor')!.options!.some(o=>o.text==='doktoru'));
+});
