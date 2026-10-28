@@ -383,6 +383,10 @@ test('12D–F active Turkish choices render with the intended meaning and keep f
   await area.locator('input[value="target"]').check();
   await area.getByRole('button',{name:'Check lesson answer',exact:true}).click();
   await expect(area.getByText('Correct.',{exact:true})).toBeVisible();
+  if(lesson==='relative_building'&&e.id.startsWith('vn43-expand-')){
+   await expect(area.locator('[role="status"].feedback p[lang="tr"]')).toHaveText(e.sentence);
+   await expect(area.locator('[role="status"].feedback p[lang="tr"]')).not.toContainText('undefined');
+  }
   await expect(area.locator('.feedback-reason')).toBeVisible();
   const details=area.getByText('Full explanation',{exact:true});
   if(await details.count()){
