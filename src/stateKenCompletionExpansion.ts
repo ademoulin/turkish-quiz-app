@@ -34,6 +34,6 @@ export const stateKenCompletionQuestions:VerbNounQuestion[]=stateKenCompletionEx
   sentence:example.template,expected:example.answer,
   ...(typed?{}:{optionLanguage:'tr' as const,expectedOptionId:'target',options:choices.map((text,i)=>({id:i===0?'target':`other-${i}`,text}))}),
   temporalPredicate:source.temporalPredicate,temporalRelation:source.temporalRelation,temporalSubject:source.temporalSubject,mainSubject:source.mainSubject,temporalTime:source.temporalTime,
-  source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:source.supportingRuleIds,
+  source:'newly_authored',reviewStatus:'draft_needs_independent_review',supportingRuleIds:typed?source.supportingRuleIds:[],
  };
 });
