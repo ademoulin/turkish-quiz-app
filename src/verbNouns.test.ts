@@ -524,3 +524,23 @@ test('12E head-case choices offer three distinct forms with the authored answer 
  assert.ok(bare.find(q=>q.expected==='komşu')!.options!.some(o=>o.text==='komşuyu'));
  assert.ok(bare.find(q=>q.expected==='doktor')!.options!.some(o=>o.text==='doktoru'));
 });
+
+test('5.7 multiple choice tests -(y)ken formation, not unrelated main predicates',()=>{
+ const choices=lessonPool('state_ken','structure').filter(q=>q.id.startsWith('vn57-expand-'));
+ const typed=lessonPool('state_ken','type').filter(q=>q.id.startsWith('vn57-expand-'));
+ assert.equal(choices.length,12);
+ assert.equal(typed.length,12);
+ for(const q of choices){
+  const source=examples.find(e=>e.id===q.exampleId)!;
+  assert.equal(q.expected,source.converbClause!.split(' ').at(-1),q.id);
+  assert.equal(q.sentence.replace('___',q.expected),source.sentence,q.id);
+  assert.equal(q.options!.length,4,q.id);
+  assert.equal(new Set(q.options!.map(o=>o.text)).size,4,q.id);
+  assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected,q.id);
+  assert.ok(q.options!.every(o=>!o.text.includes(' ')),q.id);
+ }
+ for(const q of typed)assert.ok(q.expected.includes(' '),q.id);
+ const school=choices.find(q=>q.expected==='okuldayken')!;
+ assert.ok(school.options!.some(o=>o.text==='okuldaken'));
+ assert.ok(school.options!.some(o=>o.text==='okulda'));
+});
