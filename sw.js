@@ -1,0 +1,45 @@
+/* Generated at build time; scoped to this GitHub Pages project. */
+const CACHE_PREFIX = 'quiz-my-turkish-app-';
+const CACHE_NAME = CACHE_PREFIX + '059506157443fe83';
+const ASSETS = ["assets/index-BaX4EHQx.css","assets/index-CcNquG1L.js","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","index.html","manifest.webmanifest"];
+const base = new URL('./', self.location.href);
+const assetUrls = ASSETS.map(path => new URL(path, base).href);
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(assetUrls.map(url => new Request(url, { cache: 'reload' })));
+    } catch (error) {
+      await caches.delete(CACHE_NAME);
+      throw error;
+    }
+  })());
+  // Updates wait until old app windows close; never interrupt an answer.
+});
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    // Retain the immediately previous download for outgoing worker requests.
+    // Bound storage to this version plus one previous successful version.
+    const previous = (await caches.keys()).filter(name => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME);
+    for (const name of previous.slice(0, -1)) await caches.delete(name);
+    await self.clients.claim();
+  })());
+});
+self.addEventListener('message', event => {
+  if (event.data !== 'CHECK_OFFLINE') return;
+  event.waitUntil((async () => {
+    const ready = (await Promise.all(assetUrls.map(url => caches.match(url, { cacheName: CACHE_NAME })))).every(Boolean);
+    event.ports[0]?.postMessage({ ready, version: CACHE_NAME });
+  })());
+});
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || url.origin !== base.origin || !url.pathname.startsWith(base.pathname)) return;
+  const target = event.request.mode === 'navigate' &&
+    (url.pathname === base.pathname || url.pathname === base.pathname + 'index.html')
+    ? new URL('index.html', base).href : url.href;
+  if (!assetUrls.includes(target)) return;
+  event.respondWith((async () => {
+    return await caches.match(target, { cacheName: CACHE_NAME }) || fetch(event.request);
+  })());
+});
