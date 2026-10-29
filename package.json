@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node --import tsx scripts/validate-yeni-hitit.ts && tsc -b && vite build && node scripts/standalone.mjs",
+    "build": "node --import tsx scripts/validate-yeni-hitit.ts && tsc -b && vite build && node scripts/standalone.mjs && node scripts/build-offline.mjs",
     "test": "node scripts/check-curriculum-counts.mjs && node --import tsx --test src/*.test.ts scripts/*.test.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test:e2e": "playwright test",
