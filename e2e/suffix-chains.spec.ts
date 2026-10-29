@@ -6,6 +6,7 @@ async function open(page:import('@playwright/test').Page){
  await page.getByLabel('Practice method',{exact:true}).selectOption('build-from-base');return page.getByRole('region',{name:'Build endings from base',exact:true});
 }
 test('48 full chains from bare nouns: explicit constraints, no answer leakage, touch, keyboard and correction',async({page})=>{
+ test.setTimeout(60000); // Full 48-question interaction can exceed 45s on a loaded CI runner.
  const area=await open(page);await expect(area.getByRole('region',{name:'How to practice'})).toContainText('bavullarımızdan');
  await area.getByRole('button',{name:'Start building from base'}).click();const seen=new Set<string>();
  for(let i=0;i<48;i++){

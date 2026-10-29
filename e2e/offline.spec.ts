@@ -107,6 +107,20 @@ test('failed installs do not report ready; updates wait for session windows to c
     await expect(tab.locator('#answer')).toHaveValue('my unfinished answer');
     expect(await tab.evaluate(() => caches.keys())).toContain('quiz-my-turkish-app-first');
     await tab.close();
+    // Let the browser finish natural activation with no old controlled window.
+    await expect.poll(async () => {
+      for (const worker of context.serviceWorkers()) {
+        try {
+          if (await worker.evaluate(() => {
+            const sw = globalThis as any;
+            return sw.registration.active?.state === 'activated' && !sw.registration.waiting &&
+              // Generated worker constants are lexical globals.
+              eval('CACHE_NAME') === 'quiz-my-turkish-app-second';
+          })) return true;
+        } catch { /* The outgoing worker can terminate during this check. */ }
+      }
+      return false;
+    }, { timeout: 15000 }).toBe(true);
     tab = await context.newPage();
     await tab.goto(target);
     await expect.poll(() => tab.evaluate(() => caches.keys())).toEqual(['quiz-my-turkish-app-second']);

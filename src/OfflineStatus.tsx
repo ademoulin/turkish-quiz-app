@@ -33,6 +33,7 @@ export function OfflineStatus({ vocabularyReady, storageError }: { vocabularyRea
     if (!('serviceWorker' in navigator)) setState('failed');
     else {
       navigator.serviceWorker.addEventListener('controllerchange', check);
+      check();
       const url = new URL('sw.js', new URL(import.meta.env.BASE_URL, location.href));
       void navigator.serviceWorker.register(url, { scope: './', updateViaCache: 'none' }).then(reg => {
         registration = reg;
@@ -49,7 +50,11 @@ export function OfflineStatus({ vocabularyReady, storageError }: { vocabularyRea
         reg.addEventListener('updatefound', watchInstall);
         watchInstall();
         check();
-      }).catch(() => { if (alive) setState('failed'); });
+      }).catch(() => {
+        if (!alive) return;
+        if (navigator.serviceWorker.controller) check();
+        else setState('failed');
+      });
     }
     return () => {
       alive = false;
