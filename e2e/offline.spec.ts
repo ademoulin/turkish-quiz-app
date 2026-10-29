@@ -20,13 +20,13 @@ test('production download survives a closed tab, offline practice and saved resu
   await offline.getByRole('button', { name: 'Select all matching' }).click();
   await offline.getByRole('button', { name: 'Let’s practice' }).click();
   await offline.locator('#answer').fill('wrong');
-  await offline.getByRole('button', { name: 'Check answer', exact: true }).click();
+  await offline.getByRole('button', { name: /^Check answer/ }).click();
   await expect(offline.locator('.feedback')).toBeVisible();
   await offline.reload();
   await offline.getByRole('button', { name: 'Conjugation Put the endings to work.' }).click();
   await offline.getByRole('button', { name: 'Let’s practice' }).click();
   await offline.locator('#answer').fill('wrong');
-  await offline.getByRole('button', { name: 'Check answer', exact: true }).click();
+  await offline.getByRole('button', { name: /^Check answer/ }).click();
   await expect(offline.locator('.expected')).toBeVisible();
   await offline.reload();
   await offline.getByRole('button', { name: 'Open grammar practice' }).click();

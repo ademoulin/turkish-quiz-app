@@ -22,3 +22,28 @@ test('precache includes nested assets, excludes standalone export and changes ve
     assert.notEqual(await readFile(join(root, 'sw.js'), 'utf8'), first);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+test('readiness and fetch checks never recreate deleted caches after an update', async () => {
+  const { runInNewContext } = await import('node:vm');
+  const handlers = {};
+  const response = { ok: true };
+  let matches = 0;
+  let posted;
+  const source = (await readFile('scripts/sw-template.js', 'utf8'))
+    .replace('__VERSION__', 'test').replace('__ASSETS__', '["index.html"]');
+  runInNewContext(source, {
+    URL, Request,
+    self: { location: { href: 'https://example.com/turkish-quiz-app/sw.js' }, addEventListener: (type, fn) => { handlers[type] = fn; } },
+    caches: {
+      open: () => { throw Error('Read checks must not create caches'); },
+      match: async (url, options) => { assert.equal(options.cacheName, 'quiz-my-turkish-app-test'); matches++; return response; },
+    },
+    fetch: () => { throw Error('Should serve the cached response'); },
+  });
+  let work;
+  handlers.message({ data: 'CHECK_OFFLINE', ports: [{ postMessage: value => { posted = value.ready; } }], waitUntil: promise => { work = promise; } });
+  await work;
+  assert.equal(posted, true);
+  handlers.fetch({ request: { method: 'GET', mode: 'navigate', url: 'https://example.com/turkish-quiz-app/' }, respondWith: promise => { work = promise; } });
+  assert.equal(await work, response);
+  assert.equal(matches, 2);
+});

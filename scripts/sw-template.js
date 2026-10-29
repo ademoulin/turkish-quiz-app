@@ -27,8 +27,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
   if (event.data !== 'CHECK_OFFLINE') return;
   event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    const ready = (await Promise.all(assetUrls.map(url => cache.match(url)))).every(Boolean);
+    const ready = (await Promise.all(assetUrls.map(url => caches.match(url, { cacheName: CACHE_NAME })))).every(Boolean);
     event.ports[0]?.postMessage({ ready });
   })());
 });
@@ -40,7 +39,6 @@ self.addEventListener('fetch', event => {
     ? new URL('index.html', base).href : url.href;
   if (!assetUrls.includes(target)) return;
   event.respondWith((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    return await cache.match(target) || fetch(event.request);
+    return await caches.match(target, { cacheName: CACHE_NAME }) || fetch(event.request);
   })());
 });
