@@ -18,9 +18,10 @@ self.addEventListener('install', event => {
 });
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    for (const name of await caches.keys()) {
-      if (name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME) await caches.delete(name);
-    }
+    // Retain the immediately previous download for outgoing worker requests.
+    // Bound storage to this version plus one previous successful version.
+    const previous = (await caches.keys()).filter(name => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME);
+    for (const name of previous.slice(0, -1)) await caches.delete(name);
     await self.clients.claim();
   })());
 });
@@ -28,7 +29,7 @@ self.addEventListener('message', event => {
   if (event.data !== 'CHECK_OFFLINE') return;
   event.waitUntil((async () => {
     const ready = (await Promise.all(assetUrls.map(url => caches.match(url, { cacheName: CACHE_NAME })))).every(Boolean);
-    event.ports[0]?.postMessage({ ready });
+    event.ports[0]?.postMessage({ ready, version: CACHE_NAME });
   })());
 });
 self.addEventListener('fetch', event => {

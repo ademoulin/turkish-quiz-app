@@ -478,7 +478,8 @@ Export progress for backups. Clearing site data removes downloads/progress, and
 browser storage can be evicted under pressure. There is no cross-device sync.
 App updates download when opened/foregrounded online and activate after all old
 app windows close. They never force a reload during practice. Cache cleanup only
-removes this app's older resource caches, not learner progress.
+retains the current and immediately previous app download for outgoing requests;
+older downloads are removed, without touching learner progress.
 
 `npm run build` generates the resource list from all production output (excluding
 the separate standalone export) and hashes assets plus worker logic for versioning.

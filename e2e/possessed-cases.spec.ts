@@ -8,6 +8,7 @@ async function open(page:import('@playwright/test').Page){
  return page.getByRole('region',{name:'Typed possessed case practice',exact:true});
 }
 test('all 48 possessed-case answers, touch, keyboard, reveal, scoring and correction',async({page})=>{
+ test.setTimeout(120000); // Exhaustive 48-question walkthrough; each assertion still has its normal timeout.
  const area=await open(page); await area.getByRole('button',{name:'Start possessed case practice'}).click();
  const seen=new Set<string>();
  for(let i=0;i<48;i++){
