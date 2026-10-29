@@ -123,7 +123,13 @@ test('failed installs do not report ready; updates wait for session windows to c
     }, { timeout: 15000 }).toBe(true);
     tab = await context.newPage();
     await tab.goto(target);
-    await expect.poll(() => tab.evaluate(() => caches.keys())).toEqual(['quiz-my-turkish-app-second']);
+    await expect.poll(() => tab.evaluate(() => caches.keys())).toEqual(['quiz-my-turkish-app-first', 'quiz-my-turkish-app-second']);
+    const activeVersion = await tab.evaluate(() => new Promise<string>(resolve => {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = e => { channel.port1.close(); resolve(e.data.version); };
+      navigator.serviceWorker.controller!.postMessage('CHECK_OFFLINE', [channel.port2]);
+    }));
+    expect(activeVersion).toBe('quiz-my-turkish-app-second');
     await context.setOffline(true);
     await tab.reload();
     await expect(tab.getByText('Ready for offline practice', { exact: true })).toBeVisible();

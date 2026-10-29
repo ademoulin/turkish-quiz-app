@@ -47,3 +47,19 @@ test('readiness and fetch checks never recreate deleted caches after an update',
   assert.equal(await work, response);
   assert.equal(matches, 2);
 });
+test('activation retains the previous download and removes older app caches only', async () => {
+  const { runInNewContext } = await import('node:vm');
+  const handlers = {};
+  const deleted = [];
+  let claimed = false;
+  runInNewContext((await readFile('scripts/sw-template.js', 'utf8')).replace('__VERSION__', 'third').replace('__ASSETS__', '[]'), {
+    URL,
+    self: { location: { href: 'https://example.com/turkish-quiz-app/sw.js' }, clients: { claim: async () => { claimed = true; } }, addEventListener: (type, fn) => { handlers[type] = fn; } },
+    caches: { keys: async () => ['another-app', 'quiz-my-turkish-app-first', 'quiz-my-turkish-app-second', 'quiz-my-turkish-app-third'], delete: async name => { deleted.push(name); } },
+  });
+  let work;
+  handlers.activate({ waitUntil: promise => { work = promise; } });
+  await work;
+  assert.deepEqual(deleted, ['quiz-my-turkish-app-first']);
+  assert.equal(claimed, true);
+});
