@@ -861,3 +861,8 @@ legend,
 .familiarity-filter[aria-pressed="true"] { outline:2px solid var(--familiarity-ink,#246355); outline-offset:2px; font-weight:700; }
 .familiarity-badge { display:inline-block; font-size:.85rem; font-weight:600; padding:.1rem .55rem; border-radius:1rem; margin-left:.65rem; white-space:nowrap; }
 .familiarity-result { display:block; font-size:.9rem; color:var(--muted); margin-top:.25rem; }
+
+.offline-status { margin: 0 0 1.25rem; padding: .8rem 1rem; border: 1px solid #c5d9d2; border-radius: 12px; background: #eff6f2; }
+.offline-status small { display: block; margin-top: .25rem; }
+.offline-status details { margin-top: .5rem; font-size: .85rem; }
+.offline-status p { max-width: 65ch; }

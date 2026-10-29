@@ -38,6 +38,7 @@ Never equate CI passing with linguistic review or pedagogical quality.
 
 | ID | Workstream | Status | Evidence / next closure criterion |
 | --- | --- | --- | --- |
+| OFFLINE | Flight-ready offline PWA | Implemented / verification pending | User approved October 29. Bundled current Sheet snapshot, complete production precache, Home Screen support and offline readiness; preserve progress schema and grading. PR #125; 429 unit/build checks pass locally and in CI. First browser run: 146 passed; offline readiness on rejected re-registration fixed, update lifecycle test synchronized, full 48-question timeout adjusted for measured CI duration. Second browser run: all 146 existing tests and vocabulary-cache priority passed; fixed test button selector and prevented read-only worker checks from recreating retired caches. Full suite rerun required. Real iPhone airplane-mode test required before travel. |
 | CORE | Vocabulary and conjugation app | Implemented | Operational; no redesign requested. Revalidate only when affected. |
 | CURR | Advanced grammar lessons, Sections 3–5 | Implemented | Curriculum and productive exercises exist on main. |
 | CLEAN | Remove low-value recognition/interpretation drills | Implemented | PR #90 merged with 14 additional low-value exercises retired; automated checks passed. Broader instructional review remains under QUALITY. |
@@ -119,3 +120,16 @@ End every substantive development response, including in a new chat, with this e
 ## Resume previously committed next actions
 
 When the user returns with a status update that resolves the last reported blocker (for example, "CI passed"), treat it as the signal to resume and execute the previously stated **What I will do next** action automatically. First independently verify the status and current repository state. Do not respond with only a status acknowledgement or ask for a redundant confirmation. Exceptions: the user says stop, changes scope, a new safety/merge-approval boundary applies, or verification reveals a genuine blocker. The same rule applies across chats when the previous plan can be established from the project ledger or conversation context.
+
+### OFFLINE — October 29, 2026
+
+User explicitly prioritized offline flight practice; existing curriculum work is
+paused for this isolated infrastructure change. No exercise content, grading,
+history schema or IDs change. The vocabulary snapshot is verbatim public CSV;
+newer valid cached Sheet downloads retain priority. No learner-data migration,
+cloud sync, background sync or unfinished-session persistence.
+
+Acceptance: complete cached app opens at /turkish-quiz-app/ with no network, all
+practice families remain available, answered results survive reopening, failed
+installs never report ready, updates leave active answers alone. Real iPhone
+Home Screen/airplane-mode verification remains a user-device acceptance check.

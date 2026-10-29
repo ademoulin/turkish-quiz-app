@@ -456,3 +456,32 @@ Grammar practice → Verb nouns and clauses → **12D · Build sentences with re
 Lesson 12E · Relative clauses: to, in and from adds 12 scenarios / 36 meaning, inner/outer-role and guided assembly exercises. Reconstruct dative, locative and ablative source relationships, then independently choose the head’s role in the main sentence. All forms and main predicates are supplied. Newly authored drafts; independent linguistic review and exact Ödkem mapping pending.
 
 Lesson 12F · Negation inside relative clauses adds 12 scenarios / 36 meaning, negation-scope and guided assembly exercises across -(y)An, -DIK and -(y)AcAK. Description and main-statement polarity are assessed separately, including both-negative and affirmative controls. All forms are supplied; no finite-conjugation drill. Newly authored drafts pending independent linguistic review and exact Ödkem mapping.
+
+## Offline practice on iPhone
+
+The production build includes a service worker, Home Screen manifest/icons and a
+fixed vocabulary snapshot downloaded from the public source Sheet on October 29,
+2026. All bundled grammar content, conjugation and grading work without Google.
+Online Refresh vocabulary still downloads the Sheet and takes priority over the
+snapshot; the last successful download is used offline. No account or backend is
+added, and progress keeps its existing browser storage key and backup format.
+
+Open the hosted app online and wait for **Ready for offline practice**. To install,
+use Safari → Share → Add to Home Screen; open the installed app online and wait
+for readiness there too. Before travel, turn off Wi-Fi and enable airplane mode,
+close/reopen the app, answer questions and reopen again to check saved progress.
+The indicator verifies the active worker's entire precache and local progress
+storage availability. Development mode does not install a service worker.
+
+Answered questions persist; unfinished sessions and unsubmitted text do not.
+Export progress for backups. Clearing site data removes downloads/progress, and
+browser storage can be evicted under pressure. There is no cross-device sync.
+App updates download when opened/foregrounded online and activate after all old
+app windows close. They never force a reload during practice. Cache cleanup only
+removes this app's older resource caches, not learner progress.
+
+`npm run build` generates the resource list from all production output (excluding
+the separate standalone export) and hashes assets plus worker logic for versioning.
+The worker remains under the GitHub Pages project path. `e2e/offline.spec.ts` tests
+the production path, closed-tab offline startup, vocabulary/conjugation/grammar,
+saved history, failed downloads and safe updates.

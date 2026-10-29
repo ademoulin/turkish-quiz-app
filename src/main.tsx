@@ -1,3 +1,5 @@
+import snapshotCsv from "./data/vocabulary-2026-10-29.csv?raw";
+import { OfflineStatus } from "./OfflineStatus";
 import {GrammarProgress} from './GrammarProgress';
 import {skillLabel} from './grammarLabels';
 import React, { useEffect, useRef, useState, useMemo } from "react";
@@ -82,7 +84,7 @@ function App() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [source, setSource] = useState<"live" | "cached" | "none">("none");
+  const [source, setSource] = useState<"live" | "cached" | "snapshot" | "none">("none");
   const [notice, setNotice] = useState("");
   const [storageError, setStorageError] = useState(false);
   const [search, setSearch] = useState("");
@@ -143,14 +145,25 @@ function App() {
           setSource("none");
         }
       }
+      if (!cached) {
+        const p = parseVocab(snapshotCsv);
+        setEntries(p.entries);
+        setWarnings(p.warnings);
+        setSource("snapshot");
+      }
       setNotice(
-        `Couldn’t refresh vocabulary. ${err instanceof Error ? err.message : "Check your connection."} ${readStore().cache || store.cache ? "Using your last saved download where available." : "Check your internet connection and that the sheet is publicly viewable, then try again."}`,
+        `Couldn’t refresh vocabulary. ${err instanceof Error ? err.message : "Check your connection."} ${readStore().cache || store.cache ? "Using your last saved download where available." : "Using the bundled October 29 vocabulary snapshot."}`,
       );
     } finally {
       setLoading(false);
     }
   }
   useEffect(() => {
+    const bundled = parseVocab(snapshotCsv);
+    setEntries(bundled.entries);
+    setWarnings(bundled.warnings);
+    setSource("snapshot");
+    setLoading(false);
     const cache = readStore().cache;
     if (cache) {
       try {
@@ -162,7 +175,7 @@ function App() {
         /* Fetch can repair an invalid cache. */
       }
     }
-    void refresh();
+    if (navigator.onLine) void refresh();
   }, []);
   useEffect(() => {
     if (screen === "quiz" && !feedback) {
@@ -463,6 +476,7 @@ function App() {
         <span className="header-label">YOUR DAILY DOSE OF TÜRKÇE</span>
       </header>
       <main>
+        <OfflineStatus vocabularyReady={entries.length > 0} storageError={storageError} />
         {storageError && (
           <div className="alert" role="alert">
             Browser storage is unavailable or full. Your progress may not
@@ -505,7 +519,9 @@ function App() {
                       ? "Your vocabulary is up to date"
                       : source === "cached"
                         ? "Using saved vocabulary"
-                        : "Vocabulary not loaded"}
+                        : source === "snapshot"
+                          ? "Using bundled vocabulary · October 29"
+                          : "Vocabulary not loaded"}
                 </strong>
                 <small>
                   {entries.length} entries
