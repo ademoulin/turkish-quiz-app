@@ -113,9 +113,12 @@ test('failed installs do not report ready; updates wait for session windows to c
         try {
           if (await worker.evaluate(() => {
             const sw = globalThis as any;
-            return sw.registration.active?.state === 'activated' && !sw.registration.waiting &&
-              // Generated worker constants are lexical globals.
-              eval('CACHE_NAME') === 'quiz-my-turkish-app-second';
+            if (!sw.registration.active || sw.registration.installing || sw.registration.waiting) return false;
+            return new Promise<boolean>(resolve => {
+              const channel = new MessageChannel();
+              channel.port1.onmessage = e => { channel.port1.close(); resolve(e.data.version === 'quiz-my-turkish-app-second'); };
+              sw.registration.active.postMessage('CHECK_OFFLINE', [channel.port2]);
+            });
           })) return true;
         } catch { /* The outgoing worker can terminate during this check. */ }
       }
@@ -124,12 +127,11 @@ test('failed installs do not report ready; updates wait for session windows to c
     tab = await context.newPage();
     await tab.goto(target);
     await expect.poll(() => tab.evaluate(() => caches.keys())).toEqual(['quiz-my-turkish-app-first', 'quiz-my-turkish-app-second']);
-    const activeVersion = await tab.evaluate(() => new Promise<string>(resolve => {
+    await expect.poll(() => tab.evaluate(() => new Promise<string>(resolve => {
       const channel = new MessageChannel();
       channel.port1.onmessage = e => { channel.port1.close(); resolve(e.data.version); };
       navigator.serviceWorker.controller!.postMessage('CHECK_OFFLINE', [channel.port2]);
-    }));
-    expect(activeVersion).toBe('quiz-my-turkish-app-second');
+    })), { timeout: 15000 }).toBe('quiz-my-turkish-app-second');
     await context.setOffline(true);
     await tab.reload();
     await expect(tab.getByText('Ready for offline practice', { exact: true })).toBeVisible();
