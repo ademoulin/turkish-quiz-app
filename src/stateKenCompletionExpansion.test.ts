@@ -5,7 +5,7 @@ import {verbNounExamples,verbNounQuestions} from './verbNouns';
 import {lessonPool,recordLesson} from './verbNounPractice';
 import {validatePilotImport,correctPilot} from './casePilot';
 
-test('5.7 adds 12 full state/location clauses and 12 finite-predicate selections',()=>{
+test('5.7 adds 12 full state/location clauses and 12 -(y)ken form selections',()=>{
  assert.ok(examples.length>0);assert.ok(questions.length>0);
  assert.equal(new Set(questions.map(q=>q.id)).size,questions.length);
  assert.ok(questions.filter(q=>q.task==='type').length>0);
@@ -24,8 +24,8 @@ test('5.7 adds 12 full state/location clauses and 12 finite-predicate selections
   assert.deepEqual(validatePilotImport({version:1,pilotAttempts:bad}),bad);
   assert.equal(correctPilot(bad,bad[0].id)[0].correct,true);
   if(q.task==='structure'){
-   assert.equal(q.options!.length,3);
-   assert.equal(new Set(q.options!.map(o=>o.text)).size,3);
+   assert.equal(q.options!.length,4);
+   assert.equal(new Set(q.options!.map(o=>o.text)).size,4);
   }
  }
 });

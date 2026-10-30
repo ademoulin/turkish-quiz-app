@@ -8,7 +8,7 @@ test('registry integrity and lesson-specific practice',()=>{
  assert.ok(examples.length>0);assert.ok(bank.length>0);assert.equal(new Set(examples.map(e=>e.id)).size,examples.length);assert.equal(new Set(bank.map(q=>q.id)).size,bank.length);const exampleIds=new Set(examples.map(e=>e.id));for(const q of bank){assert.ok(exampleIds.has(q.exampleId),`Missing example for ${q.id}`);assert.ok(lessonPool(q.lessonId).some(item=>item.id===q.id),`Unregistered lesson question ${q.id}`);}
  for(const lesson of ['activity','cases','subjects','clause_cases','negation','content_dik','content_future','contrasts','subject_relatives','object_relatives','converb_ip','converb_arak','converb_madan','temporal_order','temporal_when','temporal_while','state_ken','temporal_contrasts'] as const){assert.ok(lessonPool(lesson).length>0);for(const task of lessonTasks(lesson))assert.ok(lessonPool(lesson,task).length>0);}
  for(const e of examples){assert.equal(e.template.split('___').length,2);assert.equal(e.template.replace('___',e.answer).toLocaleLowerCase('tr'),e.sentence.toLocaleLowerCase('tr'));assert.equal((e.mainLead?e.mainLead+' ':'')+e.unit+' '+e.main+'.',e.sentence);assert.ok(e.id.startsWith('vn45-expand-')||e.id.startsWith('vn51-expand-')||e.id.startsWith('vn52-expand-')||e.id.startsWith('vn53-expand-')||e.id.startsWith('vn54-expand-')||e.id.startsWith('vn54-form-')||e.id.startsWith('vn55-expand-')||e.id.startsWith('vn56-expand-')||e.id.startsWith('vn57-expand-')||e.id.startsWith('vn58-expand-')||e.unit.includes(e.answer)||e.unit.toLocaleLowerCase('tr').includes(e.answer));}
- for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'&&q.task!=='build'){const count=q.lessonId==='action_forms'&&q.task==='structure'?5:q.exampleId.startsWith('vn45-expand-')||q.exampleId.startsWith('vn44-expand-')?q.options!.length:(q.exampleId.startsWith('vn43-expand-')||q.exampleId.startsWith('vn-relative-expand-')||q.lessonId==='temporal_contrasts'&&q.task==='structure'&&!q.id.startsWith('vn58-expand-'))?4:3;assert.equal(q.options?.length,count);assert.equal(new Set(q.options!.map(o=>o.text)).size,count);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
+ for(const q of bank){assert.equal(q.source,'newly_authored');assert.equal(q.reviewStatus,'draft_needs_independent_review');if(q.task!=='type'&&q.task!=='build'){const count=q.lessonId==='action_forms'&&q.task==='structure'?5:q.exampleId.startsWith('vn45-expand-')||q.exampleId.startsWith('vn44-expand-')?q.options!.length:(q.exampleId.startsWith('vn43-expand-')||q.exampleId.startsWith('vn57-expand-')||q.exampleId.startsWith('vn-relative-expand-')||q.lessonId==='temporal_contrasts'&&q.task==='structure'&&!q.id.startsWith('vn58-expand-'))?4:3;assert.equal(q.options?.length,count);assert.equal(new Set(q.options!.map(o=>o.text)).size,count);assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected);assert.deepEqual(q.supportingRuleIds,[]);}}
  assert.equal(lessonPool('subjects','meaning').length,0);
  assert.equal(lessonPool('subjects','structure').length,0);
  assert.equal(retired.filter(q=>q.lessonId==='subjects'&&q.task==='meaning').length>=8,true);
@@ -523,4 +523,24 @@ test('12E head-case choices offer three distinct forms with the authored answer 
  assert.equal(bare.length,2);
  assert.ok(bare.find(q=>q.expected==='komşu')!.options!.some(o=>o.text==='komşuyu'));
  assert.ok(bare.find(q=>q.expected==='doktor')!.options!.some(o=>o.text==='doktoru'));
+});
+
+test('5.7 multiple choice tests -(y)ken formation, not unrelated main predicates',()=>{
+ const choices=lessonPool('state_ken','structure').filter(q=>q.id.startsWith('vn57-expand-'));
+ const typed=lessonPool('state_ken','type').filter(q=>q.id.startsWith('vn57-expand-'));
+ assert.equal(choices.length,12);
+ assert.equal(typed.length,12);
+ for(const q of choices){
+  const source=examples.find(e=>e.id===q.exampleId)!;
+  assert.equal(q.expected,source.converbClause!.split(' ').at(-1),q.id);
+  assert.equal(q.sentence.replace('___',q.expected),source.sentence,q.id);
+  assert.equal(q.options!.length,4,q.id);
+  assert.equal(new Set(q.options!.map(o=>o.text)).size,4,q.id);
+  assert.equal(q.options!.find(o=>o.id===q.expectedOptionId)?.text,q.expected,q.id);
+  assert.ok(q.options!.every(o=>!o.text.includes(' ')),q.id);
+ }
+ for(const q of typed)assert.ok(q.expected.includes(' '),q.id);
+ const school=choices.find(q=>q.expected==='okuldayken')!;
+ assert.ok(school.options!.some(o=>o.text==='okuldaken'));
+ assert.ok(school.options!.some(o=>o.text==='okulda'));
 });
