@@ -1,7 +1,7 @@
 /* Generated at build time; scoped to this GitHub Pages project. */
 const CACHE_PREFIX = 'quiz-my-turkish-app-';
-const CACHE_NAME = CACHE_PREFIX + '059506157443fe83';
-const ASSETS = ["assets/index-BaX4EHQx.css","assets/index-CcNquG1L.js","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","index.html","manifest.webmanifest"];
+const CACHE_NAME = CACHE_PREFIX + 'd4623b8ff3044aa5';
+const ASSETS = ["assets/index-BaX4EHQx.css","assets/index-rJ8NCfQt.js","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","index.html","manifest.webmanifest"];
 const base = new URL('./', self.location.href);
 const assetUrls = ASSETS.map(path => new URL(path, base).href);
 self.addEventListener('install', event => {
